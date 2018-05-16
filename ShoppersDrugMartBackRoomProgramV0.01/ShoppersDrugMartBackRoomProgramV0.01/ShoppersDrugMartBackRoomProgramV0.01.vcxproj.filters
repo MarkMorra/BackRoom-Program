@@ -23,5 +23,8 @@
     <ClInclude Include="Logger.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="ErrorMsg.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
