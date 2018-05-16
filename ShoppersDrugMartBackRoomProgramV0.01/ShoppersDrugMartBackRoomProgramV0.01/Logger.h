@@ -28,14 +28,21 @@ Log::~Log()
 {
 }
 
+
+
+
+
+
+
 class Logger
 {
 public:
 	Logger(string Filename);
 	~Logger();
-	void Reload();
+	void reload();
+	void save();
 	void addItem(Log data);
-	
+
 
 private:
 
@@ -55,7 +62,7 @@ Logger::~Logger()
 {
 }
 
-void Logger::Reload() {
+void Logger::reload() {
 
 	FILE *file;
 
@@ -75,6 +82,33 @@ void Logger::Reload() {
 	{
 		log.push_front(temp);
 	}
+
+	fclose(file);
+}
+
+void Logger::save()
+{
+
+	FILE *file;
+	list<Log>::iterator *it;
+
+	file = fopen(Filepath.c_str(), "w");
+
+	if (file == NULL)
+	{
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function");
+		return;
+	}
+
+	it = log.begin;
+	while (true)
+	{
+
+	}
+	fwrite()
+
+
+		fclose(file);
 }
 
 void Logger::addItem(Log data)
