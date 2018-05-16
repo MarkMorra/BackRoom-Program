@@ -5,33 +5,43 @@
 #include <list>
 using namespace std;
 
-#define FilePrefix "/"
-#define FileSuffix "/logger.log"
+#define FILE_PREFIX "/"
+#define FILE_SUFFIX "/logger.log"
+#define CHAR_IN_LOG_MSG 150
 
 class Log
 {
 public:
+	Log(int PLU, string msg);
 	Log();
 	~Log();
-
-private:
+	void display();
+	
 	tm time;
 	int PLUCode;
-	char message[100];
+	char message[CHAR_IN_LOG_MSG];
 };
 
-Log::Log()
+Log::Log(int PLU, string msg)
 {
+	PLUCode = PLU;
+	if (msg.length > CHAR_IN_LOG_MSG - 1)
+	{
+		msg = string(msg,0,CHAR_IN_LOG_MSG-1);
+	}
+	strcpy(message, msg.c_str);
+
 }
+
+Log::Log() {};
 
 Log::~Log()
 {
 }
 
-
-
-
-
+void Log::display() {
+	cout << "Year: " << time.tm_year+1900 << ", Month: " 
+}
 
 
 class Logger
@@ -41,7 +51,9 @@ public:
 	~Logger();
 	void reload();
 	void save();
-	void addItem(Log data);
+	void addItem(int PLU,string msg);
+	void display();
+	void display(int PLU);
 
 
 private:
@@ -51,15 +63,18 @@ private:
 
 };
 
-Logger::Logger(string Filename)
+Logger::Logger(string filename)
 {
 
-	Filepath = FilePrefix + Filename + FileSuffix;
+	Filepath = FILE_PREFIX + filename + FILE_SUFFIX;
 
 }
 
 Logger::~Logger()
 {
+
+	save();
+
 }
 
 void Logger::reload() {
@@ -101,20 +116,42 @@ void Logger::save()
 	}
 
 	it = log.begin;
-	while (true)
+	while (it != log.back)
 	{
 
+		fwrite(it, sizeof(*it), 1, file);
+		it++;
+
 	}
-	fwrite()
+	fwrite(it, sizeof(*it), 1, file); //the for loop stops when it reaches the last element so this is here to write the final element
 
+	fclose(file);
 
-		fclose(file);
 }
 
-void Logger::addItem(Log data)
+void Logger::addItem(int PLU, string msg)
 {
 
-	log.push_front(data);
+	log.push_front(Log(PLU, msg));
+
+}
+
+void Logger::display(int PLU)
+{
+
+	list<Log>::iterator *it;
+	it = log.begin;
+
+	while (true)
+	{
+		if ((*it)->PLUCode == PLU)
+		{
+
+		}
+	}
+
+	Log temp;
+	temp.PLUCode;
 
 }
 
