@@ -26,5 +26,8 @@
     <ClInclude Include="ErrorMsg.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Database.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

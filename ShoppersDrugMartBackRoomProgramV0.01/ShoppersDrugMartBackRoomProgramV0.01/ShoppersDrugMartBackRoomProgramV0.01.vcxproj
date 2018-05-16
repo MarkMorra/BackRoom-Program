@@ -119,6 +119,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Database.h" />
     <ClInclude Include="ErrorMsg.h" />
     <ClInclude Include="Logger.h" />
   </ItemGroup>
