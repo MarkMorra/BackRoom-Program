@@ -1,7 +1,15 @@
 #include "Logger.h"
 
+void onStart();
+
 int main() {
 
-	//eat ass
+	onStart();
+
+}
+
+void onStart() {
+
+	//put stuff here
 
 }
