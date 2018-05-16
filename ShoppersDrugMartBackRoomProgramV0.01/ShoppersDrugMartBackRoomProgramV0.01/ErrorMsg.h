@@ -7,5 +7,5 @@ void errorMsg(string error) {
 
 	cout << "\n\n" << error << "\nPress enter to continue...";
 
-	while (getch() != 13);
+	while (_getch() != 13);
 }

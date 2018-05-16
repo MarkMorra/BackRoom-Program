@@ -8,13 +8,33 @@ using namespace std;
 #define FilePrefix "/"
 #define FileSuffix "/logger.log"
 
+class Log
+{
+public:
+	Log();
+	~Log();
+
+private:
+	tm time;
+	int PLUCode;
+	char message[100];
+};
+
+Log::Log()
+{
+}
+
+Log::~Log()
+{
+}
+
 class Logger
 {
 public:
 	Logger(string Filename);
 	~Logger();
 	void Reload();
-	void addItem(Log Data);
+	void addItem(Log data);
 	
 
 private:
@@ -68,24 +88,3 @@ void Logger::addItem(Log data)
 
 
 
-
-
-class Log
-{
-public:
-	Log();
-	~Log();
-
-private:
-	tm time;
-	int PLUCode;
-	char message[100];
-};
-
-Log::Log()
-{
-}
-
-Log::~Log()
-{
-}
