@@ -1,4 +1,4 @@
-#include "Error"
+#include "ErrorMsg.h"
 #include <conio.h>
 #include <iostream>
 #include <string>
@@ -14,6 +14,7 @@ public:
 	Logger(string Filename);
 	~Logger();
 	void Reload();
+	void addItem(Log Data);
 	
 
 private:
@@ -42,7 +43,7 @@ void Logger::Reload() {
 
 	if (file == NULL)
 	{
-		cout ""
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function");
 		return;
 	}
 
@@ -55,6 +56,15 @@ void Logger::Reload() {
 		log.push_front(temp);
 	}
 }
+
+void Logger::addItem(Log data)
+{
+
+	log.push_front(data);
+
+}
+
+
 
 
 
