@@ -29,5 +29,8 @@
     <ClInclude Include="Database.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="Users.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
