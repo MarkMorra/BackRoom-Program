@@ -7,7 +7,7 @@
 using namespace std;
 
 #define FILE_PREFIX ""
-#define FILE_SUFFIX "\logger.log"
+#define FILE_SUFFIX "/logger.log"
 #define CHAR_IN_LOG_MSG 150
 
 class Log
@@ -44,7 +44,9 @@ Log::~Log()
 }
 
 void Log::display() {
-	cout << _wasctime(&timeLogged) << " : " << message;
+	char *timeAsString = asctime(&timeLogged);
+	timeAsString[strlen(timeAsString) - 1] = '\0'; //removes the \n character created in asctime
+	cout << timeAsString << " : " << message;
 }
 
 
@@ -90,7 +92,7 @@ void Logger::reload() {
 
 	if (file == NULL)
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function");
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?");
 		return;
 	}
 
@@ -100,7 +102,7 @@ void Logger::reload() {
 
 	while (fread(&temp,sizeof(temp),1,file))
 	{
-		log.push_front(temp);
+		log.push_back(temp);
 	}
 
 	fclose(file);
@@ -163,14 +165,17 @@ void Logger::display(int PLU)
 
 void Logger::display()
 {
-
+	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
 
 	while (it != log.end())
 	{
+		i++;
+		cout << i << ") ";
 		it->display();
 		it++;
+		cout << "\n";
 	}
 
 }
