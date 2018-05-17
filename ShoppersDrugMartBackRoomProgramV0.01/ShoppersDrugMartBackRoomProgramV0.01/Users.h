@@ -14,20 +14,31 @@ using namespace std;
 
 class Permissions //Contains permissions for the specific username or password, accessed through Database class
 {
-public:
-	bool test; //Cady doesn't know how to do this
+private:
+	bool selectitem;
+	bool resetitem;
+	bool viewlogs;
+	bool resetusers;
+	bool settings;
+	bool additem;
+	bool viewitem;
+	bool viewspecific;
+	bool changeprice;
+	bool changeinventory;
 };
 
 class Users //Contains usernames and passwords, accessed through Database class
 {
-public:
+private:
+	Permissions permission;
+	string firstname;
+	string lastname;
+	string password;
 };
 
 class Database
 {
 public:
 	vector<Users> user;
-	vector<Permissions> permission;
-
-	//Username, password, permissions, access to these is here
+	//Username, password, permissions; access to these is here
 };
