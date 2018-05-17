@@ -60,8 +60,6 @@ class Logger
 public:
 	Logger(string Filename);
 	~Logger();
-	void reload();
-	void save();
 	void addItem(int UPCCode, int Userid, char type, string message);
 	void display();
 	void display(int PLU);
@@ -69,6 +67,8 @@ public:
 
 private:
 
+	void reload();
+	void save();
 	string Filepath;
 	list<Log> log;
 
