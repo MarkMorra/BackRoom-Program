@@ -1,5 +1,6 @@
 #include "ErrorMsg.h"
 #include <conio.h>
+#include <time.h>
 #include <iostream>
 #include <string>
 #include <list>
@@ -17,13 +18,16 @@ public:
 	~Log();
 	void display();
 	
-	tm time;
+	tm timeLogged;
 	int PLUCode;
 	char message[CHAR_IN_LOG_MSG];
 };
 
 Log::Log(int PLU, string msg)
 {
+	time_t rawTime = time(NULL);
+	timeLogged = *localtime(&rawTime); //might not work
+
 	PLUCode = PLU;
 	if (msg.length > CHAR_IN_LOG_MSG - 1)
 	{
@@ -40,7 +44,7 @@ Log::~Log()
 }
 
 void Log::display() {
-	cout << "Year: " << time.tm_year+1900 << ", Month: " 
+	cout << _wasctime(&time) << " : " << message;
 }
 
 
