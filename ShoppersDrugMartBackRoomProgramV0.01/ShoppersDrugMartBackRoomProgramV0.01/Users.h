@@ -25,6 +25,20 @@ private:
 	bool viewspecific;
 	bool changeprice;
 	bool changeinventory;
+
+	Permissions()
+	{
+		selectitem = false;
+		resetitem = false;
+		viewlogs = false;
+		resetusers = false;
+		settings = false;
+		additem = false;
+		viewitem = false;
+		viewspecific = false;
+		changeprice = false;
+		changeinventory = false;
+	}
 };
 
 class Users //Contains usernames and passwords, accessed through Database class
