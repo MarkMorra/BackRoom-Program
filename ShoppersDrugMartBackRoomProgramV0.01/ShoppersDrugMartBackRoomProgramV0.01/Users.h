@@ -48,6 +48,7 @@ private:
 	string firstname;
 	string lastname;
 	string password;
+	int id;
 };
 
 class Database

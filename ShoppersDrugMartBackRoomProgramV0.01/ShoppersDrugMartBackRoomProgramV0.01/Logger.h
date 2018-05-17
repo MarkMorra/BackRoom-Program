@@ -13,27 +13,32 @@ using namespace std;
 class Log
 {
 public:
-	Log(int PLU, string msg);
+	Log(int _UPCCode, int _Userid, char _type, string message);
 	Log();
 	~Log();
 	void display();
 	
 	tm timeLogged;
-	int PLUCode;
+	int UPCCode; //-1 if not applicable
+	int Userid; //id of the user who made the change -1 if not applicable
+	char type; //the type of log
+	//g = generic, p = price change, a = amount change, n = new item
 	char message[CHAR_IN_LOG_MSG];
 };
 
-Log::Log(int PLU, string msg)
+Log::Log(int _UPCCode, int _Userid, char _type, string _message)
 {
 	time_t rawTime = time(NULL);
-	timeLogged = *localtime(&rawTime); //might not work
+	timeLogged = *localtime(&rawTime);
 
-	PLUCode = PLU;
-	if (msg.length() > CHAR_IN_LOG_MSG - 1)
+	UPCCode = _UPCCode;
+	Userid = _Userid;
+	type = _type;
+	if (_message.length() > CHAR_IN_LOG_MSG - 1)
 	{
-		msg = string(msg,0,CHAR_IN_LOG_MSG-1);
+		_message = string(_message,0,CHAR_IN_LOG_MSG-1);
 	}
-	strcpy(message, msg.c_str());
+	strcpy(message, _message.c_str());
 
 }
 
@@ -57,7 +62,7 @@ public:
 	~Logger();
 	void reload();
 	void save();
-	void addItem(int PLU,string msg);
+	void addItem(int UPCCode, int Userid, char type, string message);
 	void display();
 	void display(int PLU);
 
@@ -79,9 +84,7 @@ Logger::Logger(string filename)
 
 Logger::~Logger()
 {
-
 	save();
-
 }
 
 void Logger::reload() {
@@ -136,16 +139,16 @@ void Logger::save()
 
 }
 
-void Logger::addItem(int PLU, string msg)
+void Logger::addItem(int UPCCode, int Userid, char type, string message)
 {
 
-	log.push_front(Log(PLU, msg));
+	log.push_front(Log(UPCCode,Userid,type,message));
 
 	save();
 
 }
 
-void Logger::display(int PLU)
+void Logger::display(int UPC)
 {
 
 	list<Log>::iterator it;
@@ -153,7 +156,7 @@ void Logger::display(int PLU)
 
 	while (it != log.end())
 	{
-		if (it->PLUCode == PLU)
+		if (it->UPCCode == UPC)
 		{
 			it->display();
 		}
