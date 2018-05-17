@@ -35,8 +35,8 @@ class Database {
 public:
 	Database(string filename);
 	~Database();
-	void Add(int upc, int plu, int amount, char name[15], char desc[25], float price, float cost, float sale);
-
+	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
+	vector<Item>::iterator Search(int upc);
 
 private:
 	string filepath;
@@ -58,10 +58,24 @@ Database::~Database() {
 
 }
 
-void Database::Add(int upc, int plu, int amount, char name[15], char desc[25], float price, float cost, float sale) {
+void Database::Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale) {
 
-	Item temp;
 
-	vector.add(Item())
+	vector<Item>::iterator it;
+
+	it = Search(upc);
+
+	item.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
+
+}
+
+vector<Item>::iterator Database::Search(int upc) {
+
+	int i, first, middle, last;
+	bool found;
+
+	// iterator = begin + array pos
+
+	return vector<Item>::iterator (item.begin + i);
 
 }
