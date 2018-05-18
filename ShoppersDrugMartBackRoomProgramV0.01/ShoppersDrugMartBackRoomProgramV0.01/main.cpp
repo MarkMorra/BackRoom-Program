@@ -9,7 +9,7 @@ void welcome();
 void testMenu();
 
 
-Logger *logger;
+Logger *gLogger;
 
 int main() {
 
@@ -19,7 +19,7 @@ int main() {
 
 void onStart() {
 
-	logger = new Logger(FOLDER_NAME);
+	gLogger = new Logger(FOLDER_NAME);
 
 }
 
@@ -75,12 +75,12 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 				getline(cin, msg);
 			} while (msg == "");
 
-			logger->addItem(plu, msg);
+			gLogger->addItem(plu,0,'g', msg);
 			break;
 
 		case '2':
 			system("cls");
-			logger->display();
+			gLogger->display();
 			cout << "\n\npress enter...";
 			while (_getch() != 13);
 			break;
