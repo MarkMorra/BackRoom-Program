@@ -11,12 +11,11 @@ using namespace std;
 class Item {
 
 public:
-	Item(int _upc, int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
-
-private:
 	int upc, plu, amount;
 	char name[15], desc[25];
 	float price, cost, sale;
+
+	Item(int _upc, int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
 
 };
 
@@ -40,7 +39,7 @@ public:
 
 private:
 	string filepath;
-	vector<Item> item;
+	vector<Item> items;
 
 };
 
@@ -54,7 +53,7 @@ Database::~Database() {
 
 	//call save function
 
-	item.clear();
+	items.clear();
 
 }
 
@@ -65,17 +64,39 @@ void Database::Add(int upc, int plu, int amount, string name, string desc, float
 
 	it = Search(upc);
 
-	item.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
+
+	items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
 
 }
 
 vector<Item>::iterator Database::Search(int upc) {
 
-	int i, first, middle, last;
-	bool found;
+	int first, middle, last;
+	bool found = false;
 
-	// iterator = begin + array pos
+	first = 0;
+	last = items.size() - 1;
 
-	return vector<Item>::iterator (item.begin + i);
+	while (first <= last && found == false) {
+
+		middle = int((first + last) / 2);
+
+		if (upc == items[middle].upc) {
+
+			break;
+
+		} else if (upc > items[middle].upc) {
+
+			first = middle + 1;
+
+		} else {
+
+			last = middle + 1;
+
+		}
+
+	}
+
+	return vector<Item>::iterator (items.begin + middle);
 
 }

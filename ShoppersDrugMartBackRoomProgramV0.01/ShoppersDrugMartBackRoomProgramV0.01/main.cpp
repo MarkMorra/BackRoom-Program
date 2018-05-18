@@ -1,5 +1,6 @@
 #include "Logger.h"
-//#include "Database.h"
+#include "Database.h"
+#include "Users.h"
 
 #define VERSION "0.01"
 #define FOLDER_NAME "data"
@@ -7,19 +8,34 @@
 void onStart();
 void welcome();
 void testMenu();
+void logon(User *user);
+void menu(User *user);
+void selectItem(User *user);
 
 
-Logger *logger;
+Logger *gLogger;
 
 int main() {
 
+	User *user;
+
 	onStart();
 	welcome();
+	
+	while (true)
+	{
+		logon(user);
+		if (user == NULL) { return; }
+		menu(user);
+	}
+	
+
+
 }
 
 void onStart() {
 
-	logger = new Logger(FOLDER_NAME);
+	gLogger = new Logger(FOLDER_NAME);
 
 }
 
@@ -75,12 +91,12 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 				getline(cin, msg);
 			} while (msg == "");
 
-			logger->addItem(0, plu, 0,'g', msg);
+			gLogger->addItem(plu,0,'g', msg);
 			break;
 
 		case '2':
 			system("cls");
-			logger->display();
+			gLogger->display();
 			cout << "\n\npress enter...";
 			while (_getch() != 13);
 			break;
@@ -92,4 +108,67 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 		}
 	}
 	
+}
+
+void logon(User *user) {
+
+	char choice;
+
+	system("cls");
+	cout << "This is the standin login screen\n\n1) Logon\n2) Exit";
+	choice = _getch();
+
+	while (choice != '1' && choice != '2')
+	{
+		
+		system("cls");
+		cout << "This is the standin login screen\n\n1) Logon\n2) Exit\n\nError, " << choice << "is not a valid input";
+		choice = _getch();
+
+	} 
+
+	switch (choice)
+	{
+	case '1':
+		//add code to logon --requires working users.h
+
+		//return User;
+		break;
+	case '2':
+		user = NULL;
+		return;
+	}
+
+
+
+}
+
+void menu(User *user)
+{
+
+	//display functions based on user permissions
+
+}
+
+void selectItem(User *user) 
+{
+	
+	//needs more database.h member functions
+
+}
+
+void displayItemStats(User *user, Item *item) 
+{
+
+	system("cls");
+
+	cout << "Name:\t\t" << item->name
+		<< "\nDesc:\t\t" << item->desc
+		<< "\nUPC:\t\t" << item->upc
+		<< "\nPLU:\t\t" << item->plu
+		<< "\n"
+		<< "\nPrice:\t\t"; printf("$%0.2f", item->price);
+	cout << "\nSale Price:\t"; printf("$%0.2f", item->sale);
+	cout << "\nPurchase Cost:\t"; printf("$0.2f", item->cost)
+
 }
