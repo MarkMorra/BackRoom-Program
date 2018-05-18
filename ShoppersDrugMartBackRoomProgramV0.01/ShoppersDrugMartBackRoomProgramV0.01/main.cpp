@@ -1,5 +1,6 @@
 #include "Logger.h"
-//#include "Database.h"
+#include "Database.h"
+#include "Users.h"
 
 #define VERSION "0.01"
 #define FOLDER_NAME "data"
@@ -7,6 +8,7 @@
 void onStart();
 void welcome();
 void testMenu();
+User logon();
 
 
 Logger *gLogger;
@@ -15,6 +17,7 @@ int main() {
 
 	onStart();
 	welcome();
+	logon();
 }
 
 void onStart() {
@@ -92,4 +95,12 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 		}
 	}
 	
+}
+
+User logon() {
+
+	system("cls");
+
+
+
 }

@@ -41,7 +41,7 @@ private:
 	}
 };
 
-class Users //Contains usernames and passwords, accessed through Database class
+class User //Contains usernames and passwords, accessed through Database class
 {
 private:
 	Permissions permission;
@@ -54,6 +54,6 @@ private:
 class Database
 {
 public:
-	vector<Users> user;
+	vector<User> user;
 	//Username, password, permissions; access to these is here
 };
