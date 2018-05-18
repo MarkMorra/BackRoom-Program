@@ -9,6 +9,8 @@ void onStart();
 void welcome();
 void testMenu();
 void logon(User *user);
+void menu(User *user);
+void selectItem(User *user);
 
 
 Logger *gLogger;
@@ -19,8 +21,14 @@ int main() {
 
 	onStart();
 	welcome();
-	logon(user);
-	if (user == NULL) { return; }
+	
+	while (true)
+	{
+		logon(user);
+		if (user == NULL) { return; }
+		menu(user);
+	}
+	
 
 
 }
@@ -132,5 +140,35 @@ void logon(User *user) {
 	}
 
 
+
+}
+
+void menu(User *user)
+{
+
+	//display functions based on user permissions
+
+}
+
+void selectItem(User *user) 
+{
+	
+	//needs more database.h member functions
+
+}
+
+void displayItemStats(User *user, Item *item) 
+{
+
+	system("cls");
+
+	cout << "Name:\t\t" << item->name
+		<< "\nDesc:\t\t" << item->desc
+		<< "\nUPC:\t\t" << item->upc
+		<< "\nPLU:\t\t" << item->plu
+		<< "\n"
+		<< "\nPrice:\t\t"; printf("$%0.2f", item->price);
+	cout << "\nSale Price:\t"; printf("$%0.2f", item->sale);
+	cout << "\nPurchase Cost:\t"; printf("$0.2f", item->cost)
 
 }
