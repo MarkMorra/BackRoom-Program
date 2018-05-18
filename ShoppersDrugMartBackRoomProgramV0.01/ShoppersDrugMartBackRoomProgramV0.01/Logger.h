@@ -7,7 +7,7 @@
 using namespace std;
 
 #define FILE_PREFIX ""
-#define FILE_SUFFIX "/logger.log"
+#define FILE_SUFFIX "logger.log"
 #define CHAR_IN_LOG_MSG 150
 
 class Log
@@ -90,6 +90,9 @@ Logger::~Logger()
 void Logger::reload() {
 
 	FILE *file;
+	char tempy[100];
+
+	strcpy(tempy, Filepath.c_str());
 
 	file = fopen(Filepath.c_str(), "r");
 
@@ -120,9 +123,13 @@ void Logger::save()
 
 	file = fopen(Filepath.c_str(), "w");
 
+	char tempy[100];
+
+	strcpy(tempy, Filepath.c_str());
+
 	if (file == NULL)
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function");
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::save function");
 		return;
 	}
 
