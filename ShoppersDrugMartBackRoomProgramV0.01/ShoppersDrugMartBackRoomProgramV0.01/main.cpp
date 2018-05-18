@@ -8,16 +8,18 @@
 void onStart();
 void welcome();
 void testMenu();
-User logon();
+void logon(User *user);
 
 
 Logger *gLogger;
 
 int main() {
 
+	User *user;
+
 	onStart();
 	welcome();
-	logon();
+	logon(user);
 }
 
 void onStart() {
@@ -97,9 +99,34 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	
 }
 
-User logon() {
+void logon(User *user) {
+
+	char choice;
 
 	system("cls");
+	cout << "This is the standin login screen\n\n1) Logon\n2) Exit";
+	choice = _getch();
+
+	while (choice != '1' && choice != '2')
+	{
+		
+		system("cls");
+		cout << "This is the standin login screen\n\n1) Logon\n2) Exit\n\nError, " << choice << "is not a valid input";
+		choice = _getch();
+
+	} 
+
+	switch (choice)
+	{
+	case '1':
+		//add code to logon --requires working users.h
+
+		//return User;
+		break;
+	case '2':
+		user = NULL;
+		return;
+	}
 
 
 
