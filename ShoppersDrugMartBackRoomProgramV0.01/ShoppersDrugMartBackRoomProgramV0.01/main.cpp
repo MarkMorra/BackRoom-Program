@@ -91,7 +91,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 				getline(cin, msg);
 			} while (msg == "");
 
-			gLogger->addItem(plu,0,'g', msg);
+			gLogger->addItem(0,plu,0,'g', msg);
 			break;
 
 		case '2':
@@ -169,6 +169,6 @@ void displayItemStats(User *user, Item *item)
 		<< "\n"
 		<< "\nPrice:\t\t"; printf("$%0.2f", item->price);
 	cout << "\nSale Price:\t"; printf("$%0.2f", item->sale);
-	cout << "\nPurchase Cost:\t"; printf("$0.2f", item->cost)
+	cout << "\nPurchase Cost:\t"; printf("$0.2f", item->cost);
 
 }
