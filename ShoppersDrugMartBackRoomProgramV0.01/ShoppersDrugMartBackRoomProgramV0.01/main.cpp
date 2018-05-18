@@ -20,6 +20,9 @@ int main() {
 	onStart();
 	welcome();
 	logon(user);
+	if (user == NULL) { return; }
+
+
 }
 
 void onStart() {
