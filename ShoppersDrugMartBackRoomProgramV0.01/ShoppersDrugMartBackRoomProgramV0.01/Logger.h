@@ -13,25 +13,27 @@ using namespace std;
 class Log
 {
 public:
-	Log(int _UPCCode, int _Userid, char _type, string message);
+	Log(int _UPCCode, int _PLUCode, int _Userid, char _type, string message);
 	Log();
 	~Log();
 	void display();
 	
 	tm timeLogged;
 	int UPCCode; //-1 if not applicable
+	int PLUCode; //-1 if not applicable
 	int Userid; //id of the user who made the change -1 if not applicable
 	char type; //the type of log
 	//g = generic, p = price change, a = amount change, n = new item
 	char message[CHAR_IN_LOG_MSG];
 };
 
-Log::Log(int _UPCCode, int _Userid, char _type, string _message)
+Log::Log(int _UPCCode, int _PLUCode, int _Userid, char _type, string _message)
 {
 	time_t rawTime = time(NULL);
 	timeLogged = *localtime(&rawTime);
 
 	UPCCode = _UPCCode;
+	PLUCode = _PLUCode;
 	Userid = _Userid;
 	type = _type;
 	if (_message.length() > CHAR_IN_LOG_MSG - 1)
@@ -60,9 +62,10 @@ class Logger
 public:
 	Logger(string Filename);
 	~Logger();
-	void addItem(int UPCCode, int Userid, char type, string message);
+	void addItem(int UPCCode, int Userid, int PLUCode, char type, string message);
 	void display();
-	void display(int PLU);
+	void display(int searchNumber, char intType); //search number is UPCCode, PLUCode or userid. intType specifies which one (U=upc,P=PLU,a=user)
+	void display(char type);
 
 
 private:
@@ -146,26 +149,88 @@ void Logger::save()
 
 }
 
-void Logger::addItem(int UPCCode, int Userid, char type, string message)
+void Logger::addItem(int UPCCode, int PLUCode, int Userid, char type, string message)
 {
 
-	log.push_front(Log(UPCCode,Userid,type,message));
+	log.push_front(Log(UPCCode,PLUCode,Userid,type,message));
 
 	save();
 
 }
 
-void Logger::display(int UPC)
+void Logger::display(int seachNumber, char type)
 {
+	int i = 0;
+	list<Log>::iterator it;
+	it = log.begin();
 
+	type = toupper(type);
+
+	switch (type)
+	{
+	case 'A':
+		while (it != log.end())
+		{
+
+			if (it->Userid == seachNumber)
+			{
+				i++;
+				cout << i << ") ";
+				it->display();
+				cout << "\n";
+			}
+
+			it++;
+		}
+		break;
+	case 'P':
+		while (it != log.end())
+		{
+
+			if (it->PLUCode == seachNumber)
+			{
+				i++;
+				cout << i << ") ";
+				it->display();
+				cout << "\n";
+			}
+
+			it++;
+		}
+		break;
+	case 'U':
+		while (it != log.end())
+		{
+
+			if (it->UPCCode == seachNumber)
+			{
+				i++;
+				cout << i << ") ";
+				it->display();
+				cout << "\n";
+			}
+
+			it++;
+		}
+		break;
+	}
+}
+
+void Logger::display(char _type)
+{
+	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
 
 	while (it != log.end())
 	{
-		if (it->UPCCode == UPC)
+
+		if (it->type == _type)
 		{
+			i++;
+			cout << i << ") "; 
 			it->display();
+			cout << "\n";
 		}
 
 		it++;

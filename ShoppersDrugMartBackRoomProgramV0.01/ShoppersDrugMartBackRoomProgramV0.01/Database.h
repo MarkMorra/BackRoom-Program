@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <vector>
+#include "ErrorMsg.h"
 using namespace std;
 
 #define FILE_PREFIX "/"
@@ -64,7 +65,6 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 
 	it = Search(upc);
 
-
 	items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
 
 }
@@ -72,18 +72,35 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 vector<Item>::iterator ItemDatabase::Search(int upc) {
 
 	int first, middle, last;
-	bool found = false;
 
 	first = 0;
 	last = items.size() - 1;
 
-	while (first <= last && found == false) {
+	if (items.size() == 0) {
+
+		return vector<Item>::iterator(items.begin());
+
+	}
+
+	if (upc < (items[0].upc)) {
+
+		return vector<Item>::iterator(items.begin());
+
+	}
+
+	if (upc > (items[items.size() - 1].upc)) {
+
+		return vector<Item>::iterator(items.end());
+
+	}
+
+	while (first <= last) {
 
 		middle = int((first + last) / 2);
 
-		if (upc == items[middle].upc) {
+		if (upc == items[middle].upc || (upc > items[middle - 1].upc && upc < items[middle].upc)) {
 
-			break;
+			return vector<Item>::iterator(items.begin() + middle);
 
 		} else if (upc > items[middle].upc) {
 
@@ -97,6 +114,7 @@ vector<Item>::iterator ItemDatabase::Search(int upc) {
 
 	}
 
-	return vector<Item>::iterator (items.begin() + middle);
+	errorMsg("The binary search in Item Database::Search has failed and was unable to find the correct position for " + to_string(upc) + ". This item will not be added to the database.");
+	return vector<Item>::iterator();
 
 }
