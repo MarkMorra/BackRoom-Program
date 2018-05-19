@@ -1,3 +1,4 @@
+#pragma once
 #include "ErrorMsg.h"
 #include <conio.h>
 #include <time.h>
@@ -7,7 +8,7 @@
 using namespace std;
 
 #define FILE_PREFIX ""
-#define FILE_SUFFIX "logger.log"
+#define FILE_SUFFIX "/logger.log"
 #define CHAR_IN_LOG_MSG 150
 
 class Log
@@ -81,6 +82,20 @@ Logger::Logger(string filename)
 {
 
 	Filepath = FILE_PREFIX + filename + FILE_SUFFIX;
+
+	FILE *file;
+	file = fopen(Filepath.c_str(), "r");
+	if (file == NULL)
+	{
+		fclose(file);
+		file = fopen(Filepath.c_str(), "w");
+		if (file == NULL)
+		{
+			errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?");
+		}
+		fclose(file);
+	}
+
 	reload();
 
 }
@@ -93,9 +108,6 @@ Logger::~Logger()
 void Logger::reload() {
 
 	FILE *file;
-	char tempy[100];
-
-	strcpy(tempy, Filepath.c_str());
 
 	file = fopen(Filepath.c_str(), "r");
 
@@ -125,10 +137,6 @@ void Logger::save()
 	list<Log> wow;
 
 	file = fopen(Filepath.c_str(), "w");
-
-	char tempy[100];
-
-	strcpy(tempy, Filepath.c_str());
 
 	if (file == NULL)
 	{

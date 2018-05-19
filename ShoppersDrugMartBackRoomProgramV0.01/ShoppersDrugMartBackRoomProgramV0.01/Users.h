@@ -1,5 +1,6 @@
 //Thursday, May 17, 2018
 
+#pragma once
 #include <conio.h>
 #include <stdlib.h>
 #include <stdio.h>
