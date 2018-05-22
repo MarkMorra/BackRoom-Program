@@ -5,7 +5,7 @@
 #include <iostream>
 #include <string>
 #include <list>
-#include "Encyptor.h"
+#include "Encryptor.h"
 using namespace std;
 
 #define FILE_PREFIX ""

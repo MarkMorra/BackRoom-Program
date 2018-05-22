@@ -1,82 +1,102 @@
 //Thursday, May 17, 2018
-//Encrypt all data that comes through
 
 #pragma once
-#include <conio.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-#include <string>
-#include <string.h>
 #include <vector>
+#include <string.h>
 #include "Encryptor.h"
-
 using namespace std;
 
-#define SIZE 100
+#define P_SELECTITEM 0
+#define P_RESETITEM 1
+#define P_VIEWLOGS 2
+#define P_RESETUSERS 3
+#define P_SETTINGS 4
+#define P_ADDITEM 5
+#define P_VIEWITEM 6
+#define P_VIEWSPECIFIC 7
+#define P_CHANGEPRICE 8
+#define P_CHANGEINVENTORY 9
 
-#define SELECTITEM 0
-#define RESETITEM 1
-#define VIEWLOGS 2
-#define RESETUSERS 3
-#define SETTINGS 4
-#define ADDITEM 5
-#define VIEWITEM 6
-#define VIEWSPECIFIC 7
-#define CHANGEPRICE 8
-#define CHANGEINVENTORY 9
+#define NUMBER_OF_PERMISSIONS 10
+
+#define LENGTH_OF_USER_STRINGS 50
 
 class Permissions //Contains permissions for the specific username or password, accessed through Database class
 {
 public:
-	Permissions(bool perminfo[])
-	{
-		//perm[SELECTITEM] = true; Something like this
-		int x = 0;
-		for (x = 0; x < 10; x++)
-		{
-			perm[x] = perminfo[x];
-		}
-	}
-private:
-	bool perm[10];
+	Permissions();
+	Permissions(bool perms[NUMBER_OF_PERMISSIONS]);
+	bool permissions[NUMBER_OF_PERMISSIONS];
 };
+
+Permissions::Permissions() 
+{	
+	for (int i = 0; i < NUMBER_OF_PERMISSIONS; i++)
+	{
+		permissions[i] = false;
+	}
+}
+
+inline Permissions::Permissions(bool perms[NUMBER_OF_PERMISSIONS])
+{
+}
+
+Permissions::Permissions(bool perms[])
+{
+	for (int i = 0; i < NUMBER_OF_PERMISSIONS; i++)
+	{
+		permissions[i] = perms[i];
+	}
+}
 
 class User //Contains usernames and passwords, accessed through UserDatabase class
 {
 public:
-	User(int,string,string);
-private:
+	User(int ID,string firstName,string secondName);
+	User();
+	
 	Permissions permission;
-	string firstname;
-	string lastname;
-	string password;
+	char firstName[LENGTH_OF_USER_STRINGS];
+	char lastName[LENGTH_OF_USER_STRINGS];
+	char password[LENGTH_OF_USER_STRINGS];
 	int id;
+	
 };
 
-User::User(int identification, string first, string last) //Variables from main send information here
+User::User(int _ID, string _firstName, string _lastName) //Variables from main send information here
 {
-	//Check if correct inputs have been entered
-	//Allow user to input
-	id = identification;
-	firstname = first;
-	lastname = last;
-	encrypt(firstname,firstname.length());
-	encrypt(lastname,lastname.length());
+	id = _ID;
+	strcpy(firstName, _firstName.c_str());
+	strcpy(lastName, _lastName.c_str());
 };
 
 class UserDatabase
 {
 public:
-	vector<User>::iterator fuckme;
-	vector<User>::iterator Compare();
-	fuckme = Compare();
-	//Username, password, permissions; access to these is here
+	UserDatabase();
+	~UserDatabase();
 private:
-	vector<User> user;
+	vector<User> users;
+
+	int findWithID(int ID);
 };
 
-vector<User>::iterator UserDatabase::Compare()
+int UserDatabase::findWithID(int ID)
 {
+	for (int i = 0; i < users.size() -1; i++)
+	{
+		if (users[i].id == ID) { return i; }
+	}
 
+	return -1; //if no user with this id exists -1 is returned;
+}
+
+UserDatabase::UserDatabase()
+{
+	//call RELOAD method
+}
+
+UserDatabase::~UserDatabase()
+{
+	//call save method
 }
