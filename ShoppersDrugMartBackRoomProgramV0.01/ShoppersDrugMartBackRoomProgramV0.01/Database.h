@@ -166,6 +166,10 @@ void ItemDatabase::Reload() {
 
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
+
+		decrypt(temp.name, NAME_LEN);
+		decrypt(temp.desc, DESC_LEN);
+
 		items.push_back(temp);
 	}
 
@@ -189,6 +193,9 @@ void ItemDatabase::Save()
 	it = items.begin();
 	while (it != items.end())
 	{
+
+		encrypt(it->name, NAME_LEN);
+		encrypt(it->desc, DESC_LEN);
 
 		fwrite(&(*it), sizeof(*it), 1, file);
 		it++;
