@@ -9,7 +9,7 @@
 #include <string>
 #include <string.h>
 #include <vector>
-#include "Encyptor.h"
+#include "Encryptor.h"
 
 using namespace std;
 
