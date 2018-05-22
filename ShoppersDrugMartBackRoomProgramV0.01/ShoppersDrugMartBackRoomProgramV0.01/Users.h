@@ -55,11 +55,12 @@ private:
 	int id;
 };
 
-User::User() {
+User::User()
+{
 
 };
 
-class Database
+class UserDatabase
 {
 public:
 	vector<User> user;
