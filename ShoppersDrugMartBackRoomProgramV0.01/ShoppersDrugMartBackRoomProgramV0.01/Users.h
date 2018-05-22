@@ -1,4 +1,5 @@
 //Thursday, May 17, 2018
+//Encrypt all data that comes through
 
 #pragma once
 #include <conio.h>
@@ -8,45 +9,38 @@
 #include <string>
 #include <string.h>
 #include <vector>
+#include "Encyptor.h"
 
 using namespace std;
 
 #define SIZE 100
+
+#define SELECTITEM 0
+#define RESETITEM 1
+#define VIEWLOGS 2
+#define RESETUSERS 3
+#define SETTINGS 4
+#define ADDITEM 5
+#define VIEWITEM 6
+#define VIEWSPECIFIC 7
+#define CHANGEPRICE 8
+#define CHANGEINVENTORY 9
 
 class Permissions //Contains permissions for the specific username or password, accessed through Database class
 {
 public:
 	Permissions()
 	{
-		selectitem = false;
-		resetitem = false;
-		viewlogs = false;
-		resetusers = false;
-		settings = false;
-		additem = false;
-		viewitem = false;
-		viewspecific = false;
-		changeprice = false;
-		changeinventory = false;
+		//perm[SELECTITEM] = true; Something like this
 	}
-
 private:
-	bool selectitem;
-	bool resetitem;
-	bool viewlogs;
-	bool resetusers;
-	bool settings;
-	bool additem;
-	bool viewitem;
-	bool viewspecific;
-	bool changeprice;
-	bool changeinventory;
+	bool perm[10];
 };
 
-class User //Contains usernames and passwords, accessed through Database class
+class User //Contains usernames and passwords, accessed through UserDatabase class
 {
 public:
-	User();
+	User(int,string,string);
 private:
 	Permissions permission;
 	string firstname;
@@ -55,9 +49,15 @@ private:
 	int id;
 };
 
-User::User()
+User::User(int identification, string first, string last) //Variables from main send information here
 {
-
+	//Check if correct inputs have been entered
+	//Allow user to input
+	id = identification;
+	firstname = first;
+	lastname = last;
+	//encrypt(firstname,firstname.length());
+	//encrypt(lastname,lastname.length());
 };
 
 class UserDatabase
