@@ -29,9 +29,14 @@ using namespace std;
 class Permissions //Contains permissions for the specific username or password, accessed through Database class
 {
 public:
-	Permissions()
+	Permissions(bool perminfo[])
 	{
 		//perm[SELECTITEM] = true; Something like this
+		int x = 0;
+		for (x = 0; x < 10; x++)
+		{
+			perm[x] = perminfo[x];
+		}
 	}
 private:
 	bool perm[10];
@@ -56,13 +61,22 @@ User::User(int identification, string first, string last) //Variables from main 
 	id = identification;
 	firstname = first;
 	lastname = last;
-	//encrypt(firstname,firstname.length());
-	//encrypt(lastname,lastname.length());
+	encrypt(firstname,firstname.length());
+	encrypt(lastname,lastname.length());
 };
 
 class UserDatabase
 {
 public:
-	vector<User> user;
+	vector<User>::iterator fuckme;
+	vector<User>::iterator Compare();
+	fuckme = Compare();
 	//Username, password, permissions; access to these is here
+private:
+	vector<User> user;
 };
+
+vector<User>::iterator UserDatabase::Compare()
+{
+
+}
