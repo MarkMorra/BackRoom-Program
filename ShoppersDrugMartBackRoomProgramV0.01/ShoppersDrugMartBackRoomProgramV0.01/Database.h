@@ -5,6 +5,7 @@
 #include <string.h>
 #include <vector>
 #include "ErrorMsg.h"
+#include "Encyptor.h"
 using namespace std;
 
 #define FILE_PREFIX "/"
@@ -38,6 +39,7 @@ public:
 	~ItemDatabase();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
 	vector<Item>::iterator Search(int upc);
+
 
 private:
 	string filepath;
@@ -117,5 +119,56 @@ vector<Item>::iterator ItemDatabase::Search(int upc) {
 
 	errorMsg("The binary search in Item Database::Search has failed and was unable to find the correct position for " + to_string(upc) + ". This item will not be added to the database.");
 	return vector<Item>::iterator();
+
+}
+
+void ItemDatabase::Reload() {
+
+	FILE *file;
+
+	file = fopen(Filepath.c_str(), "r");
+
+	if (file == NULL)
+	{
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?");
+		return;
+	}
+
+	log.clear();
+
+	Log temp;
+
+	while (fread(&temp, sizeof(temp), 1, file))
+	{
+		log.push_back(temp);
+	}
+
+	fclose(file);
+}
+
+void ItemDatabase::Save()
+{
+
+	FILE *file;
+	list<Log>::iterator it;
+
+	file = fopen(Filepath.c_str(), "w");
+
+	if (file == NULL)
+	{
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::save function");
+		return;
+	}
+
+	it = log.begin();
+	while (it != log.end())
+	{
+
+		fwrite(&(*it), sizeof(*it), 1, file);
+		it++;
+
+	}
+
+	fclose(file);
 
 }
