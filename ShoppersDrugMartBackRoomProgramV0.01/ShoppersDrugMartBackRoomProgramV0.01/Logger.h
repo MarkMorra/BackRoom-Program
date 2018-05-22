@@ -1,3 +1,4 @@
+#pragma once
 #include "ErrorMsg.h"
 #include <conio.h>
 #include <time.h>
@@ -81,6 +82,20 @@ Logger::Logger(string filename)
 {
 
 	Filepath = FILE_PREFIX + filename + FILE_SUFFIX;
+
+	FILE *file;
+	file = fopen(Filepath.c_str(), "r");
+	if (file == NULL)
+	{
+		fclose(file);
+		file = fopen(Filepath.c_str(), "w");
+		if (file == NULL)
+		{
+			errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?");
+		}
+		fclose(file);
+	}
+
 	reload();
 
 }
@@ -125,7 +140,7 @@ void Logger::save()
 
 	if (file == NULL)
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function");
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::save function");
 		return;
 	}
 

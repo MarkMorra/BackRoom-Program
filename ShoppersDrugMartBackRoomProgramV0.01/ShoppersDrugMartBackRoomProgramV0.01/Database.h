@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -30,11 +31,11 @@ Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _p
 }
 
 
-class Database {
+class ItemDatabase {
 
 public:
-	Database(string filename);
-	~Database();
+	ItemDatabase(string filename);
+	~ItemDatabase();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
 	vector<Item>::iterator Search(int upc);
 
@@ -44,13 +45,13 @@ private:
 
 };
 
-Database::Database(string filename) {
+ItemDatabase::ItemDatabase(string filename) {
 
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX;
 
 }
 
-Database::~Database() {
+ItemDatabase::~ItemDatabase() {
 
 	//call save function
 
@@ -58,7 +59,7 @@ Database::~Database() {
 
 }
 
-void Database::Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale) {
+void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale) {
 
 
 	vector<Item>::iterator it;
@@ -69,7 +70,7 @@ void Database::Add(int upc, int plu, int amount, string name, string desc, float
 
 }
 
-vector<Item>::iterator Database::Search(int upc) {
+vector<Item>::iterator ItemDatabase::Search(int upc) {
 
 	int first, middle, last;
 

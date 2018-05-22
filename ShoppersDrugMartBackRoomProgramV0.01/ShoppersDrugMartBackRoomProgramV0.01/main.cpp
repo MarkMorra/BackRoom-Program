@@ -18,7 +18,7 @@ Logger *gLogger;
 
 int main() {
 
-	User *user;
+	User *user = new User;
 
 	onStart();
 	welcome();
@@ -130,14 +130,21 @@ void logon(User *user) {
 
 	system("cls");
 	cout << "This is the standin login screen\n\n1) Logon\n2) Exit";
-	choice = _getch();
+	
+	do
+	{
+		choice = _getch();
+	} while (choice == '\0');
 
 	while (choice != '1' && choice != '2')
 	{
 		
 		system("cls");
 		cout << "This is the standin login screen\n\n1) Logon\n2) Exit\n\nError, " << choice << "is not a valid input";
-		choice = _getch();
+		do
+		{
+			choice = _getch();
+		} while (choice == '\0');
 
 	} 
 
