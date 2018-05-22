@@ -1,7 +1,7 @@
 #include "Logger.h"
 #include "Database.h"
 #include "Users.h"
-#include "Encyptor.h"
+#include "Encryptor.h"
 
 #define VERSION "0.01"
 #define FOLDER_NAME "data"
