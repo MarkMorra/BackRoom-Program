@@ -121,6 +121,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Database.h" />
+    <ClInclude Include="Encyptor.h" />
     <ClInclude Include="ErrorMsg.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="Users.h" />
