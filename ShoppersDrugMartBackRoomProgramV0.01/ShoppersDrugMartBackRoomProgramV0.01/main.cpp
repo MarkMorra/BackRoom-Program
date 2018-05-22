@@ -1,6 +1,7 @@
 #include "Logger.h"
 #include "Database.h"
 #include "Users.h"
+#include "Encyptor.h"
 
 #define VERSION "0.01"
 #define FOLDER_NAME "data"
@@ -25,7 +26,7 @@ int main() {
 	while (true)
 	{
 		logon(user);
-		if (user == NULL) { return; }
+		if (user == NULL) { return EXIT_SUCCESS; }
 		menu(user);
 	}
 	
@@ -69,6 +70,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 		cout << "This menu is for testing only\n\n0. exit test menu";
 		cout << "\n1. new loger item";
 		cout << "\n2. dispaly logger list";
+		cout << "\n3. test encryption";
 
 		cout << "\n\nChoise option";
 		do
@@ -100,7 +102,19 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			cout << "\n\npress enter...";
 			while (_getch() != 13);
 			break;
-
+		case '3':
+			char* string;
+			system("cls");
+			cout << "Please enter a string :";
+			scanf("%s", string);
+			cout << "\n\nThe original: " << string;
+			encrypt(string);
+			cout << "\nEncypted: " << string;
+			decrypt(string);
+			cout << "\nDecrypted: " << string;
+			cout << "\n\npress enter...";
+			while (_getch() != 13);
+			break;
 		default:
 			cout << "invalid number...press enter";
 			while (_getch() != 13);
