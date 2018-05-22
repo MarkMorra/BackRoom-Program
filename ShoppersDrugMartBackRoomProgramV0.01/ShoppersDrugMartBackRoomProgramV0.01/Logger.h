@@ -143,7 +143,7 @@ void Logger::save()
 
 	FILE *file;
 	list<Log>::iterator it;
-	list<Log> wow;
+	Log temp;
 
 	file = fopen(Filepath.c_str(), "w");
 
@@ -156,10 +156,10 @@ void Logger::save()
 	it = log.begin();
 	while (it != log.end())
 	{
-		encrypt(it->message, CHAR_IN_LOG_MSG);
-		encrypt(&(it->type), 1);
-		fwrite(&(*it), sizeof(*it), 1, file);
-		//unencrypt
+		temp = *it;
+		encrypt(temp.message, CHAR_IN_LOG_MSG);
+		encrypt(&(temp.type), 1);
+		fwrite(&temp, sizeof(temp), 1, file);
 		it++;
 
 	}

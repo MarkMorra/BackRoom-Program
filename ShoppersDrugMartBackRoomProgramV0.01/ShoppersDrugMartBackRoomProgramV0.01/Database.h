@@ -181,6 +181,7 @@ void ItemDatabase::Save()
 
 	FILE *file;
 	vector<Item>::iterator it;
+	Item temp;
 
 	file = fopen(filepath.c_str(), "w");
 
@@ -193,11 +194,12 @@ void ItemDatabase::Save()
 	it = items.begin();
 	while (it != items.end())
 	{
+		temp = *it;
 
-		encrypt(it->name, NAME_LEN);
-		encrypt(it->desc, DESC_LEN);
+		encrypt(temp.name, NAME_LEN);
+		encrypt(temp.desc, DESC_LEN);
 
-		fwrite(&(*it), sizeof(*it), 1, file);
+		fwrite(&temp, sizeof(temp), 1, file);
 		it++;
 
 	}
