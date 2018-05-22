@@ -63,7 +63,6 @@ void welcome() {
 void testMenu() //this function is only for testing and can be accssed by pressing page up on the welcome screen
 {
 	char choice;
-	int plu;
 	string msg;
 	int upc;
 	int plu;

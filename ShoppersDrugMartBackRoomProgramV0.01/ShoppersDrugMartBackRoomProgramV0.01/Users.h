@@ -86,9 +86,24 @@ private:
 	vector<User> users;
 
 	int findWithID(int ID);
+	User checkCredentials(string _firstName, string _lastName, string _password);
 };
 
-UserDatabase::Add(User user)
+User UserDatabase::checkCredentials(string _firstName, string _lastName, string _password)
+{
+	vector<User>::iterator it;
+
+	it = users.begin();
+
+	while (it != users.end())
+	{
+		if (string(it->firstName) == _firstName && string(it->lastName) == _lastName && string(it->password) == _password);
+		return *it;
+	}
+	return;
+}
+
+void UserDatabase::Add(User user)
 {
 	do
 	{

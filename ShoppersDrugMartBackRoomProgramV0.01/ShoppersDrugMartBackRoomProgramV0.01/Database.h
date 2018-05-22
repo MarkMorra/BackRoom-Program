@@ -8,7 +8,7 @@
 #include "Encryptor.h"
 using namespace std;
 
-#define FILE_PREFIX "/"
+#define FILE_PREFIX ""
 #define FILE_SUFFIX "/items.dat"
 
 #define NAME_LEN 15
