@@ -103,15 +103,15 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			while (_getch() != 13);
 			break;
 		case '3':
-			char* string;
+			char string[10];
 			system("cls");
 			cout << "Please enter a string :";
-			scanf("%s", string);
-			cout << "\n\nThe original: " << string;
-			encrypt(string);
-			cout << "\nEncypted: " << string;
-			decrypt(string);
-			cout << "\nDecrypted: " << string;
+			scanf("%s", &string);
+			printf("\n\nThe original: %s", string);
+			encrypt(string,10);
+			printf("\nEncypted: %s" ,string);
+			decrypt(string,10);
+			printf("\nDecrypted: %s" ,string);
 			cout << "\n\npress enter...";
 			while (_getch() != 13);
 			break;
