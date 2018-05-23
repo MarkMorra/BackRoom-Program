@@ -49,7 +49,7 @@ void welcome() {
 
 	system("cls");
 
-	cout << "Shoppers backroom program " << VERSION << "\n\n\nPress enter to continue...";
+	cout << endl << endl << " Shoppers Backroom Program " << VERSION << endl << endl << endl << " Press enter to continue...";
 
 	while ((choice = _getch()) != 13 && choice != 73);
 
@@ -221,67 +221,66 @@ void menu(User *user)
 {
 	int found = 0;
 	int x = 0;
-	bool menuboy[10];
-	Permissions menuboyperms;
+	Permissions permissions;
 	//int menuselect = 0;
 
 	//display functions based on user permissions
 
 	cout << endl << " Where would you like to go?";
 
-	for (x = 0; x < 10; x++)
+	if (permissions.permissions[P_SELECTITEM] == true)
 	{
-		menuboy[x] = menuboyperms.permissions[x];
+		cout << endl << " 1. Select Item";
+	}
+	
+	if (permissions.permissions[P_RESETITEM] == true)
+	{
+		cout << endl << " 2. Reset Item";
+	}
+	
+	if (permissions.permissions[P_VIEWLOGS] == true)
+	{
+		cout << endl << " 3. View Logs";
+	}
+		
+	if (permissions.permissions[P_RESETUSERS] == true)
+	{
+		cout << endl << " 4. Reset Users";
+	}
+		
+	if (permissions.permissions[P_SETTINGS] == true)
+	{
+		cout << endl << " 5. User Settings";
+	}
+		
+	if (permissions.permissions[P_ADDITEM] == true)
+	{
+		cout << endl << " 6. Add Item";
+	}
+		
+	if (permissions.permissions[P_VIEWITEM] == true)
+	{
+		cout << endl << " 7. View Item";
+	}
+		
+	if (permissions.permissions[P_VIEWSPECIFIC] == true)
+	{
+		cout << endl << " 8. View Specific Item Logs";
+	}
+		
+	if (permissions.permissions[P_CHANGEPRICE] == true)
+	{
+		cout << endl << " 9. Change Item Price";
+	}
+		
+	if (permissions.permissions[P_CHANGEINVENTORY] == true)
+	{
+		cout << endl << " 10. Change Inventory Level";
 	}
 
-	do
-	{
-		found = 1;
-		if (menuboy[0] == true)
-		{
-			cout << endl << " 1. Select Item";
-		}
-		else if (menuboy[1] == true)
-		{
-			cout << endl << " 2. Reset Item";
-		}
-		else if (menuboy[2] == true)
-		{
-			cout << endl << " 3. View Logs";
-		}
-		else if (menuboy[3] == true)
-		{
-			cout << endl << " 4. Reset Users";
-		}
-		else if (menuboy[4] == true)
-		{
-			cout << endl << " 5. User Settings";
-		}
-		else if (menuboy[5] == true)
-		{
-			cout << endl << " 6. Add Item";
-		}
-		else if (menuboy[6] == true)
-		{
-			cout << endl << " 7. View Item";
-		}
-		else if (menuboy[7] == true)
-		{
-			cout << endl << " 8. View Specific Item Logs";
-		}
-		else if (menuboy[8] == true)
-		{
-			cout << endl << " 9. Change Item Price";
-		}
-		else if (menuboy[9] == true)
-		{
-			cout << endl << " 10. Change Inventory Level";
-		}
-
-		cout << endl << " 11. Log Out";
-		cout << endl << " ====> ";
-
-	} while (found == 1);
+	cout << endl << " 11. Log Out";
+	cout << endl << " ====> ";
+	//cin >> select;
 }
 
 void selectItem(User *user) 
