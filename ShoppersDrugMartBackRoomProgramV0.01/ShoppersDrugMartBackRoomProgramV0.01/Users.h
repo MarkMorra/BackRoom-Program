@@ -86,10 +86,10 @@ private:
 	vector<User> users;
 
 	int findWithID(int ID);
-	User checkCredentials(string _firstName, string _lastName, string _password);
+	void checkCredentials(User *user, string _firstName, string _lastName, string _password);
 };
 
-User UserDatabase::checkCredentials(string _firstName, string _lastName, string _password)
+void UserDatabase::checkCredentials(User *user,string _firstName, string _lastName, string _password)
 {
 	vector<User>::iterator it;
 
@@ -97,9 +97,14 @@ User UserDatabase::checkCredentials(string _firstName, string _lastName, string 
 
 	while (it != users.end())
 	{
-		if (string(it->firstName) == _firstName && string(it->lastName) == _lastName && string(it->password) == _password);
-		return *it;
+		if (string(it->firstName) == _firstName && string(it->lastName) == _lastName && string(it->password) == _password)
+		{
+			user = &*it;
+			return;
+		}
+		it++;
 	}
+	user = NULL;
 	return;
 }
 
