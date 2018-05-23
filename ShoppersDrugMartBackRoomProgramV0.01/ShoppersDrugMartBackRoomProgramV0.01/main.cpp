@@ -83,6 +83,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 		cout << "\n3. test encryption";
 		cout << "\n4. test add item";
 		cout << "\n5. display items";
+		cout << "\n6. generate 500 random items and add to list";
 
 		cout << "\n\nChoise option";
 		do
@@ -158,6 +159,14 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			break;
 		case '5':
 
+			break;
+		case '6':
+			for (int i = 0; i < 500; i++)
+			{
+				upc = rand() % 3000;
+
+				name(itoa)
+			}
 			break;
 		default:
 			cout << "invalid number...press enter";
