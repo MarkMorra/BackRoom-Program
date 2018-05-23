@@ -11,7 +11,7 @@ using namespace std;
 #define FILE_PREFIX ""
 #define FILE_SUFFIX "/users.dat"
 
-#define P_SELECTITEM 0
+#define P_SELECTITEM 0 //used to acces a specific command in the permsissions bool array inside of permisssions class
 #define P_RESETITEM 1
 #define P_VIEWLOGS 2
 #define P_RESETUSERS 3
@@ -22,7 +22,7 @@ using namespace std;
 #define P_CHANGEPRICE 8
 #define P_CHANGEINVENTORY 9
 
-#define NUMBER_OF_PERMISSIONS 10
+#define NUMBER_OF_PERMISSIONS 10 //number of bools in permissions bool array
 
 #define LENGTH_OF_USER_STRINGS 50
 

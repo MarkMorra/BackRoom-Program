@@ -165,7 +165,9 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			{
 				upc = rand() % 3000;
 
-				name(itoa)
+				name = to_string(upc);
+
+				gItemDatabase->Add(upc, 5, 5, name, name + "descitpion", 5.5, 5.6, 5.7);
 			}
 			break;
 		default:
