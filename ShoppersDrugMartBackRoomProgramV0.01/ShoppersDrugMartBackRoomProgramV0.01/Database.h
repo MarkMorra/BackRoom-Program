@@ -8,7 +8,7 @@
 #include "Encryptor.h"
 using namespace std;
 
-#define FILE_PREFIX "/"
+#define FILE_PREFIX ""
 #define FILE_SUFFIX "/items.dat"
 
 #define NAME_LEN 15
@@ -22,6 +22,7 @@ public:
 	float price, cost, sale;
 	
 	Item();
+	void Display();
 	Item(int _upc, int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
 
 };
@@ -39,6 +40,19 @@ Item::Item() {
 
 }
 
+void Item::Display() {
+
+	cout << "Name:\t\t" << name
+		<< "\nDesc:\t\t" << desc
+		<< "\nUPC:\t\t" << upc
+		<< "\nPLU:\t\t" << plu
+		<< "\n"
+		<< "\nPrice:\t\t"; printf("$%0.2f", price);
+	cout << "\nSale Price:\t"; printf("$%0.2f", sale);
+	cout << "\nPurchase Cost:\t"; printf("$0.2f", cost);
+
+}
+
 Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale) {
 
 	upc = _upc;
@@ -52,7 +66,6 @@ Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _p
 
 }
 
-
 class ItemDatabase {
 
 public:
@@ -62,6 +75,14 @@ public:
 	vector<Item>::iterator Search(int upc);
 	void Reload();
 	void Save();
+	void FindUPC();
+	void FindPLU();
+	void FindAmount();
+	void FindName();
+	void FindDesc();
+	void FindPrice();
+	void FindCost();
+	void FindSale();
 
 private:
 	string filepath;
@@ -92,8 +113,16 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 
 	it = Search(upc);
 
-	items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
-
+	if (it->upc == upc) {
+	
+		cout << "This item already exists. Add code to modify item later.";
+	
+	} else {
+	
+		items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
+	
+	}
+	
 	Save();
 
 }
@@ -181,6 +210,7 @@ void ItemDatabase::Save()
 
 	FILE *file;
 	vector<Item>::iterator it;
+	Item temp;
 
 	file = fopen(filepath.c_str(), "w");
 
@@ -193,11 +223,12 @@ void ItemDatabase::Save()
 	it = items.begin();
 	while (it != items.end())
 	{
+		temp = *it;
 
-		encrypt(it->name, NAME_LEN);
-		encrypt(it->desc, DESC_LEN);
+		encrypt(temp.name, NAME_LEN);
+		encrypt(temp.desc, DESC_LEN);
 
-		fwrite(&(*it), sizeof(*it), 1, file);
+		fwrite(&temp, sizeof(temp), 1, file);
 		it++;
 
 	}

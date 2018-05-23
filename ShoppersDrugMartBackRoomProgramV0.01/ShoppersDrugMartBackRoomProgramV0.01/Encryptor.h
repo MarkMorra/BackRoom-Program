@@ -48,7 +48,6 @@ void encrypt(char *string,int length)
 		if (pos >= length) { return; }
 	}
 
-
 }
 
 void decrypt(char *string) 

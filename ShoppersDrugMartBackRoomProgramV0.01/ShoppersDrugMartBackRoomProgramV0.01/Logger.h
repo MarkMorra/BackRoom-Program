@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include "Encryptor.h"
 using namespace std;
 
 #define FILE_PREFIX ""
@@ -87,12 +88,18 @@ Logger::Logger(string filename)
 	file = fopen(Filepath.c_str(), "r");
 	if (file == NULL)
 	{
-		fclose(file);
 		file = fopen(Filepath.c_str(), "w");
 		if (file == NULL)
 		{
 			errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?");
 		}
+		else
+		{
+			fclose(file);
+		}
+	}
+	else
+	{
 		fclose(file);
 	}
 
@@ -123,6 +130,8 @@ void Logger::reload() {
 
 	while (fread(&temp,sizeof(temp),1,file))
 	{
+		decrypt(temp.message, CHAR_IN_LOG_MSG);
+		decrypt(&(temp.type), 1);
 		log.push_back(temp);
 	}
 
@@ -134,7 +143,7 @@ void Logger::save()
 
 	FILE *file;
 	list<Log>::iterator it;
-	list<Log> wow;
+	Log temp;
 
 	file = fopen(Filepath.c_str(), "w");
 
@@ -147,8 +156,10 @@ void Logger::save()
 	it = log.begin();
 	while (it != log.end())
 	{
-
-		fwrite(&(*it), sizeof(*it), 1, file);
+		temp = *it;
+		encrypt(temp.message, CHAR_IN_LOG_MSG);
+		encrypt(&(temp.type), 1);
+		fwrite(&temp, sizeof(temp), 1, file);
 		it++;
 
 	}

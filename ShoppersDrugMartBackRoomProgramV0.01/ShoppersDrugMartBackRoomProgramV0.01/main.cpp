@@ -15,6 +15,7 @@ void selectItem(User *user);
 
 
 Logger *gLogger;
+ItemDatabase *gItemDatabase;
 
 int main() {
 
@@ -36,7 +37,9 @@ int main() {
 
 void onStart() {
 
+	srand(time(NULL));
 	gLogger = new Logger(FOLDER_NAME);
+	gItemDatabase = new ItemDatabase(FOLDER_NAME);
 
 }
 
@@ -60,8 +63,15 @@ void welcome() {
 void testMenu() //this function is only for testing and can be accssed by pressing page up on the welcome screen
 {
 	char choice;
-	int plu;
 	string msg;
+	int upc;
+	int plu;
+	int amount;
+	string name;
+	string desc;
+	float price;
+	float cost;
+	float sale;
 
 	while (true)
 	{
@@ -71,6 +81,8 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 		cout << "\n1. new loger item";
 		cout << "\n2. dispaly logger list";
 		cout << "\n3. test encryption";
+		cout << "\n4. test add item";
+		cout << "\n5. display items";
 
 		cout << "\n\nChoise option";
 		do
@@ -103,17 +115,49 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			while (_getch() != 13);
 			break;
 		case '3':
-			char string[10];
+			char str[10];
 			system("cls");
 			cout << "Please enter a string :";
-			scanf("%s", &string);
-			printf("\n\nThe original: %s", string);
-			encrypt(string,10);
-			printf("\nEncypted: %s" ,string);
-			decrypt(string,10);
-			printf("\nDecrypted: %s" ,string);
+			scanf("%s", &str);
+			printf("\n\nThe original: %s", str);
+			encrypt(str,10);
+			printf("\nEncypted: %s" ,str);
+			decrypt(str,10);
+			printf("\nDecrypted: %s" ,str);
 			cout << "\n\npress enter...";
 			while (_getch() != 13);
+			break;
+		case '4':
+
+			cout << "upc: ";
+			cin >> upc;
+
+			cout << "plu: ";
+			cin >> plu;
+
+			cout << "amount: ";
+			cin >> amount;
+
+			cout << "name";
+			getline(cin, name);
+
+			cout << "desc";
+			getline(cin, desc);
+
+			cout << "price: ";
+			cin >> price;
+
+			cout << "cost: ";
+			cin >> cost;
+
+			cout << "sale price: ";
+			cin >> sale;
+
+			gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+
+			break;
+		case '5':
+
 			break;
 		default:
 			cout << "invalid number...press enter";
@@ -188,13 +232,7 @@ void displayItemStats(User *user, Item *item)
 
 	system("cls");
 
-	cout << "Name:\t\t" << item->name
-		<< "\nDesc:\t\t" << item->desc
-		<< "\nUPC:\t\t" << item->upc
-		<< "\nPLU:\t\t" << item->plu
-		<< "\n"
-		<< "\nPrice:\t\t"; printf("$%0.2f", item->price);
-	cout << "\nSale Price:\t"; printf("$%0.2f", item->sale);
-	cout << "\nPurchase Cost:\t"; printf("$0.2f", item->cost);
+
+	
 
 }
