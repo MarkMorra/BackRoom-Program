@@ -8,6 +8,9 @@ using namespace std;
 
 #define MAX_USERS 2000
 
+#define FILE_PREFIX ""
+#define FILE_SUFFIX "/users.dat"
+
 #define P_SELECTITEM 0
 #define P_RESETITEM 1
 #define P_VIEWLOGS 2
@@ -78,15 +81,18 @@ User::User(int _ID, string _firstName, string _lastName) //Variables from main s
 class UserDatabase
 {
 public:
-	UserDatabase();
+	UserDatabase(string filename);
 	~UserDatabase();
 
 	void Add(User user);
 private:
 	vector<User> users;
-
+	string filePath;
+	
 	int findWithID(int ID);
 	void checkCredentials(User *user, string _firstName, string _lastName, string _password);
+	void reload();
+	void save();
 };
 
 void UserDatabase::checkCredentials(User *user,string _firstName, string _lastName, string _password)
@@ -133,12 +139,94 @@ int UserDatabase::findWithID(int ID)
 	return -1; //if no user with this id exists -1 is returned;
 }
 
-UserDatabase::UserDatabase()
+UserDatabase::UserDatabase(string filename)
 {
-	//call RELOAD method
+
+	filePath = FILE_PREFIX + filename + FILE_SUFFIX;
+
+	FILE *file;
+	file = fopen(filePath.c_str(), "r");
+	if (file == NULL)
+	{
+		file = fopen(filePath.c_str(), "w");
+		if (file == NULL)
+		{
+			errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?");
+		}
+		else
+		{
+			fclose(file);
+		}
+	}
+	else
+	{
+		fclose(file);
+	}
+
+	reload();
+
 }
 
 UserDatabase::~UserDatabase()
 {
 	//call save method
+}
+
+void UserDatabase::reload() 
+{
+
+	FILE *file;
+
+	file = fopen(filePath.c_str(), "r");
+
+	if (file == NULL)
+	{
+		errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?");
+		return;
+	}
+
+	users.clear();
+
+	User temp;
+
+	while (fread(&temp, sizeof(temp), 1, file))
+	{
+		decrypt(temp.password, LENGTH_OF_USER_STRINGS);
+		decrypt(temp.firstName, LENGTH_OF_USER_STRINGS);
+		decrypt(temp.lastName, LENGTH_OF_USER_STRINGS);
+		users.push_back(temp);
+	}
+
+	fclose(file);
+}
+
+void UserDatabase::save()
+{
+
+	FILE *file;
+	vector<User>::iterator it;
+	User temp;
+
+	file = fopen(filePath.c_str(), "w");
+
+	if (file == NULL)
+	{
+		errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger::save function");
+		return;
+	}
+
+	it = users.begin();
+	while (it != users.end())
+	{
+		temp = *it;
+		encrypt(temp.password, LENGTH_OF_USER_STRINGS);
+		encrypt(temp.firstName, LENGTH_OF_USER_STRINGS);
+		encrypt(temp.lastName, LENGTH_OF_USER_STRINGS);
+		fwrite(&temp, sizeof(temp), 1, file);
+		it++;
+
+	}
+
+	fclose(file);
+
 }
