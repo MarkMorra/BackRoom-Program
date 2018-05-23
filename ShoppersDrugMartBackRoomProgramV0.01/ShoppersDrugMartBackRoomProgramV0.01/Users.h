@@ -125,8 +125,6 @@ void UserDatabase::Add(User user)
 
 	//users.insert(); ---actaully add id
 	
-
-
 }
 
 int UserDatabase::findWithID(int ID)
@@ -169,7 +167,7 @@ UserDatabase::UserDatabase(string filename)
 
 UserDatabase::~UserDatabase()
 {
-	//call save method
+	save();
 }
 
 void UserDatabase::reload() 
