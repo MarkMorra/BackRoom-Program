@@ -79,7 +79,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 		cout << "This menu is for testing only\n\n0. exit test menu";
 		cout << "\n1. new loger item";
-		cout << "\n2. dispaly logger list";
+		cout << "\n2. display logger list";
 		cout << "\n3. test encryption";
 		cout << "\n4. test add item";
 		cout << "\n5. display items";
@@ -219,9 +219,69 @@ void logon(User *user) {
 
 void menu(User *user)
 {
+	int found = 0;
+	int x = 0;
+	bool menuboy[10];
+	Permissions menuboyperms;
+	//int menuselect = 0;
 
 	//display functions based on user permissions
 
+	cout << endl << " Where would you like to go?";
+
+	for (x = 0; x < 10; x++)
+	{
+		menuboy[x] = menuboyperms.permissions[x];
+	}
+
+	do
+	{
+		found = 1;
+		if (menuboy[0] == true)
+		{
+			cout << endl << " 1. Select Item";
+		}
+		else if (menuboy[1] == true)
+		{
+			cout << endl << " 2. Reset Item";
+		}
+		else if (menuboy[2] == true)
+		{
+			cout << endl << " 3. View Logs";
+		}
+		else if (menuboy[3] == true)
+		{
+			cout << endl << " 4. Reset Users";
+		}
+		else if (menuboy[4] == true)
+		{
+			cout << endl << " 5. User Settings";
+		}
+		else if (menuboy[5] == true)
+		{
+			cout << endl << " 6. Add Item";
+		}
+		else if (menuboy[6] == true)
+		{
+			cout << endl << " 7. View Item";
+		}
+		else if (menuboy[7] == true)
+		{
+			cout << endl << " 8. View Specific Item Logs";
+		}
+		else if (menuboy[8] == true)
+		{
+			cout << endl << " 9. Change Item Price";
+		}
+		else if (menuboy[9] == true)
+		{
+			cout << endl << " 10. Change Inventory Level";
+		}
+
+		cout << endl << " 11. Log Out";
+		cout << endl << " ====> ";
+
+	} while (found == 1);
 }
 
 void selectItem(User *user) 
