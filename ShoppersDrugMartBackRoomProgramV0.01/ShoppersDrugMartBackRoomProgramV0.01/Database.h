@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <vector>
+#include <list>
 #include "ErrorMsg.h"
 #include "Encryptor.h"
 using namespace std;
@@ -75,9 +76,10 @@ public:
 	vector<Item>::iterator Search(int upc);
 	void Reload();
 	void Save();
-	Item** Find();
-	Item** Find(char type, int num);
-	Item** Find(char type, string text);
+	vector<Item*>* Find();
+	vector<Item*>* Find(char type, int num);
+	vector<Item*>* Find(char type, float num);
+	vector<Item*>* Find(char type, string text);
 
 private:
 	string filepath;
@@ -232,25 +234,29 @@ void ItemDatabase::Save()
 
 }
 
-Item** ItemDatabase::Find() {
+vector<Item*>* ItemDatabase::Find() {
 
-	Item **found;
+	vector<Item*>* found;
 
-	*found = new Item[items.size()];
+	found = new vector<Item*>;
 
 	for (int i = 0; i < items.size(); i++) {
 
-		found[i] = &items[i];
+		found->push_back(&items[i]);
 
 	}
 
+	return found;
+
 }
 
-Item** ItemDatabase::Find(char type, int num) {
+vector<Item*>* ItemDatabase::Find(char type, int num) {
 
-	Item **found;
+	vector<Item*>* found;
 
-	if (type == 'u') {
+	found = new vector<Item*>;
+
+	if (type == 'u') {		// binary search for upc when type is u
 
 		int first, middle, last;
 
@@ -263,9 +269,9 @@ Item** ItemDatabase::Find(char type, int num) {
 
 			if (num == items[middle].upc) {
 
-				*found = new Item[1];
+				found->push_back(&items[middle]);
 
-				found[0] = &items[middle];
+				return found;
 
 			}
 			else if (num > items[middle].upc) {
@@ -281,10 +287,87 @@ Item** ItemDatabase::Find(char type, int num) {
 
 		}
 
-	}
-	else if (type == 'p') {
+		return found;
 
-		
+	}
+	else if (type == 'p') {		// seq search for plu when type is p
+
+		for (int i = 0; i < items.size(); i++) {
+
+			if (num == items[i].plu) {
+
+				found->push_back(&items[i]);
+
+			}
+
+		}
+
+		return found;
+
+	}
+	else if (type == 'a') {		// seq search for amount when type is a
+
+		for (int i = 0; i < items.size(); i++) {
+
+			if (num == items[i].amount) {
+
+				found->push_back(&items[i]);
+
+			}
+
+		}
+
+		return found;
+
+	}
+
+	return found;
+
+}
+
+vector<Item*>* ItemDatabase::Find(char type, float num) {
+
+	vector<Item*>* found;
+
+	found = new vector<Item*>;
+
+	if (type == 'p') {		// seq search for price when type is p
+
+		for (int i = 0; i < items.size(); i++) {
+
+			if (num == items[i].price) {
+
+				found->push_back(&items[i]);
+
+			}
+
+		}
+
+		return found;
+
+	}
+
+}
+
+vector<Item*>* ItemDatabase::Find(char type, string text) {
+
+	vector<Item*>* found;
+
+	found = new vector<Item*>;
+
+	if (type == 'n') {		// seq search for name when type is n
+
+		for (int i = 0; i < items.size(); i++) {
+
+			if (string::npos != string(items[i].name).find(text)) {
+
+				found->push_back(&items[i]);
+
+			}
+
+		}
+
+		return found;
 
 	}
 
