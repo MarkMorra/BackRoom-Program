@@ -166,9 +166,14 @@ void logon(User *user) {
 
 void menu(User *user)
 {
-
+	int found = 0;
 	//display functions based on user permissions
-
+	cout << endl << " Where would you like to go?";
+	do
+	{
+		found = 1;
+		if 
+	} while (found == 1);
 }
 
 void selectItem(User *user) 
