@@ -75,14 +75,9 @@ public:
 	vector<Item>::iterator Search(int upc);
 	void Reload();
 	void Save();
-	void FindUPC();
-	void FindPLU();
-	void FindAmount();
-	void FindName();
-	void FindDesc();
-	void FindPrice();
-	void FindCost();
-	void FindSale();
+	Item** Find();
+	Item** Find(char type, int num);
+	Item** Find(char type, string text);
 
 private:
 	string filepath;
@@ -234,5 +229,63 @@ void ItemDatabase::Save()
 	}
 
 	fclose(file);
+
+}
+
+Item** ItemDatabase::Find() {
+
+	Item **found;
+
+	*found = new Item[items.size()];
+
+	for (int i = 0; i < items.size(); i++) {
+
+		found[i] = &items[i];
+
+	}
+
+}
+
+Item** ItemDatabase::Find(char type, int num) {
+
+	Item **found;
+
+	if (type == 'u') {
+
+		int first, middle, last;
+
+		first = 0;
+		last = items.size() - 1;
+
+		while (first <= last) {
+
+			middle = int((first + last) / 2);
+
+			if (num == items[middle].upc) {
+
+				*found = new Item[1];
+
+				found[0] = &items[middle];
+
+			}
+			else if (num > items[middle].upc) {
+
+				first = middle + 1;
+
+			}
+			else {
+
+				last = middle + 1;
+
+			}
+
+		}
+
+	}
+	else if (type == 'p') {
+
+		
+
+	}
 
 }
