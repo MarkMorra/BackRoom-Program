@@ -14,6 +14,18 @@ void logon(User *user);
 void menu(User *user);
 void selectItem(User *user);
 
+//Cady's changes start here
+void logout();
+void resetItem(Item *item, Logger *log);
+void viewLogs(Logger *log);
+void resetUser(User *user, Logger *log);
+void settings(User *user, Logger *log);
+void addItem(Item *item, Logger *log);
+void viewItem(Item *item);
+void viewItemLogs(Logger *log);
+void changePrice(Item *item, Logger *log);
+void changeInventory(Item *item, Logger *log);
+//Cady's changes end here
 
 Logger *gLogger;
 ItemDatabase *gItemDatabase;
@@ -222,7 +234,7 @@ void logon(User *user) {
 
 }
 
-void menu(User *user)
+void menu(User *user) //Cady's changes start here
 {
 	
 	Permissions permissions;
@@ -276,5 +288,55 @@ void displayItemStats(User *user, Item *item)
 
 
 	
+
+}
+//Cady's changes begin here
+void logout()
+{
+
+}
+
+void resetItem(Item *item, Logger *log)
+{
+
+}
+
+void viewLogs(Logger *log)
+{
+
+}
+
+void resetUser(User *user, Logger *log)
+{
+
+}
+
+void settings(User *user, Logger *log)
+{
+
+}
+
+void addItem(Item *item, Logger *log)
+{
+
+}
+
+void viewItem(Item *item)
+{
+
+}
+
+void viewItemLogs(Logger *log)
+{
+
+}
+
+void changePrice(Item *item, Logger *log)
+{
+
+}
+
+void changeInventory(Item *item, Logger *log)
+{
 
 }
