@@ -50,7 +50,7 @@ Permissions::Permissions(bool perms[NUMBER_OF_PERMISSIONS])
 	}
 }
 
-class User //Contains usernames and passwords, accessed through UserDatabase class
+class User //Contains usernames and passwords of each user, accessed through UserDatabase class
 {
 public:
 	User(int ID,string firstName,string secondName);
@@ -64,21 +64,21 @@ public:
 	
 };
 
-User::User()
+User::User() //default constructor just sets all value to zero
 {
 	id = 0;
 	strcpy(firstName, "");
 	strcpy(lastName, "");
 }
 
-User::User(int _ID, string _firstName, string _lastName) //Variables from main send information here
+User::User(int _ID, string _firstName, string _lastName) //a constructor that sets the value based on the values passes
 {
 	id = _ID;
 	strcpy(firstName, _firstName.c_str());
 	strcpy(lastName, _lastName.c_str());
 };
 
-class UserDatabase
+class UserDatabase //main job is to store the array os Users
 {
 public:
 	UserDatabase(string filename);
@@ -89,7 +89,7 @@ private:
 	vector<User> users;
 	string filePath;
 	
-	int findWithID(int ID);
+	int findWithID(int ID); //find a user with a specific id and return an index representring thier position
 	void checkCredentials(User *user, string _firstName, string _lastName, string _password);
 	void reload();
 	void save();

@@ -120,6 +120,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Colours.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Encryptor.h" />
     <ClInclude Include="ErrorMsg.h" />
