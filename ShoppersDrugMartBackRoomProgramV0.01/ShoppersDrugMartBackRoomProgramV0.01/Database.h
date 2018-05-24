@@ -91,6 +91,8 @@ ItemDatabase::ItemDatabase(string filename) {
 
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX;
 
+	CreateDirectory(filename.c_str(), NULL);
+
 	Reload();
 
 }
@@ -345,7 +347,37 @@ vector<Item*>* ItemDatabase::Find(char type, float num) {
 
 		return found;
 
+	} else if (type == 'c') {		// seq search for cost when type is c
+
+		for (int i = 0; i < items.size(); i++) {
+
+			if (num == items[i].cost) {
+
+				found->push_back(&items[i]);
+
+			}
+
+		}
+
+		return found;
+
+	} else if (type == 's') {		// seq search for sale when type is s
+
+		for (int i = 0; i < items.size(); i++) {
+
+			if (num == items[i].sale) {
+
+				found->push_back(&items[i]);
+
+			}
+
+		}
+
+		return found;
+
 	}
+
+	return found;
 
 }
 
@@ -355,11 +387,25 @@ vector<Item*>* ItemDatabase::Find(char type, string text) {
 
 	found = new vector<Item*>;
 
-	if (type == 'n') {		// seq search for name when type is n
+	if (type == 'n') {				// seq search for name when type is n
 
 		for (int i = 0; i < items.size(); i++) {
 
 			if (string::npos != string(items[i].name).find(text)) {
+
+				found->push_back(&items[i]);
+
+			}
+
+		}
+
+		return found;
+
+	} else if (type == 'd') {		// seq search for desc when type is d
+
+		for (int i = 0; i < items.size(); i++) {
+
+			if (string::npos != string(items[i].desc).find(text)) {
 
 				found->push_back(&items[i]);
 

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <windows.h>
 #include "Encryptor.h"
 using namespace std;
 
@@ -83,6 +84,8 @@ Logger::Logger(string filename)
 {
 
 	Filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
+
+	CreateDirectory(filename.c_str(), NULL);
 
 	FILE *file;
 	file = fopen(Filepath.c_str(), "r");
