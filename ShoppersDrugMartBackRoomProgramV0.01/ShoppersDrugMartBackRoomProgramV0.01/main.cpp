@@ -224,67 +224,41 @@ void logon(User *user) {
 
 void menu(User *user)
 {
-	int found = 0;
-	int x = 0;
+	
 	Permissions permissions;
-	//int menuselect = 0;
+	char choice[2] = { 0,0 };
+	int selection = 0;
+	string disaplyName[] = { "Select Item", "Reset Item", "View Logs", "Reset Users", "User Settings", "Add Item", "View Item", "View Specific Item Logs", "Change Item Price", "Change Inventory Level" };
 
 	//display functions based on user permissions
 
-	cout << endl << " Where would you like to go?";
-
-	if (permissions.permissions[P_SELECTITEM] == true)
+	do
 	{
-		cout << endl << " 1. Select Item";
-	}
+		cout << endl << " Where would you like to go?";
 	
-	if (permissions.permissions[P_RESETITEM] == true)
-	{
-		cout << endl << " 2. Reset Item";
-	}
-	
-	if (permissions.permissions[P_VIEWLOGS] == true)
-	{
-		cout << endl << " 3. View Logs";
-	}
-		
-	if (permissions.permissions[P_RESETUSERS] == true)
-	{
-		cout << endl << " 4. Reset Users";
-	}
-		
-	if (permissions.permissions[P_SETTINGS] == true)
-	{
-		cout << endl << " 5. User Settings";
-	}
-		
-	if (permissions.permissions[P_ADDITEM] == true)
-	{
-		cout << endl << " 6. Add Item";
-	}
-		
-	if (permissions.permissions[P_VIEWITEM] == true)
-	{
-		cout << endl << " 7. View Item";
-	}
-		
-	if (permissions.permissions[P_VIEWSPECIFIC] == true)
-	{
-		cout << endl << " 8. View Specific Item Logs";
-	}
-		
-	if (permissions.permissions[P_CHANGEPRICE] == true)
-	{
-		cout << endl << " 9. Change Item Price";
-	}
-		
-	if (permissions.permissions[P_CHANGEINVENTORY] == true)
-	{
-		cout << endl << " 10. Change Inventory Level";
-	}
+		int count = 1;
+		cout << "\n1) Log Out";
+		for (int i = 0; i < NUMBER_OF_PERMISSIONS; i++)
+		{
+			if (permissions.permissions[i] == true)
+			{
+				if (selection == count)
+				{
+					changeColour(C_BLUE, C_WHITE);
+				}
+				count++;
+				cout << endl << count << ") " << disaplyName[i];
 
-	cout << endl << " 11. Log Out";
-	cout << endl << " ====> ";
+				changeColour();
+				//add it so it can move
+			}
+		}
+
+
+
+	} while (true);
+
+	
 	//cin >> select;
 }
 
