@@ -13,6 +13,18 @@ void logon(User *user);
 void menu(User *user);
 void selectItem(User *user);
 
+//Cady's changes start here
+void logout();
+void resetItem(Item *item, Logger *log);
+void viewLogs(Logger *log);
+void resetUser(User *user, Logger *log);
+void settings(User *user, Logger *log);
+void addItem(Item *item, Logger *log);
+void viewItem(Item *item);
+void viewItemLogs(Logger *log);
+void changePrice(Item *item, Logger *log);
+void changeInventory(Item *item, Logger *log);
+//Cady's changes end here
 
 Logger *gLogger;
 ItemDatabase *gItemDatabase;
@@ -217,12 +229,12 @@ void logon(User *user) {
 
 }
 
-void menu(User *user)
+void menu(User *user) //Cady's changes start here
 {
 	int found = 0;
 	int x = 0;
 	Permissions permissions;
-	//int menuselect = 0;
+	int menuselect = 0;
 
 	//display functions based on user permissions
 
@@ -280,8 +292,13 @@ void menu(User *user)
 
 	cout << endl << " 11. Log Out";
 	cout << endl << " ====> ";
-	//cin >> select;
-}
+	cin >> menuselect;
+
+	if (menuselect < 1 || menuselect > 11)
+	{
+		//Error message
+	}
+}//Cady's changes end here
 
 void selectItem(User *user) 
 {
@@ -297,5 +314,55 @@ void displayItemStats(User *user, Item *item)
 
 
 	
+
+}
+//Cady's changes begin here
+void logout()
+{
+
+}
+
+void resetItem(Item *item, Logger *log)
+{
+
+}
+
+void viewLogs(Logger *log)
+{
+
+}
+
+void resetUser(User *user, Logger *log)
+{
+
+}
+
+void settings(User *user, Logger *log)
+{
+
+}
+
+void addItem(Item *item, Logger *log)
+{
+
+}
+
+void viewItem(Item *item)
+{
+
+}
+
+void viewItemLogs(Logger *log)
+{
+
+}
+
+void changePrice(Item *item, Logger *log)
+{
+
+}
+
+void changeInventory(Item *item, Logger *log)
+{
 
 }
