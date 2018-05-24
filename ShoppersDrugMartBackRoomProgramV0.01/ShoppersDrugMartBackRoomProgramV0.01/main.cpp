@@ -4,6 +4,8 @@
 #include "Encryptor.h"
 #include "Colours.h"
 
+using namespace std;
+
 #define VERSION "0.01"
 #define FOLDER_NAME "data"
 
@@ -240,7 +242,8 @@ void menu(User *user) //Cady's changes start here
 	Permissions permissions;
 	char choice[2] = { 0,0 };
 	int selection = 0;
-	string disaplyName[] = { "Select Item", "Reset Item", "View Logs", "Reset Users", "User Settings", "Add Item", "View Item", "View Specific Item Logs", "Change Item Price", "Change Inventory Level" };
+	int menuselect = 0;
+	string[] = {"Select Items","Reset Items" ,"View Items", "Reset Users"}; //keeps adding
 
 	//display functions based on user permissions
 
@@ -267,12 +270,18 @@ void menu(User *user) //Cady's changes start here
 		}
 
 
-
 	} while (true);
 
-	
+	cout << endl << " 11. Log Out";
+	cout << endl << " ====> ";
+	cin >> menuselect;
+
+	if (menuselect < 1 || menuselect > 11)
+	{
+		//Error message
+	}	
 	//cin >> select;
-}
+}//Cady's changes end here
 
 void selectItem(User *user) 
 {
