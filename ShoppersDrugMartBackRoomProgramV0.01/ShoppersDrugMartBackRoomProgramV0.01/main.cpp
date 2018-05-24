@@ -2,6 +2,7 @@
 #include "Database.h"
 #include "Users.h"
 #include "Encryptor.h"
+#include "Colours.h"
 
 #define VERSION "0.01"
 #define FOLDER_NAME "data"
@@ -60,6 +61,8 @@ void welcome() {
 	char choice;
 
 	system("cls");
+
+	changeColour();
 
 	cout << endl << endl << " Shoppers Backroom Program " << VERSION << endl << endl << endl << " Press enter to continue...";
 
@@ -177,7 +180,9 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			{
 				upc = rand() % 3000;
 
-				name(itoa)
+				name = to_string(upc);
+
+				gItemDatabase->Add(upc, 5, 5, name, name + "descitpion", 5.5, 5.6, 5.7);
 			}
 			break;
 		default:

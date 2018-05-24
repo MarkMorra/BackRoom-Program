@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <list>
+#include <windows.h>
 #include "Encryptor.h"
 using namespace std;
 
@@ -20,7 +21,7 @@ public:
 	~Log();
 	void display();
 	
-	tm timeLogged;
+	tm timeLogged; //time when the log msg was created
 	int UPCCode; //-1 if not applicable
 	int PLUCode; //-1 if not applicable
 	int Userid; //id of the user who made the change -1 if not applicable
@@ -32,13 +33,13 @@ public:
 Log::Log(int _UPCCode, int _PLUCode, int _Userid, char _type, string _message)
 {
 	time_t rawTime = time(NULL);
-	timeLogged = *localtime(&rawTime);
+	timeLogged = *localtime(&rawTime); //saves the time the log message was created
 
 	UPCCode = _UPCCode;
 	PLUCode = _PLUCode;
 	Userid = _Userid;
 	type = _type;
-	if (_message.length() > CHAR_IN_LOG_MSG - 1)
+	if (_message.length() > CHAR_IN_LOG_MSG - 1) //if the msg is too long it shortens it
 	{
 		_message = string(_message,0,CHAR_IN_LOG_MSG-1);
 	}
@@ -55,14 +56,14 @@ Log::~Log()
 void Log::display() {
 	char *timeAsString = asctime(&timeLogged);
 	timeAsString[strlen(timeAsString) - 1] = '\0'; //removes the \n character created in asctime
-	cout << timeAsString << " : " << message;
+	cout << timeAsString << " : " << message; //disaplys the time and the log message on screen
 }
 
 
 class Logger
 {
 public:
-	Logger(string Filename);
+	Logger(string Filename); //filename is the location of the file the log data is saved in
 	~Logger();
 	void addItem(int UPCCode, int Userid, int PLUCode, char type, string message);
 	void display();
@@ -72,26 +73,28 @@ public:
 
 private:
 
-	void reload();
-	void save();
+	void reload(); //reloads logger data using data in file
+	void save(); //saves logger data to file
 	string Filepath;
-	list<Log> log;
+	list<Log> log; //list of log data
 
 };
 
 Logger::Logger(string filename)
 {
 
-	Filepath = FILE_PREFIX + filename + FILE_SUFFIX;
+	Filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
+
+	CreateDirectory(filename.c_str(), NULL);
 
 	FILE *file;
 	file = fopen(Filepath.c_str(), "r");
-	if (file == NULL)
+	if (file == NULL) //checks if file exists
 	{
-		file = fopen(Filepath.c_str(), "w");
-		if (file == NULL)
+		file = fopen(Filepath.c_str(), "w"); //if it dosent it try to create it
+		if (file == NULL) //checks if it was sucessful
 		{
-			errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?");
+			errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?"); //displays error msg
 		}
 		else
 		{
@@ -103,13 +106,13 @@ Logger::Logger(string filename)
 		fclose(file);
 	}
 
-	reload();
+	reload(); //loads data from file
 
 }
 
 Logger::~Logger()
 {
-	save();
+	save(); //when the class gets destroyed it saves the data in it
 }
 
 void Logger::reload() {
@@ -118,21 +121,21 @@ void Logger::reload() {
 
 	file = fopen(Filepath.c_str(), "r");
 
-	if (file == NULL)
+	if (file == NULL) //makes sure file opend sucessfully
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?");
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?"); //display error msg
 		return;
 	}
 
-	log.clear();
+	log.clear(); //clearslog data from logger
 
 	Log temp;
 
-	while (fread(&temp,sizeof(temp),1,file))
+	while (fread(&temp,sizeof(temp),1,file)) //keeps  read untill eof is reached
 	{
-		decrypt(temp.message, CHAR_IN_LOG_MSG);
-		decrypt(&(temp.type), 1);
-		log.push_back(temp);
+		decrypt(temp.message, CHAR_IN_LOG_MSG); //decrypts the msg saved in file
+		decrypt(&(temp.type), 1); //decrypts char saved in file
+		log.push_back(temp); //add it to the list
 	}
 
 	fclose(file);
@@ -147,19 +150,19 @@ void Logger::save()
 
 	file = fopen(Filepath.c_str(), "w");
 
-	if (file == NULL)
+	if (file == NULL) //make sure file opend sucessfully
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::save function");
+		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::save function"); //dispalys error msg
 		return;
 	}
 
 	it = log.begin();
-	while (it != log.end())
+	while (it != log.end()) //keeps looping untill it reaches the end of the list
 	{
-		temp = *it;
-		encrypt(temp.message, CHAR_IN_LOG_MSG);
-		encrypt(&(temp.type), 1);
-		fwrite(&temp, sizeof(temp), 1, file);
+		temp = *it; //creates a clone of the log so it can be encrypted
+		encrypt(temp.message, CHAR_IN_LOG_MSG); //encrypts the msg
+		encrypt(&(temp.type), 1); //encrypts the cahr
+		fwrite(&temp, sizeof(temp), 1, file); //writes to the file
 		it++;
 
 	}
@@ -171,13 +174,13 @@ void Logger::save()
 void Logger::addItem(int UPCCode, int PLUCode, int Userid, char type, string message)
 {
 
-	log.push_front(Log(UPCCode,PLUCode,Userid,type,message));
+	log.push_front(Log(UPCCode,PLUCode,Userid,type,message)); //adds a new log msg to the front of the list
 
-	save();
+	save(); //saves the new log to the file
 
 }
 
-void Logger::display(int seachNumber, char type)
+void Logger::display(int seachNumber, char type) //allows to only display log msg about a certin user, product with certin plu code ect...
 {
 	int i = 0;
 	list<Log>::iterator it;
@@ -185,13 +188,13 @@ void Logger::display(int seachNumber, char type)
 
 	type = toupper(type);
 
-	switch (type)
+	switch (type) //what type of log messages you want to see
 	{
-	case 'A':
-		while (it != log.end())
+	case 'A': //search for a certin user ID
+		while (it != log.end()) //loops untill end of the list
 		{
 
-			if (it->Userid == seachNumber)
+			if (it->Userid == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
 				cout << i << ") ";
@@ -202,11 +205,11 @@ void Logger::display(int seachNumber, char type)
 			it++;
 		}
 		break;
-	case 'P':
-		while (it != log.end())
+	case 'P': //search by plu code
+		while (it != log.end()) //loops untill end of the list
 		{
 
-			if (it->PLUCode == seachNumber)
+			if (it->PLUCode == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
 				cout << i << ") ";
@@ -217,11 +220,11 @@ void Logger::display(int seachNumber, char type)
 			it++;
 		}
 		break;
-	case 'U':
-		while (it != log.end())
+	case 'U': //search by UPC
+		while (it != log.end()) //loops untill end of the list
 		{
 
-			if (it->UPCCode == seachNumber)
+			if (it->UPCCode == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
 				cout << i << ") ";
@@ -235,16 +238,17 @@ void Logger::display(int seachNumber, char type)
 	}
 }
 
-void Logger::display(char _type)
+void Logger::display(char _type) //allows messages of a certin type to be displayed; price change, amount change ect...
+								 //g = generic, p = price change, a = amount change, n = new item
 {
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
 
-	while (it != log.end())
+	while (it != log.end()) //loops untill end of the list
 	{
 
-		if (it->type == _type)
+		if (it->type == _type) //if the log message matches the type the user selected it gets displayed
 		{
 			i++;
 			cout << i << ") "; 
@@ -257,13 +261,13 @@ void Logger::display(char _type)
 
 }
 
-void Logger::display()
+void Logger::display() //disaplyes all log messages
 {
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
 
-	while (it != log.end())
+	while (it != log.end()) //loops untill end of the list
 	{
 		i++;
 		cout << i << ") ";

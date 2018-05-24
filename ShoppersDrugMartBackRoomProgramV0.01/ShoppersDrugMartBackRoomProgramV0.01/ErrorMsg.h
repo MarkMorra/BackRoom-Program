@@ -4,12 +4,10 @@
 #include <conio.h>
 using namespace std;
 
-//void errorMsg(string error);
+void errorMsg(string error) { //used to more easily display error msg to the user
 
-void errorMsg(string error) {
+	cout << "\n\n" << error << "\nPress enter to continue..."; //dispays message
 
-	cout << "\n\n" << error << "\nPress enter to continue...";
-
-	while (_getch() != 13);
+	while (_getch() != 13); //waits for user to press enter
 
 }
