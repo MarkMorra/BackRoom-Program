@@ -11,18 +11,22 @@ using namespace std;
 #define FILE_PREFIX ""
 #define FILE_SUFFIX "/users.dat"
 
-#define P_SELECTITEM 0 //used to acces a specific command in the permsissions bool array inside of permisssions class
-#define P_RESETITEM 1
-#define P_VIEWLOGS 2
-#define P_RESETUSERS 3
-#define P_SETTINGS 4
-#define P_ADDITEM 5
-#define P_VIEWITEM 6
-#define P_VIEWSPECIFIC 7
-#define P_CHANGEPRICE 8
-#define P_CHANGEINVENTORY 9
+//used to acces a specific command in the permsissions bool array inside of permisssions class
+#define MM_SELECTITEM 0 //MM means main menu
+#define MM_RESETITEM 1
+#define MM_VIEWLOGS 2
+#define MM_RESETUSERS 3
+#define MM_SETTINGS 4
+#define MM_ADDITEM 5
 
-#define NUMBER_OF_PERMISSIONS 10 //number of bools in permissions bool array
+#define NUMBER_OF_MMPERMISSIONS 6 //number of bools in permissions bool array
+
+
+#define IM_VIEWSPECIFIC 0 //IM measn item menu
+#define IM_CHANGEPRICE 1
+#define IM_CHANGEINVENTORY 2
+
+#define NUMBER_OF_IMPERMISSIONS 3
 
 #define LENGTH_OF_USER_STRINGS 50
 
@@ -30,23 +34,20 @@ class Permissions //Contains permissions for the specific username or password, 
 {
 public:
 	Permissions();
-	Permissions(bool perms[NUMBER_OF_PERMISSIONS]);
-	bool permissions[NUMBER_OF_PERMISSIONS];
+	bool permissionsMM[NUMBER_OF_MMPERMISSIONS];
+	bool permissionsIM[NUMBER_OF_IMPERMISSIONS];
 };
 
 Permissions::Permissions() 
 {	
-	for (int i = 0; i < NUMBER_OF_PERMISSIONS; i++)
+	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
 	{
-		permissions[i] = false;
+		permissionsMM[i] = false;
 	}
-}
-
-Permissions::Permissions(bool perms[NUMBER_OF_PERMISSIONS])
-{
-	for (int i = 0; i < NUMBER_OF_PERMISSIONS; i++)
+	
+	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
 	{
-		permissions[i] = perms[i];
+		permissionsIM[i] = false;
 	}
 }
 

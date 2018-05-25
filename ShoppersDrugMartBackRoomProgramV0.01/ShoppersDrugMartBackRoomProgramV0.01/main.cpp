@@ -238,12 +238,11 @@ void logon(User *user) {
 
 void menu(User *user) //Cady's changes start here
 {
-	
-	Permissions permissions;
 	char choice[2] = { 0,0 };
 	int selection = 0;
 	int menuselect = 0;
-	string[] = {"Select Items","Reset Items" ,"View Items", "Reset Users"}; //keeps adding
+	string displayName[] = {"Select Items","Reset Items" ,"View Items", "Reset Users", ""}; //keeps adding
+	int count = 0;
 
 	//display functions based on user permissions
 
@@ -251,36 +250,64 @@ void menu(User *user) //Cady's changes start here
 	{
 		cout << endl << " Where would you like to go?";
 	
-		int count = 1;
-		cout << "\n1) Log Out";
-		for (int i = 0; i < NUMBER_OF_PERMISSIONS; i++)
+		
+		cout << "\n1) Log Out"; //display logout option, every user has acess to it
+		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //dispalys all option based on usres permissions
 		{
-			if (permissions.permissions[i] == true)
+			if (user->permission.permissionsMM[i] == true)
 			{
-				if (selection == count)
+				if (selection == count) //highlights the selection if it is the selected one
 				{
 					changeColour(C_BLUE, C_WHITE);
 				}
 				count++;
-				cout << endl << count << ") " << disaplyName[i];
+				cout << endl << count+1 << ") " << displayName[i];
 
 				changeColour();
 				//add it so it can move
 			}
 		}
 
+		do
+		{
+			fflush(stdin);
+			choice[0] = _getch();
+			choice[1] = _getch();
+		} while ((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13); //checks if the user presses up, down or enter
 
-	} while (true);
+		if (choice[1] == 72) //moves counter down if user hits down key
+		{
+			count--;
+			if (count < 0) { count = NUMBER_OF_MMPERMISSIONS - 1; }
+		}
+		else if (choice[1] == 80) //moves counter up if user hits up key
+		{
+			count++;
+			if (count > NUMBER_OF_MMPERMISSIONS - 1) { count = 0; }
+		}
+		else if (choice[0] == 13) //calls the selected function when user presses enter
+		{
 
-	cout << endl << " 11. Log Out";
-	cout << endl << " ====> ";
-	cin >> menuselect;
+			switch (count) //calls the function when they press enter
+			{
+			case 0:
 
-	if (menuselect < 1 || menuselect > 11)
-	{
-		//Error message
-	}	
-	//cin >> select;
+				break;
+			case 1:
+				break;
+			case 3:
+				break;
+			case 4:
+				break;
+			case 5:
+				break;
+			}
+
+		}
+		
+
+	} while (count != 0); //checks if they selected logout
+
 }//Cady's changes end here
 
 void selectItem(User *user) 
