@@ -32,10 +32,13 @@ void help();
 
 Logger *gLogger;
 ItemDatabase *gItemDatabase;
+UserDatabase *gUserDatabase;
 
 int main() {
 
-	User *user = new User;
+	User *user = NULL;
+
+
 
 	onStart();
 	welcome();
@@ -47,6 +50,10 @@ int main() {
 		menu(user);
 	}
 	
+	delete user;
+	delete gLogger;
+	delete gItemDatabase;
+	delete gUserDatabase;
 
 
 }
@@ -56,6 +63,7 @@ void onStart() {
 	srand(time(NULL));
 	gLogger = new Logger(FOLDER_NAME);
 	gItemDatabase = new ItemDatabase(FOLDER_NAME);
+	gUserDatabase = new UserDatabase(FOLDER_NAME);
 
 }
 
@@ -235,41 +243,137 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 void logon(User *user) {
 
-	char choice;
+	CONST int NUMBER_OF_OPTIONS = 2;
 
-	system("cls");
-	cout << "This is the standin login screen\n\n1) Logon\n2) Exit";
-	
+	string first, last, password; //saves the logon information
+	char passChar; //saves the most recent character enetered by the user when typing their password
+	char choice[2];
+	string choiceName[] = { "Log On" , "Exit" };
+	int selection = 0;
+
 	do
 	{
-		choice = _getch();
-	} while (choice == '\0');
-
-	while (choice != '1' && choice != '2')
-	{
-		
 		system("cls");
-		cout << "This is the standin login screen\n\n1) Logon\n2) Exit\n\nError, " << choice << "is not a valid input";
+		cout << "This is the standin login screen";
+		cout << endl << " Where would you like to go?";
+
+		for (int i = 0; i < 2; i++) //dispalys all option based on usres permissions
+		{
+
+			if (selection == i) //highlights the choice if it is the selected one
+			{
+				changeColour(C_GREEN, C_LWHITE);
+			}
+			cout << endl << i+1 << ") " << choiceName[i];
+
+			changeColour(); //resets colours
+		}
+
 		do
 		{
-			choice = _getch();
-		} while (choice == '\0');
+			fflush(stdin);
 
-	} 
+			do //the up and down keys are made of two characters
+			{
+				choice[0] = _getch();
+			} while (choice[0] == '\0');
 
-	switch (choice)
-	{
-	case '1':
-		//add code to logon --requires working users.h
+			if (choice[0] == -32) //only reads the second character if the first was the begining of the up or down key
+			{
+				do
+				{
+					choice[1] = _getch();
+				} while (choice[1] == '\0');
+			}
+			else
+			{
+				choice[1] = '\0';
+			}
 
-		//return User;
-		break;
-	case '2':
-		user = NULL;
-		return;
-	}
 
+		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
 
+		if (choice[1] == 72) //moves counter down if user hits down key
+		{
+			selection--;
+			if (selection < 0) { selection = NUMBER_OF_OPTIONS-1; } //resets selection if it goes under zero
+		}
+		else if (choice[1] == 80) //moves counter up if user hits up key
+		{
+			selection++;
+			if (selection > NUMBER_OF_OPTIONS-1) { selection = 0; }
+		}
+		else if (choice[0] == 13) //calls the selected function when user presses enter
+		{
+			switch (selection)
+			{
+			case 0:
+			
+				
+				user = NULL;
+				do
+				{
+					system("cls");
+					cout << "Please enter you first name: ";
+					getline(cin, first);
+
+					cout << "\nPlease enter your last name: ";
+					getline(cin, last);
+
+					do
+					{
+						system("cls");
+						cout << "\nPlease enter your password: ";
+						
+						for (int i = 0; i < password.length(); i++)
+						{
+							cout << '*';
+						}
+						
+						fflush(stdin);
+						do
+						{
+							passChar = _getch();
+						} while (passChar != '\0');
+						
+
+						if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
+						{
+							password.pop_back(); //deletes the last character
+						}
+						else if (passChar != 13)
+						{
+							password += passChar;
+						}
+
+						
+
+					} while (passChar != 13);
+					
+					gUserDatabase->checkCredentials(user, first, last, password);
+
+					if (user == NULL)
+					{
+						system("cls");
+						cout << "Error, invalid credentials\n\nWould you like to try again? (Y\N)";
+
+						do
+						{
+							fflush(stdin);
+							choice[0] = getchar();
+							choice[0] = toupper(choice[0]);
+
+						} while (choice[0] == 'Y' || choice[0] == 'N');
+					}
+
+				} while (choice[0] == 'Y');
+				return;
+			case 1:
+				user = NULL;
+				return;
+			}
+		}
+	} while (true); //checks if they selected logout
 
 }
 
@@ -351,7 +455,7 @@ void menu(User *user) //Cady's changes start here
 		{
 			selection++;
 			if (selection > NUMBER_OF_MMPERMISSIONS) { selection = 0; }
-			while (user->permission.permissionsMM[selection-1] == false && selection != 0) //makes sure the selection is a function the user has acces too
+			while (user->permission.permissionsMM[selection-1] == false && selection != 0) //makes sure the selection is a function the user has acces too, if not it icriments it
 			{
 				selection++;
 				if (selection > 0) { selection = NUMBER_OF_MMPERMISSIONS; } //resets selection if it goes over the top
@@ -360,10 +464,9 @@ void menu(User *user) //Cady's changes start here
 		else if (choice[0] == 13) //calls the selected function when user presses enter
 		{
 
-			switch (selection) //calls the function when they press enter
+			switch (selection) //calls the selected function when they press enter
 			{
 			case 0:
-
 				break;
 			case 1:
 				break;
@@ -378,7 +481,7 @@ void menu(User *user) //Cady's changes start here
 		}
 		
 
-	} while (count != 0); //checks if they selected logout
+	} while (selection != 0); //checks if they selected logout
 
 }//Cady's changes end here
 

@@ -85,13 +85,14 @@ public:
 	UserDatabase(string filename);
 	~UserDatabase();
 
+	int findWithID(int ID); //find a user with a specific id and return an index representring thier position
+	void checkCredentials(User *user, string _firstName, string _lastName, string _password);
+
 	void Add(User user);
 private:
 	vector<User> users;
 	string filePath;
 	
-	int findWithID(int ID); //find a user with a specific id and return an index representring thier position
-	void checkCredentials(User *user, string _firstName, string _lastName, string _password);
 	void reload();
 	void save();
 };
