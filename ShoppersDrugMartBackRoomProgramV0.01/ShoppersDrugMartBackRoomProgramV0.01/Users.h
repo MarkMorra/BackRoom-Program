@@ -82,7 +82,7 @@ User::User(int _ID, string _firstName, string _lastName) //a constructor that se
 class UserDatabase //main job is to store the array os Users
 {
 public:
-	UserDatabase(string filename);
+	UserDatabase(string filename, int *_authCode);
 	~UserDatabase();
 
 	int findWithID(int ID); //find a user with a specific id and return an index representring thier position
@@ -95,6 +95,8 @@ private:
 	
 	void reload();
 	void save();
+
+	int authCode;
 };
 
 void UserDatabase::checkCredentials(User *user,string _firstName, string _lastName, string _password)
@@ -139,23 +141,31 @@ int UserDatabase::findWithID(int ID)
 	return -1; //if no user with this id exists -1 is returned;
 }
 
-UserDatabase::UserDatabase(string filename)
+UserDatabase::UserDatabase(string filename, int *_authCode)
 {
 
-	filePath = FILE_PREFIX + filename + FILE_SUFFIX;
+	filePath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
+
+	authCode = *_authCode;
 
 	FILE *file;
 	file = fopen(filePath.c_str(), "r");
-	if (file == NULL)
+	if (file == NULL) //checks if file exists
 	{
-		file = fopen(filePath.c_str(), "w");
-		if (file == NULL)
+		file = fopen(filePath.c_str(), "w"); //if it dosent it try to create it
+		if (file == NULL) //checks if it was sucessful
 		{
-			errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?");
+			errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?"); //displays error msg
 		}
 		else
 		{
+			if (authCode == 0)
+			{
+				authCode = rand() + 1;
+			}
+			fwrite(&authCode, sizeof(authCode), 1, file);
 			fclose(file);
+
 		}
 	}
 	else
@@ -163,8 +173,9 @@ UserDatabase::UserDatabase(string filename)
 		fclose(file);
 	}
 
-	reload();
+	reload(); //loads data from file
 
+	*_authCode = authCode;
 }
 
 UserDatabase::~UserDatabase()
@@ -188,6 +199,19 @@ void UserDatabase::reload()
 	users.clear();
 
 	User temp;
+	int temp_authCode;
+
+	(fread(&temp_authCode, sizeof(temp), 1, file));
+
+	if (authCode == 0)
+	{
+		authCode = temp_authCode;
+	}
+	else if (authCode != temp_authCode)
+	{
+		errorMsg("Error, authCode mismatch in users.dat . This is most likely casued by someone tampering with the data files.  To prevent data theft if you continue to use the program without restoring the data files to their original state the users file will be deleted");
+		return;
+	}
 
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
@@ -215,6 +239,7 @@ void UserDatabase::save()
 		return;
 	}
 
+	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
 	it = users.begin();
 	while (it != users.end())
 	{

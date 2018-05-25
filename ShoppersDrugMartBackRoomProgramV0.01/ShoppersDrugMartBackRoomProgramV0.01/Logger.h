@@ -63,7 +63,7 @@ void Log::display() {
 class Logger
 {
 public:
-	Logger(string Filename); //filename is the location of the file the log data is saved in
+	Logger(string Filename, int *_authCode); //filename is the location of the file the log data is saved in
 	~Logger();
 	void addItem(int UPCCode, int Userid, int PLUCode, char type, string message);
 	void display();
@@ -73,6 +73,7 @@ public:
 
 private:
 
+	int authCode;
 	void reload(); //reloads logger data using data in file
 	void save(); //saves logger data to file
 	string Filepath;
@@ -80,12 +81,12 @@ private:
 
 };
 
-Logger::Logger(string filename)
+Logger::Logger(string filename, int *_authCode)
 {
 
 	Filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
-
-	CreateDirectory(filename.c_str(), NULL);
+	
+	authCode = *_authCode;
 
 	FILE *file;
 	file = fopen(Filepath.c_str(), "r");
@@ -98,7 +99,13 @@ Logger::Logger(string filename)
 		}
 		else
 		{
+			if (authCode == 0)
+			{
+				authCode = rand() + 1;
+			}
+			fwrite(&authCode, sizeof(authCode), 1, file);
 			fclose(file);
+			
 		}
 	}
 	else
@@ -108,6 +115,7 @@ Logger::Logger(string filename)
 
 	reload(); //loads data from file
 
+	*_authCode = authCode;
 }
 
 Logger::~Logger()
@@ -130,6 +138,19 @@ void Logger::reload() {
 	log.clear(); //clearslog data from logger
 
 	Log temp;
+	int temp_authCode;
+
+	(fread(&temp_authCode, sizeof(temp), 1, file));
+
+	if (authCode == 0)
+	{
+		authCode = temp_authCode;
+	}
+	else if (authCode != temp_authCode)
+	{
+		errorMsg("Error, authCode mismatch in Logger.log. This is most likely casued by someone tampering with the data files. To prevent data theft if you continue to use the program without restoring the data files to their original state the log file will be deleted");
+		return;
+	}
 
 	while (fread(&temp,sizeof(temp),1,file)) //keeps  read untill eof is reached
 	{
@@ -156,6 +177,7 @@ void Logger::save()
 		return;
 	}
 
+	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
 	it = log.begin();
 	while (it != log.end()) //keeps looping untill it reaches the end of the list
 	{

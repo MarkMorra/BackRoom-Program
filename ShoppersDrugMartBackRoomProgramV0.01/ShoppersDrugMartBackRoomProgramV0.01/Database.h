@@ -70,7 +70,7 @@ Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _p
 class ItemDatabase {
 
 public:
-	ItemDatabase(string filename);
+	ItemDatabase(string filename, int *_authCode);
 	~ItemDatabase();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
 	vector<Item>::iterator Search(int upc);
@@ -85,16 +85,45 @@ private:
 	string filepath;
 	vector<Item> items;
 
+	int authCode;
+
 };
 
-ItemDatabase::ItemDatabase(string filename) {
+ItemDatabase::ItemDatabase(string filename, int *_authCode)
+{
 
-	filepath = FILE_PREFIX + filename + FILE_SUFFIX;
+	filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
 
-	CreateDirectory(filename.c_str(), NULL);
+	authCode = *_authCode;
 
-	Reload();
+	FILE *file;
+	file = fopen(filepath.c_str(), "r");
+	if (file == NULL) //checks if file exists
+	{
+		file = fopen(filepath.c_str(), "w"); //if it dosent it try to create it
+		if (file == NULL) //checks if it was sucessful
+		{
+			errorMsg("Error, Unable to open Logger file, Path: \"" + filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?"); //displays error msg
+		}
+		else
+		{
+			if (authCode == 0)
+			{
+				authCode = rand() + 1;
+			}
+			fwrite(&authCode, sizeof(authCode), 1, file);
+			fclose(file);
 
+		}
+	}
+	else
+	{
+		fclose(file);
+	}
+
+	Reload(); //loads data from file
+
+	*_authCode = authCode;
 }
 
 ItemDatabase::~ItemDatabase() {
@@ -199,6 +228,19 @@ void ItemDatabase::Reload() {
 	items.clear();
 
 	Item temp;
+	int temp_authCode;
+
+	(fread(&temp_authCode, sizeof(temp), 1, file));
+
+	if (authCode == 0)
+	{
+		authCode = temp_authCode;
+	}
+	else if (authCode != temp_authCode)
+	{
+		errorMsg("Error, authCode mismatch in database.dat . This is most likely casued by someone tampering with the data files. To prevent data theft if you continue to use the program without restoring the data files to their original state the item database file will be deleted");
+		return;
+	}
 
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
@@ -226,6 +268,8 @@ void ItemDatabase::Save()
 		errorMsg("Error, Unable to open Item Database file, Path: \"" + filepath + "\" The file pointer was NULL. This occured in the ItemDatabase::save function");
 		return;
 	}
+
+	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
 
 	it = items.begin();
 	while (it != items.end())

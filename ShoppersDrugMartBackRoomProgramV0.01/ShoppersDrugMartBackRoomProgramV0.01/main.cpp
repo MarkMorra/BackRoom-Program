@@ -60,10 +60,17 @@ int main() {
 
 void onStart() {
 
+	int *authCode = new int; //all datafiles containe a random generated authCode. All databases generated at the same time contain the same authCode, this is to verifiy that a password database corisponding to a item database is not used to access antoher database
+	*authCode = 0;
+	
 	srand(time(NULL));
-	gLogger = new Logger(FOLDER_NAME);
-	gItemDatabase = new ItemDatabase(FOLDER_NAME);
-	gUserDatabase = new UserDatabase(FOLDER_NAME);
+
+	CreateDirectory(FOLDER_NAME, NULL); //creates the data folder
+
+	gUserDatabase = new UserDatabase(FOLDER_NAME, authCode);
+	gLogger = new Logger(FOLDER_NAME, authCode);
+	gItemDatabase = new ItemDatabase(FOLDER_NAME, authCode);
+	
 
 }
 
