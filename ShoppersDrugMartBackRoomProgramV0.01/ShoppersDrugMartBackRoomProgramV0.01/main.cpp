@@ -241,17 +241,25 @@ void menu(User *user) //Cady's changes start here
 	char choice[2] = { 0,0 };
 	int selection = 0;
 	int menuselect = 0;
-	string displayName[] = {"Select Items","Reset Items" ,"View Items", "Reset Users", ""}; //keeps adding
+	string displayName[] = {"Select Items","Reset Items" ,"View Items", "Reset Users", "Settings" , "Add items"}; //keeps adding
 	int count = 0;
 
 	//display functions based on user permissions
 
 	do
 	{
+		system("cls");
 		cout << endl << " Where would you like to go?";
-	
+		count = 0;
 		
+
+		if (selection == count) //highlights the selection if it is the selected one
+		{
+			changeColour(C_BLUE, C_WHITE);
+		}
 		cout << "\n1) Log Out"; //display logout option, every user has acess to it
+		changeColour(); //resets colours
+		count++;
 		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //dispalys all option based on usres permissions
 		{
 			if (user->permission.permissionsMM[i] == true)
@@ -263,7 +271,7 @@ void menu(User *user) //Cady's changes start here
 				count++;
 				cout << endl << count+1 << ") " << displayName[i];
 
-				changeColour();
+				changeColour(); //resets colours
 				//add it so it can move
 			}
 		}
@@ -271,24 +279,33 @@ void menu(User *user) //Cady's changes start here
 		do
 		{
 			fflush(stdin);
-			choice[0] = _getch();
-			choice[1] = _getch();
-		} while ((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13); //checks if the user presses up, down or enter
+			
+			do
+			{
+				choice[0] = _getch();
+			} while (choice[0] == '\0');
+			
+			do
+			{
+				choice[1] = _getch();
+			} while (choice[1] == '\0');
+
+		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
 
 		if (choice[1] == 72) //moves counter down if user hits down key
 		{
-			count--;
-			if (count < 0) { count = NUMBER_OF_MMPERMISSIONS - 1; }
+			selection--;
+			if (selection < 0) { selection = NUMBER_OF_MMPERMISSIONS; } //resets selection if it goes under zero
 		}
 		else if (choice[1] == 80) //moves counter up if user hits up key
 		{
-			count++;
-			if (count > NUMBER_OF_MMPERMISSIONS - 1) { count = 0; }
+			selection++;
+			if (selection > NUMBER_OF_MMPERMISSIONS) { selection = 0; }
 		}
 		else if (choice[0] == 13) //calls the selected function when user presses enter
 		{
 
-			switch (count) //calls the function when they press enter
+			switch (selection) //calls the function when they press enter
 			{
 			case 0:
 
