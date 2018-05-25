@@ -25,31 +25,31 @@ HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 void changeColour() //no paramters means it gets reverted to default (grey on black)
 {
 
-	SetConsoleTextAttribute(console, C_BLACK*10 + C_WHITE);
+	SetConsoleTextAttribute(console, C_BLACK* 0x10 + C_WHITE);
 
 }
 
 void changeColour(int backGround, int foreGround) //sets the colours based on the numbers passed
 {
 
-	SetConsoleTextAttribute(console, backGround * 10 + foreGround);
+	SetConsoleTextAttribute(console, backGround * 0x10 + foreGround);
 
 }
 
 void changeColour(int backGroundBefore, int foreGroundBefore, string str, int backGroundAfter, int foreGroundAfter) //sets the colours based on the first set of numbers, displays the string passed and then sets the colour to the second set of ints passed
 {
 
-	SetConsoleTextAttribute(console, backGroundBefore * 10 + foreGroundBefore);
+	SetConsoleTextAttribute(console, backGroundBefore * 0x10 + foreGroundBefore);
 	cout << str;
-	SetConsoleTextAttribute(console, backGroundAfter * 10 + foreGroundAfter);
+	SetConsoleTextAttribute(console, backGroundAfter * 0x10 + foreGroundAfter);
 
 }
 
 void changeColour(int backGroundBefore, int foreGroundBefore, string str) //sets the colours based on the first set of numbers, displays the string passed and then sets the colours back to the default (grey on black)
 {
 
-	SetConsoleTextAttribute(console, backGroundBefore * 10 + foreGroundBefore);
+	SetConsoleTextAttribute(console, backGroundBefore * 0x10 + foreGroundBefore);
 	cout << str;
-	SetConsoleTextAttribute(console, C_BLACK * 10 + C_WHITE);
+	SetConsoleTextAttribute(console, C_BLACK * 0x10 + C_WHITE);
 
 }
