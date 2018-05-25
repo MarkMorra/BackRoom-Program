@@ -28,6 +28,7 @@ void viewItemLogs(Logger *log);
 void changePrice(Item *item, Logger *log);
 void changeInventory(Item *item, Logger *log);
 void help();
+int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
 //Cady's changes end here
 
 Logger *gLogger;
@@ -250,137 +251,79 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 void logon(User *user) {
 
-	CONST int NUMBER_OF_OPTIONS = 2;
-
 	string first, last, password; //saves the logon information
 	char passChar; //saves the most recent character enetered by the user when typing their password
-	char choice[2];
+	char choice;
 	string choiceName[] = { "Log On" , "Exit" };
 	int selection = 0;
 
-	do
+	selection = navigatableMenu("You are currently on the welcome screen",choiceName, 2, C_BLUE, C_WHITE);
+
+	switch (selection)
 	{
-		system("cls");
-		cout << "This is the standin login screen";
-		cout << endl << " Where would you like to go?";
-
-		for (int i = 0; i < 2; i++) //dispalys all option based on usres permissions
-		{
-
-			if (selection == i) //highlights the choice if it is the selected one
-			{
-				changeColour(C_GREEN, C_LWHITE);
-			}
-			cout << endl << i+1 << ") " << choiceName[i];
-
-			changeColour(); //resets colours
-		}
-
+	case 0: //user wants to logon
+		user = NULL;
 		do
 		{
-			fflush(stdin);
+			system("cls");
+			cout << "Please enter you first name: ";
+			getline(cin, first);
 
-			do //the up and down keys are made of two characters
-			{
-				choice[0] = _getch();
-			} while (choice[0] == '\0');
+			cout << "\nPlease enter your last name: ";
+			getline(cin, last);
 
-			if (choice[0] == -32) //only reads the second character if the first was the begining of the up or down key
+			do
 			{
+				system("cls");
+				cout << "\nPlease enter your password: ";
+
+				for (int i = 0; i < password.length(); i++)
+				{
+					cout << '*';
+				}
+
+				fflush(stdin);
 				do
 				{
-					choice[1] = _getch();
-				} while (choice[1] == '\0');
-			}
-			else
+					passChar = _getch();
+				} while (passChar != '\0');
+
+
+				if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
+				{
+					password.pop_back(); //deletes the last character
+				}
+				else if (passChar != 13)
+				{
+					password += passChar;
+				}
+
+
+
+			} while (passChar != 13);
+
+			gUserDatabase->checkCredentials(user, first, last, password);
+
+			if (user == NULL)
 			{
-				choice[1] = '\0';
-			}
+				system("cls");
+				cout << "Error, invalid credentials\n\nWould you like to try again? (Y\N)";
 
-
-		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
-
-		if (choice[1] == 72) //moves counter down if user hits down key
-		{
-			selection--;
-			if (selection < 0) { selection = NUMBER_OF_OPTIONS-1; } //resets selection if it goes under zero
-		}
-		else if (choice[1] == 80) //moves counter up if user hits up key
-		{
-			selection++;
-			if (selection > NUMBER_OF_OPTIONS-1) { selection = 0; }
-		}
-		else if (choice[0] == 13) //calls the selected function when user presses enter
-		{
-			switch (selection)
-			{
-			case 0:
-			
-				
-				user = NULL;
 				do
 				{
-					system("cls");
-					cout << "Please enter you first name: ";
-					getline(cin, first);
+					fflush(stdin);
+					choice = getchar();
+					choice = toupper(choice);
 
-					cout << "\nPlease enter your last name: ";
-					getline(cin, last);
-
-					do
-					{
-						system("cls");
-						cout << "\nPlease enter your password: ";
-						
-						for (int i = 0; i < password.length(); i++)
-						{
-							cout << '*';
-						}
-						
-						fflush(stdin);
-						do
-						{
-							passChar = _getch();
-						} while (passChar != '\0');
-						
-
-						if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
-						{
-							password.pop_back(); //deletes the last character
-						}
-						else if (passChar != 13)
-						{
-							password += passChar;
-						}
-
-						
-
-					} while (passChar != 13);
-					
-					gUserDatabase->checkCredentials(user, first, last, password);
-
-					if (user == NULL)
-					{
-						system("cls");
-						cout << "Error, invalid credentials\n\nWould you like to try again? (Y\N)";
-
-						do
-						{
-							fflush(stdin);
-							choice[0] = getchar();
-							choice[0] = toupper(choice[0]);
-
-						} while (choice[0] == 'Y' || choice[0] == 'N');
-					}
-
-				} while (choice[0] == 'Y');
-				return;
-			case 1:
-				user = NULL;
-				return;
+				} while (choice == 'Y' || choice == 'N');
 			}
-		}
-	} while (true); //checks if they selected logout
+
+		} while (choice == 'Y');
+		return;
+	case 1:
+		user = NULL;
+		return;
+	}
 
 }
 
@@ -593,4 +536,67 @@ void help()
 	cout << endl << endl << " Please press the enter key to return to the main menu...";
 
 	getchar();
+}
+
+int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
+{
+
+	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
+	int selection = 0;
+
+	do
+	{
+		system("cls");
+		cout << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+
+		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
+		{
+
+			if (selection == i) //highlights the choice if it is the selected one
+			{
+				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
+			}
+			cout << endl << i + 1 << ") " << options[i];
+
+			changeColour(); //resets colours
+		}
+
+		do
+		{
+			fflush(stdin);
+
+			do //the up and down keys are made of two characters
+			{
+				choice[0] = _getch();
+			} while (choice[0] == '\0');
+
+			if (choice[0] == -32) //only reads the second character if the first was the begining of the up or down key
+			{
+				do
+				{
+					choice[1] = _getch();
+				} while (choice[1] == '\0');
+			}
+			else //sets the second char to a null termination character if the up or down key was not pressed
+			{
+				choice[1] = '\0';
+			}
+
+
+		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
+
+		if (choice[1] == 72) //moves counter down if user hits down key
+		{
+			selection--;
+			if (selection < 0) { selection = numberOfOptions - 1; } //resets selection if it goes under zero
+		}
+		else if (choice[1] == 80) //moves counter up if user hits up key
+		{
+			selection++;
+			if (selection > numberOfOptions - 1) { selection = 0; }
+		}
+
+	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
+	
+	return selection;
 }
