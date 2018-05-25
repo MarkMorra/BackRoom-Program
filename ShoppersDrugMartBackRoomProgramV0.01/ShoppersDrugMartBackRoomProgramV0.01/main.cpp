@@ -27,6 +27,7 @@ void viewItem(Item *item);
 void viewItemLogs(Logger *log);
 void changePrice(Item *item, Logger *log);
 void changeInventory(Item *item, Logger *log);
+void help();
 //Cady's changes end here
 
 Logger *gLogger;
@@ -392,4 +393,40 @@ void changePrice(Item *item, Logger *log)
 void changeInventory(Item *item, Logger *log)
 {
 
+}
+
+void help()
+{
+	cout << endl << "	         +s++o											         +s++o         ";
+	cout << endl << "	        +y												        +y             ";
+	cout << endl << "	   ``   +y    `//ssooo`   _    _ ______ _      _____  	   ``   +y    `//ssooo`  ";
+	cout << endl << "	  //y`    ds++om//    .d  | |  | |  ____| |    |  __ \ 	  //y`    ds++om//    .d  "; 
+	cout << endl << "	  so     d...`h:    `//  | |__| | |__  | |    | |__) |	  so     d...`h:    `//  ";
+	cout << endl << "	   //ssoohy:..-+dy//`     |  __  |  __| | |    |  ___/ 	   //ssoohy:..-+dy//`     ";
+	cout << endl << "	         `-yos`  :d-    | |  | | |____| |____| |   				  `-yos`  :d-    ";
+	cout << endl << "	     `     oy     -d    |_|  |_|______|______|_|		      `     oy     -d    ";
+	cout << endl << "	     //s-`:ys`   :+s:									      //s-`:ys`   :+s:   ";
+	cout << endl << "	      //sys//     +//										       //sys//     +//     ";
+
+	cout << endl << endl << endl << " How to Maneuver: Use the arrow keys to move up and down the selections.";
+	cout << " Press enter to confirm your selection. Press enter anytime the screen pauses to continue the program.";
+	
+	cout << endl << endl << " How to Exit: One can only exit from the log in screen. Therefore, select log out to return";
+	cout << endl << " to the log in screen and select exit as opposed to the log in option";
+
+	cout << endl << endl << " If some option are not showing for you, it is because the admin as not given you permissions";
+	cout << endl << " to access the function you seek. Speak to an admin user and have them log in. Select settings and have";
+	cout << endl << " and have the admin add permissions to your account.";
+  
+	cout << endl << endl << " The first person to log in to this program is automatically the admin. After that, the admin may";
+	cout << endl << " add new users or admins and manage their permission levels in settings.";
+                              
+	cout << endl << endl << " Warning: It is possible to reset the user database. This means that every user account including";
+	cout << endl << " including the current admins will be deleted and the program will return to default. Therefore, every";
+	cout << endl << " user and admin must be added again to the program. Similar to the point above, the first log in after";
+	cout << endl << " resetting the user database will automatically become the admin.";
+
+	cout << endl << endl << " Please press the enter key to return to the main menu...";
+
+	getchar();
 }
