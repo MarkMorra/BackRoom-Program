@@ -112,7 +112,15 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 
 	it = Search(upc);
 
-	if (it->upc == upc) {
+	if (it._Ptr == NULL) {
+
+		items.push_back(Item(upc, plu, amount, name, desc, price, cost, sale));
+
+	} else if (it == items.end()) {
+
+		items.push_back(Item(upc, plu, amount, name, desc, price, cost, sale));
+
+	} else if ((*it).upc == upc) {
 	
 		cout << "This item already exists. Add code to modify item later.";
 	
@@ -165,7 +173,7 @@ vector<Item>::iterator ItemDatabase::Search(int upc) {
 
 		} else {
 
-			last = middle + 1;
+			last = middle - 1;
 
 		}
 

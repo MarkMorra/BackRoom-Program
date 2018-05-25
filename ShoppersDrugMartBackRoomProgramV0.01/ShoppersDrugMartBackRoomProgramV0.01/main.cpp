@@ -80,7 +80,7 @@ void welcome() {
 
 void testMenu() //this function is only for testing and can be accssed by pressing page up on the welcome screen
 {
-	char choice;
+	char choice, dis;
 	string msg;
 	int upc;
 	int plu;
@@ -103,7 +103,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 		cout << "\n5. display items";
 		cout << "\n6. generate 500 random items and add to list";
 
-		cout << "\n\nChoise option";
+		cout << "\n\nChoose option";
 		do
 		{
 			choice = _getch();
@@ -176,6 +176,42 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 			break;
 		case '5':
+
+			vector<Item*> *retItems; //returned items
+
+			cout << "1. display all items\n2. search by upc";
+			do {
+				dis = _getch();
+			} while (dis == '\0');
+
+			switch (dis) {
+				case '1':
+
+					retItems = gItemDatabase->Find();
+
+					system("cls");
+
+					for (int i = 0; i < retItems->size(); i++) {
+
+						(*retItems)[i]->Display();
+
+						cout << "\n\n";
+
+					}
+
+					break;
+				case '2':
+					int tempupc;
+
+					cout << "upc: ";
+					cin >> tempupc;
+
+					retItems = gItemDatabase->Find(tempupc, 'u');
+
+					(*retItems)[0]->Display();
+
+					break;
+			}
 
 			break;
 		case '6':
