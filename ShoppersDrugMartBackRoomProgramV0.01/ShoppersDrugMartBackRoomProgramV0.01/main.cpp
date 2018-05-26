@@ -328,6 +328,10 @@ void logon(User **user) {
 
 				} while (choice != 'Y' && choice != 'N');
 			}
+			else
+			{
+				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + "logged on");
+			}
 
 		} while (choice == 'Y' && *user == NULL);
 		return;
@@ -341,7 +345,7 @@ void logon(User **user) {
 void menu(User **user) //Cady's changes start here
 {
 	int selection = 0;
-	string allOptions[] = {"Search Items", "Add an Item" , "View Logs" , "Create new User Account" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = {"Search Items", "Add an Item" , "View Logs" , "Change Another User's Settings" , "Create new User Account" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
@@ -395,6 +399,8 @@ void menu(User **user) //Cady's changes start here
 		}
 
 	} while (corrispondingIndex[selection] != 0);
+
+	gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + "logged off");
 
 	delete[] corrispondingIndex;
 	delete[] avalibleOptions;
