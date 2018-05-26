@@ -10,7 +10,7 @@
 #define C_RED 0x4
 #define C_PURPLE 0x5
 #define C_YELLOW 0x6
-#define C_WHITE 0x7
+#define C_LGREY 0x7
 #define C_GREY 0x8
 #define C_LBLUE 0x9
 #define C_LGREEN 0x10
@@ -18,7 +18,7 @@
 #define C_LRED 0xC
 #define C_LPURPLE 0xD
 #define C_LYELLOW 0xE
-#define C_LWHITE 0xF
+#define C_WHITE 0xF
 
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 

@@ -12,16 +12,16 @@ using namespace std;
 void onStart();
 void welcome();
 void testMenu();
-void logon(User *user);
-void menu(User *user);
-void selectItem(User *user);
+void logon(User **user);
+void menu(User **user);
+void selectItem(User **user);
 
 //Cady's changes start here
 void logout();
 void resetItem(Item *item, Logger *log);
 void viewLogs(Logger *log);
-void resetUser(User *user, Logger *log);
-void settings(User *user, Logger *log);
+void resetUser(User **user, Logger *log);
+void settings(User **user, Logger *log);
 void addItem(Item *item, Logger *log);
 void viewItem(Item *item);
 void viewItemLogs(Logger *log);
@@ -37,7 +37,7 @@ UserDatabase *gUserDatabase;
 
 int main() {
 
-	User *user = NULL;
+	User **user = new User*;
 
 
 
@@ -47,7 +47,7 @@ int main() {
 	while (true)
 	{
 		logon(user);
-		if (user == NULL) { return EXIT_SUCCESS; }
+		if (*user == NULL) { return EXIT_SUCCESS; }
 		menu(user);
 	}
 	
@@ -249,7 +249,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	
 }
 
-void logon(User *user) {
+void logon(User **user) {
 
 	string first, last, password; //saves the logon information
 	char passChar; //saves the most recent character enetered by the user when typing their password
@@ -262,9 +262,11 @@ void logon(User *user) {
 	switch (selection)
 	{
 	case 0: //user wants to logon
-		user = NULL;
 		do
 		{
+			*user = NULL;
+			password = "";
+
 			system("cls");
 			cout << "Please enter you first name: ";
 			getline(cin, first);
@@ -286,12 +288,15 @@ void logon(User *user) {
 				do
 				{
 					passChar = _getch();
-				} while (passChar != '\0');
+				} while (passChar == '\0');
 
 
 				if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
 				{
-					password.pop_back(); //deletes the last character
+					if (password.length() > 0)
+					{
+						password.pop_back(); //deletes the last character
+					}
 				}
 				else if (passChar != 13)
 				{
@@ -304,145 +309,103 @@ void logon(User *user) {
 
 			gUserDatabase->checkCredentials(user, first, last, password);
 
-			if (user == NULL)
+			if (*user == NULL)
 			{
 				system("cls");
-				cout << "Error, invalid credentials\n\nWould you like to try again? (Y\N)";
+				cout << "Error, invalid credentials\n\nWould you like to try again? (Y/N)";
 
 				do
 				{
 					fflush(stdin);
-					choice = getchar();
+					do
+					{
+						choice = _getch();
+					} while (choice == '\0');
 					choice = toupper(choice);
 
-				} while (choice == 'Y' || choice == 'N');
+				} while (choice != 'Y' && choice != 'N');
 			}
 
-		} while (choice == 'Y');
+		} while (choice == 'Y' && *user == NULL);
 		return;
 	case 1:
-		user = NULL;
+		*user = NULL;
 		return;
 	}
 
 }
 
-void menu(User *user) //Cady's changes start here
+void menu(User **user) //Cady's changes start here
 {
-	char choice[2] = { 0,0 };
 	int selection = 0;
-	int menuselect = 0;
-	string displayName[] = {"Select Items","Reset Items" ,"View Items", "Reset Users", "Settings" , "Add items"}; //keeps adding
-	int count = 0;
+	string allOptions[] = {"Select Items","Reset Items" ,"View Items", "Reset Users", "Settings" , "Add items"}; //all of the strings corrispinging to all the possible menu options
+	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
+	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
+	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
 
-	//display functions based on user permission
+	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //counts how many permission the current user has access too
+	{
 
+		if ((*user)->permission.permissionsMM[i] == true) 
+		{
+			amount++;
+		}
+
+	}
+
+	avalibleOptions = new string[amount];
+	corrispondingIndex = new int[amount];
+
+	avalibleOptions[0] = "Log Out"; //all users have access to logout
+
+	int pos = 1; //this number is iterated everytime the user has access to a command;
+	corrispondingIndex[0] = 0; //option zero is always option zero as it isa vilible to every user;
+	
+	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //makes the array of string to be passed to the menu function
+	{
+
+		if ((*user)->permission.permissionsMM[i] == true)
+		{
+			corrispondingIndex[pos] = i;
+			avalibleOptions[pos] = allOptions[i];
+			pos++;
+		}
+
+	}
+	
 	do
 	{
-		system("cls");
-		cout << endl << " Where would you like to go?";
-		count = 0;
-		
+		selection = navigatableMenu("You are on the main menu screen.\nThe options you see listed are based on your premission level.\nIf you belive there is a mistake with your permission see your manager.", avalibleOptions, amount, C_BLUE, C_LGREY);
 
-		if (selection == count) //highlights the selection if it is the selected one
+		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
-			changeColour(C_GREEN, C_LWHITE);
-		}
-		cout << "\n1) Log Out"; //display logout option, every user has acess to it
-		changeColour(); //resets colours
-		count++;
-		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //dispalys all option based on usres permissions
-		{
-			if (user->permission.permissionsMM[i] == true)
-			{
-				if (selection == count) //highlights the selection if it is the selected one
-				{
-					changeColour(C_GREEN, C_LWHITE);
-				}
-				count++;
-				cout << endl << count << ") " << displayName[i];
-
-				changeColour(); //resets colours
-				//add it so it can move
-			}
+		case 1:
+			break;
+		case 2:
+			break;
+		case 3:
+			break;
+		case 4:
+			break;
+		case 5:
+			break;
 		}
 
-		do
-		{
-			fflush(stdin);
-			
-			do //the up and down keys are made of two characters
-			{
-				choice[0] = _getch();
-			} while (choice[0] == '\0');
-			
-			if (choice[0] == -32) //only reads the second character if the first was the begining of the up or down key
-			{
-				do
-				{
-					choice[1] = _getch();
-				} while (choice[1] == '\0');
-			}
-			else
-			{
-				choice[1] = '\0';
-			}
-			
+	} while (corrispondingIndex[selection] != 0);
 
-		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
-
-		if (choice[1] == 72) //moves counter down if user hits down key
-		{
-			selection--;
-			if (selection < 0) { selection = NUMBER_OF_MMPERMISSIONS; } //resets selection if it goes under zero
-			while (user->permission.permissionsMM[selection-1] == false && selection != 0) //makes sure the selection is a function the user has acces too
-			{
-				selection--;
-				if (selection < 0) { selection = NUMBER_OF_MMPERMISSIONS; } //resets selection if it goes under zero
-			}
-		}
-		else if (choice[1] == 80) //moves counter up if user hits up key
-		{
-			selection++;
-			if (selection > NUMBER_OF_MMPERMISSIONS) { selection = 0; }
-			while (user->permission.permissionsMM[selection-1] == false && selection != 0) //makes sure the selection is a function the user has acces too, if not it icriments it
-			{
-				selection++;
-				if (selection > 0) { selection = NUMBER_OF_MMPERMISSIONS; } //resets selection if it goes over the top
-			}
-		}
-		else if (choice[0] == 13) //calls the selected function when user presses enter
-		{
-
-			switch (selection) //calls the selected function when they press enter
-			{
-			case 0:
-				break;
-			case 1:
-				break;
-			case 3:
-				break;
-			case 4:
-				break;
-			case 5:
-				break;
-			}
-
-		}
-		
-
-	} while (selection != 0); //checks if they selected logout
+	delete[] corrispondingIndex;
+	delete[] avalibleOptions;
 
 }//Cady's changes end here
 
-void selectItem(User *user) 
+void selectItem(User **user) 
 {
 	
 	//needs more database.h member functions
 
 }
 
-void displayItemStats(User *user, Item *item) 
+void displayItemStats(User **user, Item *item) 
 {
 
 	system("cls");
@@ -467,12 +430,12 @@ void viewLogs(Logger *log)
 
 }
 
-void resetUser(User *user, Logger *log)
+void resetUser(User **user, Logger *log)
 {
 
 }
 
-void settings(User *user, Logger *log)
+void settings(User **user, Logger *log)
 {
 
 }

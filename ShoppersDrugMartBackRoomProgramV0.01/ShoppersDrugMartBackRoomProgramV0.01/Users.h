@@ -45,7 +45,7 @@ Permissions::Permissions()
 		permissionsMM[i] = false;
 	}
 	
-	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++)
 	{
 		permissionsIM[i] = false;
 	}
@@ -54,7 +54,7 @@ Permissions::Permissions()
 class User //Contains usernames and passwords of each user, accessed through UserDatabase class
 {
 public:
-	User(int ID,string firstName,string secondName);
+	User(int ID,string _firstName,string _lastName, string _password, Permissions _permissions);
 	User();
 	
 	Permissions permission;
@@ -72,11 +72,13 @@ User::User() //default constructor just sets all value to zero
 	strcpy(lastName, "");
 }
 
-User::User(int _ID, string _firstName, string _lastName) //a constructor that sets the value based on the values passes
+User::User(int _ID, string _firstName, string _lastName, string _password, Permissions _permissions) //a constructor that sets the value based on the values passes
 {
 	id = _ID;
 	strcpy(firstName, _firstName.c_str());
 	strcpy(lastName, _lastName.c_str());
+	strcpy(password, _password.c_str());
+	permission = _permissions;
 };
 
 class UserDatabase //main job is to store the array os Users
@@ -86,7 +88,7 @@ public:
 	~UserDatabase();
 
 	int findWithID(int ID); //find a user with a specific id and return an index representring thier position
-	void checkCredentials(User *user, string _firstName, string _lastName, string _password);
+	void checkCredentials(User **user, string _firstName, string _lastName, string _password);
 
 	void Add(User user);
 private:
@@ -99,7 +101,7 @@ private:
 	int authCode;
 };
 
-void UserDatabase::checkCredentials(User *user,string _firstName, string _lastName, string _password)
+void UserDatabase::checkCredentials(User **user,string _firstName, string _lastName, string _password)
 {
 	vector<User>::iterator it;
 
@@ -109,7 +111,7 @@ void UserDatabase::checkCredentials(User *user,string _firstName, string _lastNa
 	{
 		if (string(it->firstName) == _firstName && string(it->lastName) == _lastName && string(it->password) == _password)
 		{
-			user = &*it;
+			*user = &(*it);
 			return;
 		}
 		it++;
@@ -176,6 +178,38 @@ UserDatabase::UserDatabase(string filename, int *_authCode)
 	reload(); //loads data from file
 
 	*_authCode = authCode;
+
+	if (users.size() < 1) //if there are no users in the data base allow a new admin user to be created
+	{
+
+		string firstname, lastname, password;
+
+		system("cls");
+
+		cout << "There are currently no user accounts.\n The following steps will allow you to create a new user account with full privalages\n\nPlease enter a first name: ";
+		getline(cin, firstname);
+
+		cout << "\nPlease enter a last name: ";
+		getline(cin, lastname);
+
+		cout << "\nPlease enter a password: ";
+		getline(cin, password);
+
+		Permissions permissions;
+
+		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+		{
+			permissions.permissionsMM[i] = true;
+		}
+
+		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++)
+		{
+			permissions.permissionsIM[i] = true;
+		}
+
+		users.push_back(User(0, firstname, lastname, password, permissions));
+		save();
+	}
 }
 
 UserDatabase::~UserDatabase()
@@ -201,7 +235,7 @@ void UserDatabase::reload()
 	User temp;
 	int temp_authCode;
 
-	(fread(&temp_authCode, sizeof(temp), 1, file));
+	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
 	if (authCode == 0)
 	{
@@ -222,6 +256,11 @@ void UserDatabase::reload()
 	}
 
 	fclose(file);
+
+	if (users.size() < 0)
+	{
+		errorMsg("Error, There was no data in user database, was the file deleted? Please resart the program to reload from the file. If the error persists place a copy of the same users.dat file that has been deleted in the data folder. If this is not an option delete the users.dat file in the data folder. this will unfortuanatlly result in all other data being wiped to prevent data theft, sorry for the inconveniance");
+	}
 }
 
 void UserDatabase::save()
