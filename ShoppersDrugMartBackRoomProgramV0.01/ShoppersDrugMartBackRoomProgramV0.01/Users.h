@@ -12,14 +12,16 @@ using namespace std;
 #define FILE_SUFFIX "/users.dat"
 
 //used to acces a specific command in the permsissions bool array inside of permisssions class
-#define MM_SELECTITEM 0 //MM means main menu
-#define MM_RESETITEM 1
+#define MM_SEARCHITEMDATABASE 0 //MM means main menu
+#define MM_ADDITEM 1
 #define MM_VIEWLOGS 2
-#define MM_RESETUSERS 3
-#define MM_SETTINGS 4
-#define MM_ADDITEM 5
+#define MM_UEERSETTINGS 3
+#define MM_ADDUSER 4
+#define MM_RESETITEM 5
+#define MM_RESETUSERS 6
+#define MM_RESETLOGS 7
 
-#define NUMBER_OF_MMPERMISSIONS 6 //number of bools in permissions bool array
+#define NUMBER_OF_MMPERMISSIONS 8 //number of bools in permissions bool array
 
 
 #define IM_VIEWSPECIFIC 0 //IM measn item menu

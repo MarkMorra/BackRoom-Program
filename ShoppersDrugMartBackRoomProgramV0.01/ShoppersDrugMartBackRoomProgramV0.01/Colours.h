@@ -20,12 +20,14 @@
 #define C_LYELLOW 0xE
 #define C_WHITE 0xF
 
+#define C_DEFAULT (C_BLACK* 0x10 + C_WHITE)
+
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 
 void changeColour() //no paramters means it gets reverted to default (grey on black)
 {
 
-	SetConsoleTextAttribute(console, C_BLACK* 0x10 + C_WHITE); //change thses to change the default colour
+	SetConsoleTextAttribute(console, C_DEFAULT); //change thses to change the default colour
 
 }
 
@@ -50,6 +52,6 @@ void changeColour(int backGroundBefore, int foreGroundBefore, string str) //sets
 
 	SetConsoleTextAttribute(console, backGroundBefore * 0x10 + foreGroundBefore);
 	cout << str;
-	changeColour();
+	SetConsoleTextAttribute(console, C_DEFAULT);
 
 }
