@@ -109,6 +109,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	float price;
 	float cost;
 	float sale;
+	string display;
 
 	while (true)
 	{
@@ -148,8 +149,8 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 		case '2':
 			system("cls");
-			gLogger->display();
-			cout << "\n\npress enter...";
+			gLogger->display(&display);
+			cout << display << "\n\npress enter...";
 			while (_getch() != 13);
 			break;
 		case '3':
@@ -573,7 +574,7 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 	return selection;
 }
 
-int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title,string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
@@ -595,7 +596,9 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 
 			changeColour(); //resets colours
 		}
-
+		
+		cout << footerText;
+		
 		do
 		{
 			fflush(stdin);
@@ -634,4 +637,23 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
 	
 	return selection;
+}
+
+void displayLog()
+{
+
+	string str;
+	string option[] = { "Exit","Display All" };
+	int numOfOptions = 2;
+	int selection;
+
+	gLogger->display(&str);
+
+	do
+	{
+		navigatableMenu("You are in the view logs menu", )
+
+
+	} while (selection != 0);
+
 }
