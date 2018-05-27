@@ -573,7 +573,9 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 	return selection;
 }
 
-int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
+
+template <typename type> 
+int navigatableMenu(string title,string options[], type *object ,void *functionPtr (), int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
@@ -617,6 +619,7 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 				choice[1] = '\0';
 			}
 
+			(object->*functionPtr)();
 
 		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
 
@@ -634,4 +637,156 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
 	
 	return selection;
+}
+
+
+template <typename type, typename arg1>
+int navigatableMenu(string title, string options[], type *object, void *functionPtr(arg1), int numberOfOptions, int selectedBackground, int selectedForeground)
+{
+
+	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
+	int selection = 0;
+
+	do
+	{
+		system("cls");
+		cout << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+
+		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
+		{
+
+			if (selection == i) //highlights the choice if it is the selected one
+			{
+				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
+			}
+			cout << endl << i + 1 << ") " << options[i];
+
+			changeColour(); //resets colours
+		}
+
+		do
+		{
+			fflush(stdin);
+
+			do //the up and down keys are made of two characters
+			{
+				choice[0] = _getch();
+			} while (choice[0] == '\0');
+
+			if (choice[0] == -32) //only reads the second character if the first was the begining of the up or down key
+			{
+				do
+				{
+					choice[1] = _getch();
+				} while (choice[1] == '\0');
+			}
+			else //sets the second char to a null termination character if the up or down key was not pressed
+			{
+				choice[1] = '\0';
+			}
+
+			(object->*functionPtr)(arg1);
+
+		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
+
+		if (choice[1] == 72) //moves counter down if user hits down key
+		{
+			selection--;
+			if (selection < 0) { selection = numberOfOptions - 1; } //resets selection if it goes under zero
+		}
+		else if (choice[1] == 80) //moves counter up if user hits up key
+		{
+			selection++;
+			if (selection > numberOfOptions - 1) { selection = 0; }
+		}
+
+	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
+
+	return selection;
+}
+
+template <typename type, typename arg1, typename arg2>
+int navigatableMenu(string title, string options[], type *object, void *functionPtr(arg1,arg2), int numberOfOptions, int selectedBackground, int selectedForeground)
+{
+
+	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
+	int selection = 0;
+
+	do
+	{
+		system("cls");
+		cout << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+
+		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
+		{
+
+			if (selection == i) //highlights the choice if it is the selected one
+			{
+				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
+			}
+			cout << endl << i + 1 << ") " << options[i];
+
+			changeColour(); //resets colours
+		}
+
+		do
+		{
+			fflush(stdin);
+
+			do //the up and down keys are made of two characters
+			{
+				choice[0] = _getch();
+			} while (choice[0] == '\0');
+
+			if (choice[0] == -32) //only reads the second character if the first was the begining of the up or down key
+			{
+				do
+				{
+					choice[1] = _getch();
+				} while (choice[1] == '\0');
+			}
+			else //sets the second char to a null termination character if the up or down key was not pressed
+			{
+				choice[1] = '\0';
+			}
+
+			(object->*functionPtr)(arg1,arg2);
+
+		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
+
+		if (choice[1] == 72) //moves counter down if user hits down key
+		{
+			selection--;
+			if (selection < 0) { selection = numberOfOptions - 1; } //resets selection if it goes under zero
+		}
+		else if (choice[1] == 80) //moves counter up if user hits up key
+		{
+			selection++;
+			if (selection > numberOfOptions - 1) { selection = 0; }
+		}
+
+	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
+
+	return selection;
+}
+
+void dispalyLogItems() {
+
+	void (Logger::*displayPtr)();
+	int selection;
+
+	displayPtr = &Logger::display;
+
+	(gLogger->*displayPtr)();
+
+	do
+	{
+
+		selection = navigatableMenu()
+
+	} while (selection != 0);
+
+	
+
+
 }
