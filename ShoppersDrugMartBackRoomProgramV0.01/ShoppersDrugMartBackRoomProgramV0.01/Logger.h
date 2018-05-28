@@ -259,6 +259,11 @@ void Logger::display(string *str,int seachNumber, char type) //allows to only di
 		}
 		break;
 	}
+
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
+	}
 }
 
 void Logger::display(string *str, char _type) //allows messages of a certin type to be displayed; price change, amount change ect...
@@ -283,6 +288,11 @@ void Logger::display(string *str, char _type) //allows messages of a certin type
 		it++;
 	}
 
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
+	}
+
 }
 
 void Logger::display(string *str) //disaplyes all log messages
@@ -299,6 +309,11 @@ void Logger::display(string *str) //disaplyes all log messages
 		*str += it->display();
 		*str += "\n";
 		it++;
+	}
+
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
 	}
 
 }

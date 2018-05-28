@@ -19,7 +19,7 @@ void selectItem(User **user);
 //Cady's changes start here
 void logout();
 void resetItem(Item *item, Logger *log);
-void viewLogs(Logger *log);
+void viewLogs();
 void resetUser(User **user, Logger *log);
 void settings(User **user, Logger *log);
 void addItem(Item *item, Logger *log);
@@ -377,7 +377,7 @@ void menu(User **user) //Cady's changes start here
 
 		if ((*user)->permission.permissionsMM[i] == true)
 		{
-			corrispondingIndex[pos] = i;
+			corrispondingIndex[pos] = i+1;
 			avalibleOptions[pos] = allOptions[i];
 			pos++;
 		}
@@ -397,6 +397,7 @@ void menu(User **user) //Cady's changes start here
 		case 3:
 			break;
 		case 4:
+			viewLogs();
 			break;
 		case 5:
 			break;
@@ -442,24 +443,44 @@ void viewLogs()
 {
 	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by PLU", "Search by User" };
 	int numOfOptions = 4;
+	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes","View Ammount Cahnges"};
+	int numOfSearchByTypeOptions = 3;
+	
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
 	int choice = 0;
 
 	gLogger->display(&headerString); //fills the string with all the logs
 
-	choice = navigatableMenu("You are in the View Logs menu", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
-
-	switch (choice)
+	do
 	{
-	case 1:
-		return; //returns if they pick exit
-	case 2:
-		gLogger->display(&headerString); //fills the string with all the logs when they select view all
-		break;
-	case 3:
-		navigatableMenu("You are in the View Logs menu", options, &headerString, numOfOptions, C_BLUE, C_WHITE); //keep going
+		choice = navigatableMenu("You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
-	}
+		switch (choice)
+		{
+		case 0:
+			return; //returns if they pick exit
+		case 1:
+			gLogger->display(&headerString); //fills the string with all the logs when they select view all
+			break;
+		case 2:
+			choice = navigatableMenu("You are in the View Logs menu", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
+
+			switch (choice)
+			{
+			case 0:
+				gLogger->display(&headerString, 'l');
+				break;
+			case 1:
+				gLogger->display(&headerString, 'p');
+				break;
+			case 2:
+				gLogger->display(&headerString, 'a');
+				break;
+			}
+			break;
+		}
+	} while (true);
+	
 
 }
 
@@ -559,7 +580,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	do
 	{
 		system("cls");
-		cout << *headerText << endl << endl << endl << *title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
