@@ -238,9 +238,18 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 			break;
 		case '6':
-			for (int i = 0; i < 500; i++)
+
+			int maxGen, maxUPC;
+
+			cout << "num to gen: ";
+			cin >> maxGen;
+
+			cout << "max upc: ";
+			cin >> maxUPC;
+
+			for (int i = 0; i < maxGen; i++)
 			{
-				upc = rand() % 3000;
+				upc = rand() % maxUPC;
 
 				name = to_string(upc);
 
