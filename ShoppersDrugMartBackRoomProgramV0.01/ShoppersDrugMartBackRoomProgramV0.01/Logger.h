@@ -19,7 +19,7 @@ public:
 	Log(int _UPCCode, int _PLUCode, int _Userid, char _type, string message);
 	Log();
 	~Log();
-	void display();
+	string display();
 	
 	tm timeLogged; //time when the log msg was created
 	int UPCCode; //-1 if not applicable
@@ -53,10 +53,10 @@ Log::~Log()
 {
 }
 
-void Log::display() {
+string Log::display() {
 	char *timeAsString = asctime(&timeLogged);
 	timeAsString[strlen(timeAsString) - 1] = '\0'; //removes the \n character created in asctime
-	cout << timeAsString << " : " << message; //disaplys the time and the log message on screen
+	return string(timeAsString) + " : " + message; //returns the time and the log message on screen
 }
 
 
@@ -66,9 +66,9 @@ public:
 	Logger(string Filename, int *_authCode); //filename is the location of the file the log data is saved in
 	~Logger();
 	void addItem(int UPCCode, int Userid, int PLUCode, char type, string message);
-	void display();
-	void display(int searchNumber, char intType); //search number is UPCCode, PLUCode or userid. intType specifies which one (U=upc,P=PLU,a=user)
-	void display(char type);
+	void display(string *str);
+	void display(string *str, int searchNumber, char intType); //search number is UPCCode, PLUCode or userid. intType specifies which one (U=upc,P=PLU,a=user)
+	void display(string *str, char type);
 
 
 private:
@@ -140,7 +140,7 @@ void Logger::reload() {
 	Log temp;
 	int temp_authCode;
 
-	(fread(&temp_authCode, sizeof(temp), 1, file));
+	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
 	if (authCode == 0)
 	{
@@ -202,11 +202,12 @@ void Logger::addItem(int UPCCode, int PLUCode, int Userid, char type, string mes
 
 }
 
-void Logger::display(int seachNumber, char type) //allows to only display log msg about a certin user, product with certin plu code ect...
+void Logger::display(string *str,int seachNumber, char type) //allows to only display log msg about a certin user, product with certin plu code ect...
 {
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
+	*str = "";
 
 	type = toupper(type);
 
@@ -219,9 +220,9 @@ void Logger::display(int seachNumber, char type) //allows to only display log ms
 			if (it->Userid == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
-				cout << i << ") ";
-				it->display();
-				cout << "\n";
+				*str += to_string(i) + ") ";
+				*str += it->display();
+				*str += "\n";
 			}
 
 			it++;
@@ -234,9 +235,9 @@ void Logger::display(int seachNumber, char type) //allows to only display log ms
 			if (it->PLUCode == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
-				cout << i << ") ";
-				it->display();
-				cout << "\n";
+				*str += to_string(i) + ") ";
+				*str += it->display();
+				*str += "\n";
 			}
 
 			it++;
@@ -249,9 +250,9 @@ void Logger::display(int seachNumber, char type) //allows to only display log ms
 			if (it->UPCCode == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
-				cout << i << ") ";
-				it->display();
-				cout << "\n";
+				*str += to_string(i) + ") ";
+				*str += it->display();
+				*str += "\n";
 			}
 
 			it++;
@@ -260,12 +261,13 @@ void Logger::display(int seachNumber, char type) //allows to only display log ms
 	}
 }
 
-void Logger::display(char _type) //allows messages of a certin type to be displayed; price change, amount change ect...
+void Logger::display(string *str, char _type) //allows messages of a certin type to be displayed; price change, amount change ect...
 								 //g = generic, p = price change, a = amount change, n = new item
 {
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
+	*str = "";
 
 	while (it != log.end()) //loops untill end of the list
 	{
@@ -273,9 +275,9 @@ void Logger::display(char _type) //allows messages of a certin type to be displa
 		if (it->type == _type) //if the log message matches the type the user selected it gets displayed
 		{
 			i++;
-			cout << i << ") "; 
-			it->display();
-			cout << "\n";
+			*str += to_string(i) + ") "; 
+			*str += it->display();
+			*str += "\n";
 		}
 
 		it++;
@@ -283,7 +285,7 @@ void Logger::display(char _type) //allows messages of a certin type to be displa
 
 }
 
-void Logger::display() //disaplyes all log messages
+void Logger::display(string *str) //disaplyes all log messages
 {
 	int i = 0;
 	list<Log>::iterator it;
@@ -292,10 +294,10 @@ void Logger::display() //disaplyes all log messages
 	while (it != log.end()) //loops untill end of the list
 	{
 		i++;
-		cout << i << ") ";
-		it->display();
+		*str += to_string(i) + ") ";
+		*str += it->display();
+		*str += "\n";
 		it++;
-		cout << "\n";
 	}
 
 }
