@@ -522,7 +522,7 @@ void help()
 int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 
-	navigatableMenu(title, options, "", numberOfOptions, selectedBackground, selectedForeground);
+	return navigatableMenu(title, options, "", numberOfOptions, selectedBackground, selectedForeground);
 	
 }
 
