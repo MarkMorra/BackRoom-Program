@@ -483,8 +483,9 @@ void changeInventory(Item *item, Logger *log)
 
 }
 
-void help()
+void help()//Help screen displays instructions on how to use the program and answers to frequently asked questions
 {
+	//Graphics for help screen displays coding company logo and the title
 	cout << endl << "	         +s++o											         +s++o         ";
 	cout << endl << "	        +y												        +y             ";
 	cout << endl << "	   ``   +y    `//ssooo`   _    _ ______ _      _____  	   ``   +y    `//ssooo`  ";
@@ -496,27 +497,35 @@ void help()
 	cout << endl << "	     //s-`:ys`   :+s:									      //s-`:ys`   :+s:   ";
 	cout << endl << "	      //sys//     +//										       //sys//     +//     ";
 
+	//Explains how the user should maneuver through the program using the keyboard
 	cout << endl << endl << endl << " How to Maneuver: Use the arrow keys to move up and down the selections.";
 	cout << " Press enter to confirm your selection. Press enter anytime the screen pauses to continue the program.";
 	
+	//Explains to the user how they should exit the program
 	cout << endl << endl << " How to Exit: One can only exit from the log in screen. Therefore, select log out to return";
 	cout << endl << " to the log in screen and select exit as opposed to the log in option";
 
+	//Explains to the user how user permissions work and answers why they may have less or more options than other users
+	//Also explains admin roles in terms of user settings
 	cout << endl << endl << " If some option are not showing for you, it is because the admin as not given you permissions";
 	cout << endl << " to access the function you seek. Speak to an admin user and have them log in. Select settings and have";
 	cout << endl << " and have the admin add permissions to your account.";
   
+	//Explains to the user what happens the first time the program is set up and how admins and regular user accounts can be created
 	cout << endl << endl << " The first person to log in to this program is automatically the admin. After that, the admin may";
 	cout << endl << " add new users or admins and manage their permission levels in settings.";
-                              
+
+	//Explains to the user how the option Reset User Database works and warns about the consequences of selecting this option
+	//Also explains how the program will run directly after resetting the user database
 	cout << endl << endl << " Warning: It is possible to reset the user database. This means that every user account including";
 	cout << endl << " including the current admins will be deleted and the program will return to default. Therefore, every";
 	cout << endl << " user and admin must be added again to the program. Similar to the point above, the first log in after";
 	cout << endl << " resetting the user database will automatically become the admin.";
 
+	//Instructs the user how to continue the program after the screen pauses
 	cout << endl << endl << " Please press the enter key to return to the main menu...";
 
-	getchar();
+	getchar();//Pauses the screen so user can read help screen until user hits enter key
 }
 
 int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
