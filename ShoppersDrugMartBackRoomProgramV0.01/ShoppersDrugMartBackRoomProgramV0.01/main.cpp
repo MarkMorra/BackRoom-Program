@@ -29,7 +29,7 @@ void changePrice(Item *item, Logger *log);
 void changeInventory(Item *item, Logger *log);
 void help();
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
-int navigatableMenu(string title, string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 //Cady's changes end here
 
 Logger *gLogger;
@@ -440,11 +440,26 @@ void resetItem(Item *item, Logger *log)
 
 void viewLogs()
 {
-	string options[] = { "View All Logs", "Search By Type", "Search by PLU" };
-	int numOfOptions = 1;
-	string footerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
+	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by PLU", "Search by User" };
+	int numOfOptions = 4;
+	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
+	int choice = 0;
 
-	navigatableMenu("You are in the View Logs menu", options, footerString, numOfOptions, C_BLUE, C_WHITE);
+	gLogger->display(&headerString); //fills the string with all the logs
+
+	choice = navigatableMenu("You are in the View Logs menu", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
+
+	switch (choice)
+	{
+	case 1:
+		return; //returns if they pick exit
+	case 2:
+		gLogger->display(&headerString); //fills the string with all the logs when they select view all
+		break;
+	case 3:
+		navigatableMenu("You are in the View Logs menu", options, &headerString, numOfOptions, C_BLUE, C_WHITE); //keep going
+
+	}
 
 }
 
@@ -530,12 +545,12 @@ void help()//Help screen displays instructions on how to use the program and ans
 
 int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
 {
-
-	return navigatableMenu(title, options, "", numberOfOptions, selectedBackground, selectedForeground);
+	string blank = "";
+	return navigatableMenu(title, options, &blank , numberOfOptions, selectedBackground, selectedForeground);
 	
 }
 
-int navigatableMenu(string title,string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title,string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
@@ -544,7 +559,7 @@ int navigatableMenu(string title,string options[], string footerText, int number
 	do
 	{
 		system("cls");
-		cout << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+		cout << *headerText << endl << endl << endl << *title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
@@ -557,8 +572,6 @@ int navigatableMenu(string title,string options[], string footerText, int number
 
 			changeColour(); //resets colours
 		}
-
-		cout << endl << endl << footerText;
 
 		do
 		{
