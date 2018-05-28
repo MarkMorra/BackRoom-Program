@@ -290,6 +290,7 @@ void Logger::display(string *str) //disaplyes all log messages
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
+	*str = "";
 
 	while (it != log.end()) //loops untill end of the list
 	{
