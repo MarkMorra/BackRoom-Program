@@ -47,10 +47,9 @@ void Item::Display() {
 		<< "\nDesc:\t\t" << desc
 		<< "\nUPC:\t\t" << upc
 		<< "\nPLU:\t\t" << plu
-		<< "\n"
 		<< "\nPrice:\t\t"; printf("$%0.2f", price);
 	cout << "\nSale Price:\t"; printf("$%0.2f", sale);
-	cout << "\nPurchase Cost:\t"; printf("$0.2f", cost);
+	cout << "\nPurchase Cost:\t"; printf("$%0.2f", cost);
 
 }
 
@@ -151,7 +150,7 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 
 	} else if ((*it).upc == upc) {
 	
-		cout << "This item already exists. Add code to modify item later.";
+		cout << "This item already exists.";
 	
 	} else {
 	
@@ -192,13 +191,13 @@ vector<Item>::iterator ItemDatabase::Search(int upc) {
 
 		middle = int((first + last) / 2);
 
-		if (upc == items[middle].upc || (upc > items[middle - 1].upc && upc < items[middle].upc)) {
-
-			return vector<Item>::iterator(items.begin() + middle);
-
-		} else if (upc > items[middle].upc) {
+		if (upc > items[middle].upc) {
 
 			first = middle + 1;
+
+		} else if (upc == items[middle].upc || (upc > items[middle - 1].upc && upc < items[middle].upc)) {
+
+			return vector<Item>::iterator(items.begin() + middle);
 
 		} else {
 
@@ -230,7 +229,7 @@ void ItemDatabase::Reload() {
 	Item temp;
 	int temp_authCode;
 
-	(fread(&temp_authCode, sizeof(temp), 1, file));
+	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
 	if (authCode == 0)
 	{
