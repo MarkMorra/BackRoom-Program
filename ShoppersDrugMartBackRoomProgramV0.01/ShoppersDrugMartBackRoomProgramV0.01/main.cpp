@@ -29,6 +29,7 @@ void changePrice(Item *item, Logger *log);
 void changeInventory(Item *item, Logger *log);
 void help();
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 //Cady's changes end here
 
 Logger *gLogger;
@@ -109,6 +110,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	float price;
 	float cost;
 	float sale;
+	string *str;
 
 	while (true)
 	{
@@ -147,10 +149,12 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			break;
 
 		case '2':
+			str = new string;
 			system("cls");
-			gLogger->display();
+			gLogger->display(str);
 			cout << "\n\npress enter...";
 			while (_getch() != 13);
+			delete str;
 			break;
 		case '3':
 			char str[10];
@@ -582,7 +586,7 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 	return selection;
 }
 
-int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title,string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
@@ -604,6 +608,8 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 
 			changeColour(); //resets colours
 		}
+
+		cout << endl << endl << footerText;
 
 		do
 		{
