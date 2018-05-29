@@ -79,6 +79,7 @@ public:
 	vector<Item*>* Find(char type, int num);
 	vector<Item*>* Find(char type, float num);
 	vector<Item*>* Find(char type, string text);
+	int length();
 	int itemsPerPage;
 
 private:
@@ -133,6 +134,12 @@ ItemDatabase::~ItemDatabase() {
 	Save();
 
 	items.clear();
+
+}
+
+int ItemDatabase::length() {
+
+	return(items.size());
 
 }
 

@@ -546,9 +546,14 @@ void settings(User **user, Logger *log)
 void itemMenu(User **user)
 {
 
-	int selection;
+	int selection, currentPage = 0;
 
-	selection = navigatableMenu();
+	for (int i = 0; i < (gItemDatabase->itemsPerPage % gItemDatabase->length()); i++) {
+
+
+	}
+
+	selection = navigatableMenu("Items");
 
 }
 
