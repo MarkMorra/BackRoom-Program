@@ -404,9 +404,10 @@ void menu(User **user) //Cady's changes start here
 		case 2:
 			break;
 		case 3:
+			viewLogs();
 			break;
 		case 4:
-			viewLogs();
+			
 			break;
 		case 5:
 			break;
@@ -450,10 +451,10 @@ void resetItem(Item *item, Logger *log)
 
 void viewLogs()
 {
-	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by PLU", "Search by User" };
-	int numOfOptions = 4;
-	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes","View Ammount Cahnges"};
-	int numOfSearchByTypeOptions = 3;
+	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by User"};
+	int numOfOptions = 3;
+	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes" , "View Ammount Changes" , "View Item Information Changes"};
+	int numOfSearchByTypeOptions = 4;
 	
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
 	int choice = 0;
@@ -485,8 +486,15 @@ void viewLogs()
 			case 2:
 				gLogger->display(&headerString, 'a');
 				break;
+			case 3:
+				gLogger->display(&headerString, 'i');
 			}
 			break;
+		case 3:
+
+			system("cls");
+			cout << headerString;
+			cout << "\n\nPlease "
 		}
 	} while (true);
 	
@@ -598,7 +606,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 			{
 				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
 			}
-			cout << endl << i + 1 << ") " << options[i];
+			cout << endl /*<< i + 1 << ") "*/ << options[i];
 
 			changeColour(); //resets colours
 		}
