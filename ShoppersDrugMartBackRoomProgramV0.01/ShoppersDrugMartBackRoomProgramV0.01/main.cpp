@@ -22,7 +22,7 @@ void resetItem(Item *item, Logger *log);
 void viewLogs();
 void resetUser(User **user, Logger *log);
 void settings(User **user, Logger *log);
-void addItem(User **user);
+void itemMenu(User **user);
 void viewItem(Item *item);
 void viewItemLogs(Logger *log);
 void changePrice(Item *item, Logger *log);
@@ -404,7 +404,7 @@ void menu(User **user) //Cady's changes start here
 		case 1:
 			break;
 		case 2:
-			addItem(user);
+			itemMenu(user);
 			break;
 		case 3:
 			viewLogs();
@@ -514,10 +514,12 @@ void settings(User **user, Logger *log)
 
 }
 
-void addItem(User **user)
+void itemMenu(User **user)
 {
 
+	int selection;
 
+	selection = navigatableMenu();
 
 }
 
