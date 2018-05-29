@@ -56,7 +56,7 @@ Log::~Log()
 string Log::display() {
 	char *timeAsString = asctime(&timeLogged);
 	timeAsString[strlen(timeAsString) - 1] = '\0'; //removes the \n character created in asctime
-	return  (string(timeAsString) + " : " + string(message)); //disaplys the time and the log message on screen
+	return string(timeAsString) + " : " + message; //returns the time and the log message on screen
 }
 
 
@@ -140,7 +140,7 @@ void Logger::reload() {
 	Log temp;
 	int temp_authCode;
 
-	(fread(&temp_authCode, sizeof(temp), 1, file));
+	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
 	if (authCode == 0)
 	{
@@ -202,7 +202,7 @@ void Logger::addItem(int UPCCode, int PLUCode, int Userid, char type, string mes
 
 }
 
-void Logger::display(string *str, int seachNumber, char type) //allows to only display log msg about a certin user, product with certin plu code ect...
+void Logger::display(string *str,int seachNumber, char type) //allows to only display log msg about a certin user, product with certin plu code ect...
 {
 	int i = 0;
 	list<Log>::iterator it;
@@ -259,14 +259,20 @@ void Logger::display(string *str, int seachNumber, char type) //allows to only d
 		}
 		break;
 	}
+
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
+	}
 }
 
-void Logger::display(string *str,char _type) //allows messages of a certin type to be displayed; price change, amount change ect...
+void Logger::display(string *str, char _type) //allows messages of a certin type to be displayed; price change, amount change ect...
 								 //g = generic, p = price change, a = amount change, n = new item
 {
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
+	*str = "";
 
 	while (it != log.end()) //loops untill end of the list
 	{
@@ -274,12 +280,17 @@ void Logger::display(string *str,char _type) //allows messages of a certin type 
 		if (it->type == _type) //if the log message matches the type the user selected it gets displayed
 		{
 			i++;
-			*str += to_string(i) + ") ";
+			*str += to_string(i) + ") "; 
 			*str += it->display();
 			*str += "\n";
 		}
 
 		it++;
+	}
+
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
 	}
 
 }
@@ -289,6 +300,7 @@ void Logger::display(string *str) //disaplyes all log messages
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
+	*str = "";
 
 	while (it != log.end()) //loops untill end of the list
 	{
@@ -297,6 +309,11 @@ void Logger::display(string *str) //disaplyes all log messages
 		*str += it->display();
 		*str += "\n";
 		it++;
+	}
+
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
 	}
 
 }

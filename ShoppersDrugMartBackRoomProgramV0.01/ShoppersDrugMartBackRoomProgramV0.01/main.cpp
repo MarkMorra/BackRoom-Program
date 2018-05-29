@@ -19,7 +19,7 @@ void selectItem(User **user);
 //Cady's changes start here
 void logout();
 void resetItem(Item *item, Logger *log);
-void viewLogs(Logger *log);
+void viewLogs();
 void resetUser(User **user, Logger *log);
 void settings(User **user, Logger *log);
 void addItem(Item *item, Logger *log);
@@ -29,6 +29,7 @@ void changePrice(Item *item, Logger *log);
 void changeInventory(Item *item, Logger *log);
 void help();
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 //Cady's changes end here
 
 Logger *gLogger;
@@ -109,7 +110,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	float price;
 	float cost;
 	float sale;
-	string display;
+	string *str;
 
 	while (true)
 	{
@@ -148,10 +149,12 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			break;
 
 		case '2':
+			str = new string;
 			system("cls");
-			gLogger->display(&display);
-			cout << display << "\n\npress enter...";
+			gLogger->display(str);
+			cout << "\n\npress enter...";
 			while (_getch() != 13);
+			delete str;
 			break;
 		case '3':
 			char str[10];
@@ -235,9 +238,18 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 			break;
 		case '6':
-			for (int i = 0; i < 500; i++)
+
+			int maxGen, maxUPC;
+
+			cout << "num to gen: ";
+			cin >> maxGen;
+
+			cout << "max upc: ";
+			cin >> maxUPC;
+
+			for (int i = 0; i < maxGen; i++)
 			{
-				upc = rand() % 3000;
+				upc = rand() % maxUPC;
 
 				name = to_string(upc);
 
@@ -374,7 +386,7 @@ void menu(User **user) //Cady's changes start here
 
 		if ((*user)->permission.permissionsMM[i] == true)
 		{
-			corrispondingIndex[pos] = i;
+			corrispondingIndex[pos] = i+1;
 			avalibleOptions[pos] = allOptions[i];
 			pos++;
 		}
@@ -394,6 +406,7 @@ void menu(User **user) //Cady's changes start here
 		case 3:
 			break;
 		case 4:
+			viewLogs();
 			break;
 		case 5:
 			break;
@@ -435,8 +448,48 @@ void resetItem(Item *item, Logger *log)
 
 }
 
-void viewLogs(Logger *log)
+void viewLogs()
 {
+	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by PLU", "Search by User" };
+	int numOfOptions = 4;
+	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes","View Ammount Cahnges"};
+	int numOfSearchByTypeOptions = 3;
+	
+	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
+	int choice = 0;
+
+	gLogger->display(&headerString); //fills the string with all the logs
+
+	do
+	{
+		choice = navigatableMenu("You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
+
+		switch (choice)
+		{
+		case 0:
+			return; //returns if they pick exit
+		case 1:
+			gLogger->display(&headerString); //fills the string with all the logs when they select view all
+			break;
+		case 2:
+			choice = navigatableMenu("You are in the View Logs menu", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
+
+			switch (choice)
+			{
+			case 0:
+				gLogger->display(&headerString, 'l');
+				break;
+			case 1:
+				gLogger->display(&headerString, 'p');
+				break;
+			case 2:
+				gLogger->display(&headerString, 'a');
+				break;
+			}
+			break;
+		}
+	} while (true);
+	
 
 }
 
@@ -475,8 +528,9 @@ void changeInventory(Item *item, Logger *log)
 
 }
 
-void help()
+void help()//Help screen displays instructions on how to use the program and answers to frequently asked questions
 {
+	//Graphics for help screen displays coding company logo and the title
 	cout << endl << "	         +s++o											         +s++o         ";
 	cout << endl << "	        +y												        +y             ";
 	cout << endl << "	   ``   +y    `//ssooo`   _    _ ______ _      _____  	   ``   +y    `//ssooo`  ";
@@ -488,31 +542,46 @@ void help()
 	cout << endl << "	     //s-`:ys`   :+s:									      //s-`:ys`   :+s:   ";
 	cout << endl << "	      //sys//     +//										       //sys//     +//     ";
 
+	//Explains how the user should maneuver through the program using the keyboard
 	cout << endl << endl << endl << " How to Maneuver: Use the arrow keys to move up and down the selections.";
 	cout << " Press enter to confirm your selection. Press enter anytime the screen pauses to continue the program.";
 	
+	//Explains to the user how they should exit the program
 	cout << endl << endl << " How to Exit: One can only exit from the log in screen. Therefore, select log out to return";
 	cout << endl << " to the log in screen and select exit as opposed to the log in option";
 
+	//Explains to the user how user permissions work and answers why they may have less or more options than other users
+	//Also explains admin roles in terms of user settings
 	cout << endl << endl << " If some option are not showing for you, it is because the admin as not given you permissions";
 	cout << endl << " to access the function you seek. Speak to an admin user and have them log in. Select settings and have";
 	cout << endl << " and have the admin add permissions to your account.";
   
+	//Explains to the user what happens the first time the program is set up and how admins and regular user accounts can be created
 	cout << endl << endl << " The first person to log in to this program is automatically the admin. After that, the admin may";
 	cout << endl << " add new users or admins and manage their permission levels in settings.";
-                              
+
+	//Explains to the user how the option Reset User Database works and warns about the consequences of selecting this option
+	//Also explains how the program will run directly after resetting the user database
 	cout << endl << endl << " Warning: It is possible to reset the user database. This means that every user account including";
 	cout << endl << " including the current admins will be deleted and the program will return to default. Therefore, every";
 	cout << endl << " user and admin must be added again to the program. Similar to the point above, the first log in after";
 	cout << endl << " resetting the user database will automatically become the admin.";
 
+	//Instructs the user how to continue the program after the screen pauses
 	cout << endl << endl << " Please press the enter key to return to the main menu...";
 
-	getchar();
+	getchar();//Pauses the screen so user can read help screen until user hits enter key
 }
 
 int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
 {
+	string blank = "";
+	return navigatableMenu(title, options, &blank , numberOfOptions, selectedBackground, selectedForeground);
+	
+}
+
+int navigatableMenu(string title,string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground)
+{
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
 	int selection = 0;
@@ -520,7 +589,7 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 	do
 	{
 		system("cls");
-		cout << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
@@ -572,88 +641,4 @@ int navigatableMenu(string title,string options[], int numberOfOptions, int sele
 	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
 	
 	return selection;
-}
-
-int navigatableMenu(string title,string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground)
-{
-
-	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
-	int selection = 0;
-
-	do
-	{
-		system("cls");
-		cout << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
-
-		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
-		{
-
-			if (selection == i) //highlights the choice if it is the selected one
-			{
-				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
-			}
-			cout << endl << i + 1 << ") " << options[i];
-
-			changeColour(); //resets colours
-		}
-		
-		cout << footerText;
-		
-		do
-		{
-			fflush(stdin);
-
-			do //the up and down keys are made of two characters
-			{
-				choice[0] = _getch();
-			} while (choice[0] == '\0');
-
-			if (choice[0] == -32) //only reads the second character if the first was the begining of the up or down key
-			{
-				do
-				{
-					choice[1] = _getch();
-				} while (choice[1] == '\0');
-			}
-			else //sets the second char to a null termination character if the up or down key was not pressed
-			{
-				choice[1] = '\0';
-			}
-
-
-		} while (!((choice[0] == -32 && (choice[1] == 72 || choice[1] == 80)) || choice[0] == 13)); //checks if the user presses up, down or enter
-
-		if (choice[1] == 72) //moves counter down if user hits down key
-		{
-			selection--;
-			if (selection < 0) { selection = numberOfOptions - 1; } //resets selection if it goes under zero
-		}
-		else if (choice[1] == 80) //moves counter up if user hits up key
-		{
-			selection++;
-			if (selection > numberOfOptions - 1) { selection = 0; }
-		}
-
-	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
-	
-	return selection;
-}
-
-void displayLog()
-{
-
-	string str;
-	string option[] = { "Exit","Display All" };
-	int numOfOptions = 2;
-	int selection;
-
-	gLogger->display(&str);
-
-	do
-	{
-		navigatableMenu("You are in the view logs menu", )
-
-
-	} while (selection != 0);
-
 }
