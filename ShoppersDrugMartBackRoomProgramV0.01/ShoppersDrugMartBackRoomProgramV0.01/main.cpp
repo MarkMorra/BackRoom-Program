@@ -2,7 +2,7 @@
 #include "Database.h"
 #include "Users.h"
 #include "Encryptor.h"
-#include "Colours.h"
+#include "stringFunctions.h"
 
 using namespace std;
 
@@ -19,17 +19,17 @@ void selectItem(User **user);
 //Cady's changes start here
 void logout();
 void resetItem(Item *item, Logger *log);
-void viewLogs(Logger *log);
+void viewLogs();
 void resetUser(User **user, Logger *log);
 void settings(User **user, Logger *log);
-void addItem(Item *item, Logger *log);
+void addItem(User **user);
 void viewItem(Item *item);
 void viewItemLogs(Logger *log);
 void changePrice(Item *item, Logger *log);
 void changeInventory(Item *item, Logger *log);
 void help();
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
-int navigatableMenu(string title, string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 //Cady's changes end here
 
 Logger *gLogger;
@@ -239,6 +239,8 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					}
 
+					while (_getch() == '\0');
+
 					break;
 				case '2':
 					int tempupc;
@@ -255,9 +257,18 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 			break;
 		case '6':
-			for (int i = 0; i < 500; i++)
+
+			int maxGen, maxUPC;
+
+			cout << "num to gen: ";
+			cin >> maxGen;
+
+			cout << "max upc: ";
+			cin >> maxUPC;
+
+			for (int i = 0; i < maxGen; i++)
 			{
-				upc = rand() % 3000;
+				upc = rand() % maxUPC;
 
 				name = to_string(upc);
 
@@ -351,7 +362,7 @@ void logon(User **user) {
 			}
 			else
 			{
-				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + "logged on");
+				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
 			}
 
 		} while (choice == 'Y' && *user == NULL);
@@ -366,7 +377,7 @@ void logon(User **user) {
 void menu(User **user) //Cady's changes start here
 {
 	int selection = 0;
-	string allOptions[] = {"Search Items", "Add an Item" , "View Logs" , "Change Another User's Settings" , "Create new User Account" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = {"Items" , "View Logs" , "Change Another User's Settings" , "Create new User Account" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
@@ -394,7 +405,7 @@ void menu(User **user) //Cady's changes start here
 
 		if ((*user)->permission.permissionsMM[i] == true)
 		{
-			corrispondingIndex[pos] = i;
+			corrispondingIndex[pos] = i+1;
 			avalibleOptions[pos] = allOptions[i];
 			pos++;
 		}
@@ -410,10 +421,13 @@ void menu(User **user) //Cady's changes start here
 		case 1:
 			break;
 		case 2:
+			addItem(user);
 			break;
 		case 3:
+			viewLogs();
 			break;
 		case 4:
+			
 			break;
 		case 5:
 			break;
@@ -457,11 +471,53 @@ void resetItem(Item *item, Logger *log)
 
 void viewLogs()
 {
-	string options[] = { "View All Logs", "Search By Type", "Search by PLU" };
-	int numOfOptions = 1;
-	string footerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
+	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by User"};
+	int numOfOptions = 3;
+	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes" , "View Ammount Changes" , "View Item Information Changes"};
+	int numOfSearchByTypeOptions = 4;
+	
+	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
+	int choice = 0;
 
-	navigatableMenu("You are in the View Logs menu", options, footerString, numOfOptions, C_BLUE, C_WHITE);
+	gLogger->display(&headerString); //fills the string with all the logs
+
+	do
+	{
+		choice = navigatableMenu("You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
+
+		switch (choice)
+		{
+		case 0:
+			return; //returns if they pick exit
+		case 1:
+			gLogger->display(&headerString); //fills the string with all the logs when they select view all
+			break;
+		case 2:
+			choice = navigatableMenu("You are in the View Logs menu", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
+
+			switch (choice)
+			{
+			case 0:
+				gLogger->display(&headerString, 'l');
+				break;
+			case 1:
+				gLogger->display(&headerString, 'p');
+				break;
+			case 2:
+				gLogger->display(&headerString, 'a');
+				break;
+			case 3:
+				gLogger->display(&headerString, 'i');
+			}
+			break;
+		case 3:
+
+			system("cls");
+			cout << headerString;
+			cout << "\n\nPlease "
+		}
+	} while (true);
+	
 
 }
 
@@ -475,8 +531,10 @@ void settings(User **user, Logger *log)
 
 }
 
-void addItem(Item *item, Logger *log)
+void addItem(User **user)
 {
+
+
 
 }
 
@@ -547,12 +605,12 @@ void help()//Help screen displays instructions on how to use the program and ans
 
 int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
 {
-
-	return navigatableMenu(title, options, "", numberOfOptions, selectedBackground, selectedForeground);
+	string blank = "";
+	return navigatableMenu(title, options, &blank , numberOfOptions, selectedBackground, selectedForeground);
 	
 }
 
-int navigatableMenu(string title,string options[], string footerText, int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title,string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
@@ -561,7 +619,7 @@ int navigatableMenu(string title,string options[], string footerText, int number
 	do
 	{
 		system("cls");
-		cout << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
@@ -570,12 +628,10 @@ int navigatableMenu(string title,string options[], string footerText, int number
 			{
 				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
 			}
-			cout << endl << i + 1 << ") " << options[i];
+			cout << endl /*<< i + 1 << ") "*/ << options[i];
 
 			changeColour(); //resets colours
 		}
-
-		cout << endl << endl << footerText;
 
 		do
 		{

@@ -35,7 +35,7 @@
     <ClInclude Include="Encryptor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Colours.h">
+    <ClInclude Include="stringFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

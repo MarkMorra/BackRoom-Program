@@ -21,19 +21,18 @@ public:
 	~Log();
 	string display();
 	
-	tm timeLogged; //time when the log msg was created
+	time_t timeLogged; //time when the log msg was created
 	int UPCCode; //-1 if not applicable
 	int PLUCode; //-1 if not applicable
 	int Userid; //id of the user who made the change -1 if not applicable
 	char type; //the type of log
-	//g = generic, p = price change, a = amount change, n = new item, l = login/logout
+	//g = generic, p = price change, a = amount change, n = new item, l = login/logout, i = item information changes (eg the description was changed)
 	char message[CHAR_IN_LOG_MSG];
 };
 
 Log::Log(int _UPCCode, int _PLUCode, int _Userid, char _type, string _message)
 {
-	time_t rawTime = time(NULL);
-	timeLogged = *localtime(&rawTime); //saves the time the log message was created
+	timeLogged = time(NULL);
 
 	UPCCode = _UPCCode;
 	PLUCode = _PLUCode;
@@ -54,7 +53,7 @@ Log::~Log()
 }
 
 string Log::display() {
-	char *timeAsString = asctime(&timeLogged);
+	char *timeAsString = asctime(localtime(&timeLogged));
 	timeAsString[strlen(timeAsString) - 1] = '\0'; //removes the \n character created in asctime
 	return string(timeAsString) + " : " + message; //returns the time and the log message on screen
 }
@@ -74,6 +73,7 @@ public:
 private:
 
 	int authCode;
+	long int secondsBeforeMsgDelete; //how many seconds old a message has to be for it to get deleted
 	void reload(); //reloads logger data using data in file
 	void save(); //saves logger data to file
 	string Filepath;
@@ -87,6 +87,8 @@ Logger::Logger(string filename, int *_authCode)
 	Filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
 	
 	authCode = *_authCode;
+
+	secondsBeforeMsgDelete = 2592000; //sets it to the defult of 30 days
 
 	FILE *file;
 	file = fopen(Filepath.c_str(), "r");
@@ -152,11 +154,16 @@ void Logger::reload() {
 		return;
 	}
 
+	fread(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
+
 	while (fread(&temp,sizeof(temp),1,file)) //keeps  read untill eof is reached
 	{
 		decrypt(temp.message, CHAR_IN_LOG_MSG); //decrypts the msg saved in file
 		decrypt(&(temp.type), 1); //decrypts char saved in file
-		log.push_back(temp); //add it to the list
+		if ((difftime(temp.timeLogged, time(NULL))) <= secondsBeforeMsgDelete) //if the message is older then the specified time it dose not get written into memory and thus when the file is rewiritten too this log msg is not included
+		{
+			log.push_back(temp); //add it to the list
+		}
 	}
 
 	fclose(file);
@@ -178,6 +185,7 @@ void Logger::save()
 	}
 
 	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
+	fwrite(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
 	it = log.begin();
 	while (it != log.end()) //keeps looping untill it reaches the end of the list
 	{
@@ -259,6 +267,11 @@ void Logger::display(string *str,int seachNumber, char type) //allows to only di
 		}
 		break;
 	}
+
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
+	}
 }
 
 void Logger::display(string *str, char _type) //allows messages of a certin type to be displayed; price change, amount change ect...
@@ -283,6 +296,11 @@ void Logger::display(string *str, char _type) //allows messages of a certin type
 		it++;
 	}
 
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
+	}
+
 }
 
 void Logger::display(string *str) //disaplyes all log messages
@@ -290,6 +308,7 @@ void Logger::display(string *str) //disaplyes all log messages
 	int i = 0;
 	list<Log>::iterator it;
 	it = log.begin();
+	*str = "";
 
 	while (it != log.end()) //loops untill end of the list
 	{
@@ -298,6 +317,11 @@ void Logger::display(string *str) //disaplyes all log messages
 		*str += it->display();
 		*str += "\n";
 		it++;
+	}
+
+	if (*str == "")
+	{
+		*str = "There were no Logs that mactched your search requirements";
 	}
 
 }
