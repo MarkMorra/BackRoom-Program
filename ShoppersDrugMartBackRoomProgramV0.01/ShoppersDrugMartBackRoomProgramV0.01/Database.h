@@ -79,12 +79,13 @@ public:
 	vector<Item*>* Find(char type, int num);
 	vector<Item*>* Find(char type, float num);
 	vector<Item*>* Find(char type, string text);
+	int itemsPerPage;
 
 private:
 	string filepath;
 	vector<Item> items;
 
-	int authCode;
+	long long int authCode;
 
 };
 
@@ -94,6 +95,8 @@ ItemDatabase::ItemDatabase(string filename, int *_authCode)
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
 
 	authCode = *_authCode;
+
+	itemsPerPage = 10;
 
 	FILE *file;
 	file = fopen(filepath.c_str(), "r");
@@ -227,7 +230,8 @@ void ItemDatabase::Reload() {
 	items.clear();
 
 	Item temp;
-	int temp_authCode;
+	long long int temp_authCode;
+	int temp_itemsPerPage;
 
 	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
@@ -240,6 +244,8 @@ void ItemDatabase::Reload() {
 		errorMsg("Error, authCode mismatch in database.dat . This is most likely casued by someone tampering with the data files. To prevent data theft if you continue to use the program without restoring the data files to their original state the item database file will be deleted");
 		return;
 	}
+
+	fread(&temp_itemsPerPage, sizeof(temp_authCode), 1, file);
 
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
@@ -269,6 +275,8 @@ void ItemDatabase::Save()
 	}
 
 	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
+
+	fwrite(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 
 	it = items.begin();
 	while (it != items.end())
