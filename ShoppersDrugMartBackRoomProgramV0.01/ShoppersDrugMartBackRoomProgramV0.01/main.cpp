@@ -28,8 +28,10 @@ void viewItemLogs(Logger *log);
 void changePrice(Item *item, Logger *log);
 void changeInventory(Item *item, Logger *log);
 void help();
-int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 //Cady's changes end here
 
 Logger *gLogger;
@@ -497,7 +499,7 @@ void viewLogs()
 
 			system("cls");
 			cout << headerString;
-			cout << "\n\nPlease "
+			cout << "\n\nPlease ";
 		}
 	} while (true);
 	
@@ -586,18 +588,39 @@ void help()//Help screen displays instructions on how to use the program and ans
 	getchar();//Pauses the screen so user can read help screen until user hits enter key
 }
 
-int navigatableMenu(string title,string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title,string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
-	return navigatableMenu(title, options, &blank , numberOfOptions, selectedBackground, selectedForeground);
+	return navigatableMenu(title, options, &blank , numberOfOptions, startingPosition ,selectedBackground, selectedForeground);
 	
 }
 
-int navigatableMenu(string title,string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground)
+{
+	return navigatableMenu(title, options, headerText, numberOfOptions, 0 , selectedBackground, selectedForeground);
+}
+
+int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
+{
+	string blank = "";
+	return navigatableMenu(title, options, &blank, numberOfOptions, 0, selectedBackground, selectedForeground);
+
+}
+
+int navigatableMenu(string title,string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
-	int selection = 0;
+	int selection;
+
+	if (startingPosition > numberOfOptions + 1)
+	{
+		selection = 0;
+	}
+	else
+	{
+		selection = startingPosition;
+	}
 
 	do
 	{
@@ -606,14 +629,16 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
-
+			cout << endl;
 			if (selection == i) //highlights the choice if it is the selected one
 			{
-				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
+				cout << "  > ";
+				changeColour(selectedBackground, selectedForeground, options[i]); //sets the colour of the highlighted option based on values passed in
 			}
-			cout << endl /*<< i + 1 << ") "*/ << options[i];
-
-			changeColour(); //resets colours
+			else
+			{
+				cout << "    " << options[i];
+			}
 		}
 
 		do
