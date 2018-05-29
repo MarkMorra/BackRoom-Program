@@ -22,7 +22,7 @@ void resetItem(Item *item, Logger *log);
 void viewLogs();
 void resetUser(User **user, Logger *log);
 void settings(User **user, Logger *log);
-void addItem(Item *item, Logger *log);
+void addItem(User **user);
 void viewItem(Item *item);
 void viewItemLogs(Logger *log);
 void changePrice(Item *item, Logger *log);
@@ -222,6 +222,8 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					}
 
+					while (_getch() == '\0');
+
 					break;
 				case '2':
 					int tempupc;
@@ -358,7 +360,7 @@ void logon(User **user) {
 void menu(User **user) //Cady's changes start here
 {
 	int selection = 0;
-	string allOptions[] = {"Search Items", "Add an Item" , "View Logs" , "Change Another User's Settings" , "Create new User Account" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = {"Items" , "View Logs" , "Change Another User's Settings" , "Create new User Account" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
@@ -402,6 +404,7 @@ void menu(User **user) //Cady's changes start here
 		case 1:
 			break;
 		case 2:
+			addItem(user);
 			break;
 		case 3:
 			break;
@@ -503,8 +506,10 @@ void settings(User **user, Logger *log)
 
 }
 
-void addItem(Item *item, Logger *log)
+void addItem(User **user)
 {
+
+
 
 }
 
