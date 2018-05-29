@@ -22,7 +22,7 @@ void resetItem(Item *item, Logger *log);
 void viewLogs();
 void resetUser(User **user, Logger *log);
 void settings(User **user, Logger *log);
-void addItem(User **user);
+void itemMenu(User **user);
 void viewItem(Item *item);
 void viewItemLogs(Logger *log);
 void changePrice(Item *item, Logger *log);
@@ -88,6 +88,23 @@ void welcome() {
 	system("cls");
 
 	changeColour();
+
+	
+	
+	cout << endl << "\t\t\t\t _    _      _                          _ ";
+	cout << endl << "\t\t\t\t| |  | |    | |                        | |";
+	cout << endl << "\t\t\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |";
+	cout << endl << "\t\t\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |";
+	cout << endl << "\t\t\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|";
+	cout << endl << "\t\t\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)";
+                                          
+	cout << endl << endl;
+	cout << endl << "                                 _                                                                               ";
+	cout << endl << "   _____ _                      | |       _____         _                        _____                           ";
+	cout << endl << "  |   __| |_ ___ ___ ___ ___ ___|_|___   | __  |___ ___| |_ ___ ___ ___ _____   |  _  |___ ___ ___ ___ ___ _____ ";
+	cout << endl << "  |__   |   | . | . | . | -_|  _| |_ -|  | __ -| .'|  _| '_|  _| . | . |     |  |   __|  _| . | . |  _| .'|     |";
+	cout << endl << "  |_____|_|_|___|  _|  _|___|_|   |___|  |_____|__,|___|_,_|_| |___|___|_|_|_|  |__|  |_| |___|_  |_| |__,|_|_|_|";
+	cout << endl << "                |_| |_|                                                                       |___|              ";
 
 	cout << endl << endl << " Shoppers Backroom Program " << VERSION << endl << endl << endl << " Press enter to continue...";
 
@@ -406,7 +423,7 @@ void menu(User **user) //Cady's changes start here
 		case 1:
 			break;
 		case 2:
-			addItem(user);
+			itemMenu(user);
 			break;
 		case 3:
 			viewLogs();
@@ -516,10 +533,12 @@ void settings(User **user, Logger *log)
 
 }
 
-void addItem(User **user)
+void itemMenu(User **user)
 {
 
+	int selection;
 
+	selection = navigatableMenu();
 
 }
 
