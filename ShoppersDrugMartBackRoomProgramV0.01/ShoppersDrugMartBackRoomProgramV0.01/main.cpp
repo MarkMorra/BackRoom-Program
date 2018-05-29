@@ -133,7 +133,16 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	{
 		system("cls");
 
-		cout << "This menu is for testing only\n\n0. exit test menu";
+		
+                                                                           
+		cout << endl << "\t\t _____                    _____         _   _            _____             ";
+		cout << endl << "\t\t|  |  |___ ___ ___ _ _   |_   _|___ ___| |_|_|___ ___   |     |___ ___ _ _ ";
+		cout << endl << "\t\t|     | .'| . | . | | |    | | | -_|_ -|  _| |   | . |  | | | | -_|   | | |";
+		cout << endl << "\t\t|__|__|__,|  _|  _|_  |    |_| |___|___|_| |_|_|_|_  |  |_|_|_|___|_|_|___|";
+		cout << endl << "\t\t          |_| |_| |___|                          |___|                     ";
+
+
+		cout << endl << endl << "This menu is for testing only\n\n0. exit test menu";
 		cout << "\n1. new loger item";
 		cout << "\n2. display logger list";
 		cout << "\n3. test encryption";
@@ -292,7 +301,8 @@ void logon(User **user) {
 	string choiceName[] = { "Log On" , "Exit" };
 	int selection = 0;
 
-	selection = navigatableMenu("You are currently on the welcome screen",choiceName, 2, C_BLUE, C_WHITE);
+
+	selection = navigatableMenu("You are currently on the welcome screen",choiceName, 2, C_RED, C_WHITE);
 
 	switch (selection)
 	{
@@ -514,7 +524,7 @@ void viewLogs()
 
 			system("cls");
 			cout << headerString;
-			cout << "\n\nPlease "
+			cout << "\n\nPlease ";
 		}
 	} while (true);
 	
