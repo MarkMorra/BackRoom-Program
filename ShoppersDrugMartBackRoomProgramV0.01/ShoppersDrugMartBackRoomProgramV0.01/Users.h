@@ -4,6 +4,7 @@
 #include <vector>
 #include <string.h>
 #include "Encryptor.h"
+#include "stringFunctions.h"
 using namespace std;
 
 #define MAX_USERS 2000
@@ -77,8 +78,8 @@ User::User() //default constructor just sets all value to zero
 User::User(int _ID, string _firstName, string _lastName, string _password, Permissions _permissions) //a constructor that sets the value based on the values passes
 {
 	id = _ID;
-	strcpy(firstName, _firstName.c_str());
-	strcpy(lastName, _lastName.c_str());
+	strcpy(firstName, uppercase(_firstName).c_str());
+	strcpy(lastName, uppercase(_lastName).c_str());
 	strcpy(password, _password.c_str());
 	permission = _permissions;
 };
@@ -89,7 +90,8 @@ public:
 	UserDatabase(string filename, int *_authCode);
 	~UserDatabase();
 
-	int findWithID(int ID); //find a user with a specific id and return an index representring thier position
+	int findWith(int ID); //find a user with a specific id and return an index representring thier position
+	int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
 	void checkCredentials(User **user, string _firstName, string _lastName, string _password);
 
 	void Add(User user);
@@ -111,7 +113,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastN
 
 	while (it != users.end())
 	{
-		if (string(it->firstName) == _firstName && string(it->lastName) == _lastName && string(it->password) == _password)
+		if (string(it->firstName) == uppercase(_firstName) && string(it->lastName) == uppercase(_lastName) && string(it->password) == _password)
 		{
 			*user = &(*it);
 			return;
@@ -122,12 +124,14 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastN
 	return;
 }
 
+
+
 void UserDatabase::Add(User user)
 {
 	do
 	{
 		user.id = rand() % MAX_USERS;
-	} while (findWithID(user.id >= 0)); //checks if the id has already been used
+	} while (findWith(user.id >= 0)); //checks if the id has already been used
 
 	//bens code to find the position it should be added based on its ID
 
@@ -135,7 +139,7 @@ void UserDatabase::Add(User user)
 	
 }
 
-int UserDatabase::findWithID(int ID)
+int UserDatabase::findWith(int ID)
 {
 	for (int i = 0; i < users.size() -1; i++)
 	{
@@ -143,6 +147,16 @@ int UserDatabase::findWithID(int ID)
 	}
 
 	return -1; //if no user with this id exists -1 is returned;
+}
+
+int UserDatabase::findWith(string _firstname, string _lastname)
+{
+
+	for (int i = 0; i < users.size() - 1; i++)
+	{
+		if (users[i].firstName == uppercase(_firstname) && users[i].lastName == uppercase(_lastname)) { return i; }
+	}
+	return -1;
 }
 
 UserDatabase::UserDatabase(string filename, int *_authCode)
@@ -296,3 +310,4 @@ void UserDatabase::save()
 	fclose(file);
 
 }
+

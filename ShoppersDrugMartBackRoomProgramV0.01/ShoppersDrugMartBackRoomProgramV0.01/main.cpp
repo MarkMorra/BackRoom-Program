@@ -2,7 +2,7 @@
 #include "Database.h"
 #include "Users.h"
 #include "Encryptor.h"
-#include "Colours.h"
+#include "stringFunctions.h"
 
 using namespace std;
 
@@ -343,7 +343,7 @@ void logon(User **user) {
 			}
 			else
 			{
-				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + "logged on");
+				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
 			}
 
 		} while (choice == 'Y' && *user == NULL);

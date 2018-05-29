@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <windows.h>
+using namespace std;
 
 
 #define C_BLACK 0x0 //windows console colour codes (in hex)
@@ -54,4 +55,14 @@ void changeColour(int backGroundBefore, int foreGroundBefore, string str) //sets
 	cout << str;
 	SetConsoleTextAttribute(console, C_DEFAULT);
 
+}
+
+string uppercase(string str)
+{
+
+	for (int i = 0; i < str.length(); i++)
+	{
+		str[i] = toupper(str[i]);
+	}
+	return str;
 }
