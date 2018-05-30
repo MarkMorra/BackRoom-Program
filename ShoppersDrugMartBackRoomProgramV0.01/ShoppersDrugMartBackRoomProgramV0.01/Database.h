@@ -198,6 +198,7 @@ vector<Item>::iterator ItemDatabase::Search(int upc) { //returns an itterator po
 	}
 
 	while (first <= last)
+	{
 
 		middle = int((first + last) / 2); //calcs the new middle
 
@@ -209,7 +210,7 @@ vector<Item>::iterator ItemDatabase::Search(int upc) { //returns an itterator po
 
 			return vector<Item>::iterator(items.begin() + middle);
 
-		} else { //the new item is smaller than the middle
+		} else { //the new item is smaller than the middle then everything larger than middle can be ruled out
 
 			last = middle - 1;
 
@@ -217,7 +218,7 @@ vector<Item>::iterator ItemDatabase::Search(int upc) { //returns an itterator po
 
 	}
 
-	errorMsg("The binary search in Item Database::Search has failed and was unable to find the correct position for " + to_string(upc) + ". This item will not be added to the database.");
+	errorMsg("The binary search in Item Database::Search has failed and was unable to find the correct position for " + to_string(upc) + ". This item will not be added to the database."); //if the above while loops exits than an error occured
 	return vector<Item>::iterator();
 
 }
