@@ -165,44 +165,44 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 
 }
 
-vector<Item>::iterator ItemDatabase::Search(int upc) {
+vector<Item>::iterator ItemDatabase::Search(int upc) { //returns an itterator pointing to the position in which the new item should be inserted
 
 	int first, middle, last;
 
 	first = 0;
 	last = items.size() - 1;
 
-	if (items.size() == 0) {
+	if (items.size() == 0) { //checks if the vector is size zero, if it is returns an ittorator pointing to pos 0
 
 		return vector<Item>::iterator(items.begin());
 
 	}
 
-	if (upc < (items[0].upc)) {
+	if (upc < (items[0].upc)) { //checks if the new item should go before the first item
 
 		return vector<Item>::iterator(items.begin());
 
 	}
 
-	if (upc > (items[items.size() - 1].upc)) {
+	if (upc > (items[items.size() - 1].upc)) { //checks if the item should go in the last position
 
 		return vector<Item>::iterator(items.end());
 
 	}
 
-	while (first <= last) {
+	while (first <= last)
 
-		middle = int((first + last) / 2);
+		middle = int((first + last) / 2); //calcs the new middle
 
-		if (upc > items[middle].upc) {
+		if (upc > items[middle].upc) { //if the new item is larger than the middle the entire first half can be ruled out
 
 			first = middle + 1;
 
-		} else if (upc == items[middle].upc || (upc > items[middle - 1].upc && upc < items[middle].upc)) {
+		} else if (upc == items[middle].upc || (upc > items[middle - 1].upc && upc < items[middle].upc)) { //if middle equals the new item or if the item is larger then the middle but smaller then the one past the middle it reurns the pos of the middle
 
 			return vector<Item>::iterator(items.begin() + middle);
 
-		} else {
+		} else { //the new item is smaller than the middle
 
 			last = middle - 1;
 
