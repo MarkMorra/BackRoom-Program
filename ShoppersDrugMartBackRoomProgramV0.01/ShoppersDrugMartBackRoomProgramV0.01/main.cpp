@@ -42,10 +42,8 @@ int main() {
 
 	User **user = new User*;
 
-
-
-	onStart();
-	welcome();
+	onStart(); //Initializes important variables such as for databases, menu highlights etc. when program first starts
+	welcome(); //First display of the program shows a welcome screen to the user
 	
 	while (true)
 	{
@@ -81,16 +79,15 @@ void onStart() {
 
 }
 
-void welcome() {
+void welcome() { //Welcome function to display opening message when program first runs 
 
 	char choice;
 
-	system("cls");
+	system("cls"); //Clears the screen
 
 	changeColour();
-
 	
-	
+	//Displays Welcome message when user runs the program
 	cout << endl << "\t\t\t\t _    _      _                          _ ";
 	cout << endl << "\t\t\t\t| |  | |    | |                        | |";
 	cout << endl << "\t\t\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |";
@@ -98,6 +95,7 @@ void welcome() {
 	cout << endl << "\t\t\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|";
 	cout << endl << "\t\t\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)";
                                           
+	//Displays the name of the program to the user
 	cout << endl << endl;
 	cout << endl << "                                 _                                                                               ";
 	cout << endl << "   _____ _                      | |       _____         _                        _____                           ";
@@ -106,8 +104,10 @@ void welcome() {
 	cout << endl << "  |_____|_|_|___|  _|  _|___|_|   |___|  |_____|__,|___|_,_|_| |___|___|_|_|_|  |__|  |_| |___|_  |_| |__,|_|_|_|";
 	cout << endl << "                |_| |_|                                                                       |___|              ";
 
+	//Instructs user how to proceed and displays the version of the program
 	cout << endl << endl << " Shoppers Backroom Program " << VERSION << endl << endl << endl << " Press enter to continue...";
-
+	
+	//If user presses page up button, they reach a test menu, if they press enter they proceed to regular menu
 	while ((choice = _getch()) != 13 && choice != 73);
 
 	if (choice == 73)
@@ -133,17 +133,16 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 	while (true)
 	{
-		system("cls");
-
-		
-                                                                           
+		system("cls"); //Clears the screen
+                                 
+		//Displays title of testing menu
 		cout << endl << "\t\t _____                    _____         _   _            _____             ";
 		cout << endl << "\t\t|  |  |___ ___ ___ _ _   |_   _|___ ___| |_|_|___ ___   |     |___ ___ _ _ ";
 		cout << endl << "\t\t|     | .'| . | . | | |    | | | -_|_ -|  _| |   | . |  | | | | -_|   | | |";
 		cout << endl << "\t\t|__|__|__,|  _|  _|_  |    |_| |___|___|_| |_|_|_|_  |  |_|_|_|___|_|_|___|";
 		cout << endl << "\t\t          |_| |_| |___|                          |___|                     ";
 
-
+		//Displays options so user and choose which function they would like to navigate to
 		cout << endl << endl << "This menu is for testing only\n\n0. exit test menu";
 		cout << "\n1. new loger item";
 		cout << "\n2. display logger list";
@@ -168,7 +167,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			cout << "enter PLU: ";
 			cin >> plu;
 			cout << "enter log msg: ";
-			do //getline behavis weirldy with the new line charater left by cin
+			do //getline behaves weirdly with the new line charater left by cin
 			{
 				getline(cin, msg);
 			} while (msg == "");
@@ -314,7 +313,7 @@ void logon(User **user) {
 			*user = NULL;
 			password = "";
 
-			system("cls");
+			system("cls"); //Clears the screen
 			cout << "Please enter you first name: ";
 			getline(cin, first);
 
@@ -323,7 +322,7 @@ void logon(User **user) {
 
 			do
 			{
-				system("cls");
+				system("cls"); //Clears the screen
 				cout << "\nPlease enter your password: ";
 
 				for (int i = 0; i < password.length(); i++)
@@ -423,7 +422,7 @@ void menu(User **user) //Cady's changes start here
 		}
 
 	}
-	
+
 	do
 	{
 		selection = navigatableMenu("You are on the main menu screen.\nThe options you see listed are based on your premission level.\nIf you belive there is a mistake with your permission see your manager.", avalibleOptions, amount, C_BLUE, C_LGREY);
@@ -495,7 +494,7 @@ void viewLogs()
 
 	do
 	{
-		choice = navigatableMenu("You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
+		choice = navigatableMenu("You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_RED, C_WHITE);
 
 		switch (choice)
 		{
@@ -505,7 +504,7 @@ void viewLogs()
 			gLogger->display(&headerString); //fills the string with all the logs when they select view all
 			break;
 		case 2:
-			choice = navigatableMenu("You are in the View Logs menu", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
+			choice = navigatableMenu("You are in the View Logs menu", SearchByType, &headerString, numOfSearchByTypeOptions, C_RED, C_WHITE); //keep going
 
 			switch (choice)
 			{
@@ -654,6 +653,15 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	do
 	{
 		system("cls");
+
+		cout << endl << "\t\t\t\t  __  __                  ";
+		cout << endl << "\t\t\t\t |  \\/  |                 ";
+		cout << endl << "\t\t\t\t | \\  / | ___ _ __  _   _ ";
+		cout << endl << "\t\t\t\t | |\\/| |/ _ \\  _ \\| | | |";
+		cout << endl << "\t\t\t\t | |  | |  __/ | | | |_| |";
+		cout << endl << "\t\t\t\t |_|  |_|\\___|_| |_|\\__,_|";
+
+
 		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
