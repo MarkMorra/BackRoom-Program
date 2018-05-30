@@ -24,11 +24,19 @@ using namespace std;
 #define NUMBER_OF_MMPERMISSIONS 7 //number of bools in permissions bool array
 
 
-#define IM_VIEWSPECIFIC 0 //IM measn item menu
-#define IM_CHANGEPRICE 1
-#define IM_CHANGEINVENTORY 2
+#define IM_SORT_UPC 0 //IM means item menu
+#define IM_SORT_PRICE 1
+#define IM_SORT_AMOUNT 2
+#define IM_ADD_ITEM 2
 
-#define NUMBER_OF_IMPERMISSIONS 3
+#define NUMBER_OF_IMPERMISSIONS 4
+
+
+#define I_MODIFY_ITEM 0 //I means items
+#define I_REMOVE_ITEM 1
+
+#define NUMBER_OF_IPERMISSIONS 2
+
 
 #define LENGTH_OF_USER_STRINGS 50
 
@@ -38,6 +46,7 @@ public:
 	Permissions();
 	bool permissionsMM[NUMBER_OF_MMPERMISSIONS];
 	bool permissionsIM[NUMBER_OF_IMPERMISSIONS];
+	bool permissionsI[NUMBER_OF_IPERMISSIONS];
 };
 
 Permissions::Permissions() 
@@ -51,6 +60,12 @@ Permissions::Permissions()
 	{
 		permissionsIM[i] = false;
 	}
+
+	for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++)
+	{
+		permissionsI[i] = false;
+	}
+
 }
 
 class User //Contains usernames and passwords of each user, accessed through UserDatabase class

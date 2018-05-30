@@ -546,14 +546,87 @@ void settings(User **user, Logger *log)
 void itemMenu(User **user)
 {
 
-	int selection, currentPage = 0;
+	const int PAGE_OPTIONS = 2;
+	int selection, start, currentPage = 0;
+	string *itemsToDisplay;
+	string *itemsOnPage;
+	string pageOptions[] = { "Next Page", "Previous Page" };
+	string allOptions[] = { "Sort by UPC", "Sort by price", "Sort by amount", "Add Item", "Back to menu"}; //all of the strings corrispinging to all the possible menu options
+	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
+	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
+	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
 
-	for (int i = 0; i < (gItemDatabase->itemsPerPage % gItemDatabase->length()); i++) {
+	if (currentPage == 0) {
+
+		amount += 1;
+
+	} else if (currentPage == ) { //if its the last page, only show previous page option
+
+
+
+	} else if () { //if its not the first or last, show both next and previous
+
 
 
 	}
 
-	selection = navigatableMenu("Items");
+	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
+	{
+
+		if ((*user)->permission.permissionsIM[i] == true)
+		{
+			amount++;
+		}
+
+	}
+
+	if (int i = 0; i <)
+
+	avalibleOptions = new string[amount];
+	corrispondingIndex = new int[amount];
+
+	int pos = 1; //this number is iterated everytime the user has access to a command
+
+	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //makes the array of string to be passed to the menu function
+	{
+
+		if ((*user)->permission.permissionsIM[i] == true)
+		{
+			corrispondingIndex[pos] = i + 1;
+			avalibleOptions[pos] = allOptions[i];
+			pos++;
+		}
+
+	}
+
+	do
+	{
+		selection = navigatableMenu("Item Database", avalibleOptions, amount, start, C_BLUE, C_LGREY);
+
+		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
+		{
+		case 1:
+			break;
+		case 2:
+			itemMenu(user);
+			break;
+		case 3:
+			viewLogs();
+			break;
+		case 4:
+
+			break;
+		case 5:
+			break;
+		}
+
+	} while (corrispondingIndex[selection] != 0);
+
+	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->itemsPerPage) >= gItemDatabase->length()) ? ); i++) {
+
+
+
+	}
 
 }
 
