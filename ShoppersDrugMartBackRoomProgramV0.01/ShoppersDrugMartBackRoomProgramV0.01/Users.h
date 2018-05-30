@@ -18,8 +18,9 @@ using namespace std;
 #define MM_UEERSETTINGS 2
 #define MM_ADDUSER 3
 #define MM_RESETITEM 4
-#define MM_RESETUSERS 5
-#define MM_RESETLOGS 6
+#define MM_GENERALSETTINGS 5
+#define MM_RESETUSERS 6
+#define MM_RESETLOGS 7
 
 #define NUMBER_OF_MMPERMISSIONS 7 //number of bools in permissions bool array
 
@@ -100,6 +101,7 @@ private:
 	
 	void reload();
 	void save();
+	void search(int upc); //when a new user is added this function binary searches to find the position that the new user should be inserted into
 
 	int authCode;
 };
@@ -123,7 +125,10 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastN
 	return;
 }
 
+void UserDatabase::search(int upc)
+{
 
+}
 
 void UserDatabase::Add(User user)
 {

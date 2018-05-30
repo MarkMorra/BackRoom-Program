@@ -388,7 +388,7 @@ void logon(User **user) {
 void menu(User **user) //Cady's changes start here
 {
 	int selection = 0;
-	string allOptions[] = {"Items" , "View Logs" , "Change Another User's Settings" , "Create new User Account" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = {"Items" , "View Logs" , "Change Another User's Settings" , "Create new User Account" , "Edit General Settings" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
@@ -545,9 +545,14 @@ void settings(User **user, Logger *log)
 void itemMenu(User **user)
 {
 
-	int selection;
+	int selection, currentPage = 0;
 
-	selection = navigatableMenu();
+	for (int i = 0; i < (gItemDatabase->itemsPerPage % gItemDatabase->length()); i++) {
+
+
+	}
+
+	selection = navigatableMenu("Items");
 
 }
 
