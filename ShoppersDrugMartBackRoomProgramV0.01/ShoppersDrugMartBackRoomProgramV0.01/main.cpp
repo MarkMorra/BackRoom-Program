@@ -20,7 +20,7 @@ void selectItem(User **user);
 void logout();
 void resetItem(Item *item, Logger *log);
 void viewLogs();
-void resetUser();
+void resetUserDatabase(User **user);
 void settings(User **user, Logger *log);
 void itemMenu(User **user);
 void viewItem(Item *item);
@@ -107,7 +107,7 @@ void welcome() { //Welcome function to display opening message when program firs
 	//Instructs user how to proceed and displays the version of the program
 	cout << endl << endl << " Shoppers Backroom Program " << VERSION << endl << endl << endl << " Press enter to continue...";
 	
-	//If user presses page up button, they reach a test menu, if they press enter they proceed to regular menu
+	//If user presses page up button (this option is not displayed as it is only for testing), they reach a test menu, if they press enter they proceed to regular menu
 	while ((choice = _getch()) != 13 && choice != 73);
 
 	if (choice == 73)
@@ -442,6 +442,11 @@ void menu(User **user) //Cady's changes start here
 			break;
 		case 5:
 			break;
+		case 6:
+			break;
+		case 7:
+			resetUserDatabase(user);
+			break;
 		}
 
 	} while (corrispondingIndex[selection] != 0);
@@ -532,7 +537,7 @@ void viewLogs()
 
 }
 
-void resetUser(User **user)
+void resetUserDatabase(User **user)
 {
 	string options[] = { "NO, I DO NOT WANT TO DELELTE THE DATABASE", "YES, I WANT TO PERMANTLY DELETE THE USER DATABASE" };
 	int numOfOptions = 2;
@@ -540,63 +545,77 @@ void resetUser(User **user)
 	int selection;
 	string password;
 	char passChar,choice;
-	User **returnedUser;
+	User **returnedUser = new User*;
 
 	selection = navigatableMenu("ARE YOU ABSOLUTLY SURE THAT YOU WANT TO RESET THE USER DATABSE?\nTHIS OPERATION CAN NOT BE UNDONE!", options, numOfOptions, C_BLUE, C_WHITE); //created menu to ask user
-
-	if (selection == 1) //if they pick delete
+	if (selection == 0) //true if they pick no
 	{
-		system("cls");
-		cout << "Please enter your password to cofirm deletion: ";
-
-		for (int i = 0; i < password.length(); i++) //displays * according to how many chars enterd
-		{
-			cout << '*';
-		}
-
-		fflush(stdin);
+		return;
+	}
+	else //if they pick delete
+	{
 		do
 		{
-			passChar = _getch();
-		} while (passChar == '\0'); //ignores null termination character
-
-
-		if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
-		{
-			if (password.length() > 0)
-			{
-				password.pop_back(); //deletes the last character
-			}
-		}
-		else if (passChar != 13) //if they dont press enter it adds the character
-		{
-			password += passChar;
-		}
-
-	} while (passChar != 13); //continues if they press enter
-
-	gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password);  //checks if the 
-
-	if ((returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
-	{
-		system("cls");
-		cout << "Error, invalid credentials\n\nWould you like to try again? (Y/N)";
-
-		do
-		{
-			fflush(stdin);
+			password = "";
 			do
 			{
-				choice = _getch();
-			} while (choice == '\0');
-			choice = toupper(choice);
+				system("cls");
+				cout << "Please enter your password to cofirm deletion: ";
 
-		} while (choice != 'Y' && choice != 'N');
-	}
-	else
-	{
-		gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the UserDatabase");
-	}
+				for (int i = 0; i < password.length(); i++) //displays * according to how many chars enterd
+				{
+					cout << '*';
+				}
+
+				fflush(stdin);
+				do
+				{
+					passChar = _getch();
+				} while (passChar == '\0'); //ignores null termination character
+
+
+				if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
+				{
+					if (password.length() > 0)
+					{
+						password.pop_back(); //deletes the last character
+					}
+				}
+				else if (passChar != 13) //if they dont press enter it adds the character
+				{
+					password += passChar;
+				}
+			} while (passChar != 13); //continues if they press enter
+
+			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password);  //checks if the 
+
+			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
+			{
+				system("cls");
+				cout << "Error, invalid credentials\n\nWould you like to try again? (Y/N)";
+
+				do
+				{
+					fflush(stdin);
+					do
+					{
+						choice = _getch();
+					} while (choice == '\0');
+					choice = toupper(choice);
+
+				} while (choice != 'Y' && choice != 'N');
+			}
+			else
+			{
+				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the UserDatabase");
+				gUserDatabase->clear();
+				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
+				choice = 'N'; //this is to stop the while loop
+			}
+		} while (choice == 'Y');
+	} 
+
+	delete returnedUser;
 }
 
 void settings(User **user, Logger *log)
@@ -856,8 +875,4 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
 	
 	return selection;
-}
-
-void resetUser()
-{
 }

@@ -121,22 +121,22 @@ private:
 	int authCode;
 };
 
-void UserDatabase::checkCredentials(User **user,string _firstName, string _lastName, string _password)
+void UserDatabase::checkCredentials(User **user,string _firstName, string _lastName, string _password) //returns a pointer to a pointer to a user if the firstname, lastname and password match
 {
 	vector<User>::iterator it;
 
 	it = users.begin();
 
-	while (it != users.end())
+	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && string(it->lastName) == uppercase(_lastName) && string(it->password) == _password)
+		if (string(it->firstName) == uppercase(_firstName) && string(it->lastName) == uppercase(_lastName) && string(it->password) == _password) //checks if the current element is eqaul to the string passed
 		{
-			*user = &(*it);
+			*user = &(*it); //sets points to the user that matched the passed strings
 			return;
 		}
 		it++;
 	}
-	user = NULL;
+	*user = NULL; //if not match is found it is set to NULL
 	return;
 }
 
@@ -208,7 +208,7 @@ void UserDatabase::Add(User user)
 	do
 	{
 		user.id = rand() % MAX_USERS;
-	} while (findWith(user.id >= 0)); //checks if the id has already been used
+	} while (findWith(user.id) != -1); //checks if the id has already been used
 
 	//bens code to find the position it should be added based on its ID
 
@@ -229,11 +229,11 @@ int UserDatabase::findWith(int ID)
 int UserDatabase::findWith(string _firstname, string _lastname)
 {
 
-	for (int i = 0; i < users.size() - 1; i++)
+	for (int i = 0; i < users.size() - 1; i++) //loops trough all users to find a user matching the passed strings
 	{
 		if (users[i].firstName == uppercase(_firstname) && users[i].lastName == uppercase(_lastname)) { return i; }
 	}
-	return -1;
+	return -1; //returns -1 if it could not find a match
 }
 
 UserDatabase::UserDatabase(string filename, int *_authCode)
