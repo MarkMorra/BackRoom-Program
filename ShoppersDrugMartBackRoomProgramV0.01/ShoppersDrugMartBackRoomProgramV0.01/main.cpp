@@ -608,7 +608,7 @@ void itemMenu(User **user)
 {
 
 	const int PAGE_OPTIONS = 2;
-	int selection, start, currentPage = 0;
+	int selection, start = 0, currentPage = 0;
 	string *itemsToDisplay;
 	string *itemsOnPage;
 	string pageOptions[] = { "Next Page", "Previous Page" };
@@ -621,11 +621,11 @@ void itemMenu(User **user)
 
 		amount += 1;
 
-	} else if (currentPage == ) { //if its the last page, only show previous page option
+	} else if (currentPage == 1) { //if its the last page, only show previous page option
 
 
 
-	} else if () { //if its not the first or last, show both next and previous
+	} else if (true) { //if its not the first or last, show both next and previous
 
 
 
@@ -641,7 +641,7 @@ void itemMenu(User **user)
 
 	}
 
-	if (int i = 0; i <)
+	//if (int i = 0; i < 0; i++)
 
 	avalibleOptions = new string[amount];
 	corrispondingIndex = new int[amount];
@@ -683,7 +683,7 @@ void itemMenu(User **user)
 
 	} while (corrispondingIndex[selection] != 0);
 
-	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->itemsPerPage) >= gItemDatabase->length()) ? ); i++) {
+	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->itemsPerPage) >= gItemDatabase->length()) ? (true) : (true)); i++) {
 
 
 
