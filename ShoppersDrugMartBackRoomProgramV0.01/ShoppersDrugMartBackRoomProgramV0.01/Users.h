@@ -15,12 +15,11 @@ using namespace std;
 //used to acces a specific command in the permsissions bool array inside of permisssions class
 #define MM_ITEMS 0 //MM means main menu
 #define MM_VIEWLOGS 1
-#define MM_UEERSETTINGS 2
-#define MM_ADDUSER 3
-#define MM_RESETITEM 4
-#define MM_GENERALSETTINGS 5
-#define MM_RESETUSERS 6
-#define MM_RESETLOGS 7
+#define MM_ADDANDEDITUSER 2
+#define MM_RESETITEM 3
+#define MM_GENERALSETTINGS 4
+#define MM_RESETUSERS 5
+#define MM_RESETLOGS 6
 
 #define NUMBER_OF_MMPERMISSIONS 7 //number of bools in permissions bool array
 
@@ -108,6 +107,7 @@ public:
 	int findWith(int ID); //find a user with a specific id and return an index representring thier position
 	int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
 	void checkCredentials(User **user, string _firstName, string _lastName, string _password);
+	void clear();
 
 	void Add(User user);
 private:
@@ -116,32 +116,90 @@ private:
 	
 	void reload();
 	void save();
-	void search(int upc); //when a new user is added this function binary searches to find the position that the new user should be inserted into
+	vector<User>::iterator search(int upc); //when a new user is added this function binary searches to find the position that the new user should be inserted into
 
 	int authCode;
 };
 
-void UserDatabase::checkCredentials(User **user,string _firstName, string _lastName, string _password)
+void UserDatabase::checkCredentials(User **user,string _firstName, string _lastName, string _password) //returns a pointer to a pointer to a user if the firstname, lastname and password match
 {
 	vector<User>::iterator it;
 
 	it = users.begin();
 
-	while (it != users.end())
+	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && string(it->lastName) == uppercase(_lastName) && string(it->password) == _password)
+		if (string(it->firstName) == uppercase(_firstName) && string(it->lastName) == uppercase(_lastName) && string(it->password) == _password) //checks if the current element is eqaul to the string passed
 		{
-			*user = &(*it);
+			*user = &(*it); //sets points to the user that matched the passed strings
 			return;
 		}
 		it++;
 	}
-	user = NULL;
+	*user = NULL; //if not match is found it is set to NULL
 	return;
 }
 
-void UserDatabase::search(int upc)
+void UserDatabase::clear() //clears the database
 {
+
+	users.clear();
+	save();
+	reload();
+
+}
+
+vector<User>::iterator UserDatabase::search(int id) //returns an itterator pointing to the position in which the new users should be inserted
+{ 
+
+	int first, middle, last;
+
+	first = 0;
+	last = users.size() - 1;
+
+	if (users.size() == 0) { //checks if the vector is size zero, if it is returns an ittorator pointing to pos 0
+
+		return vector<User>::iterator(users.begin());
+
+	}
+
+	if (id < (users[0].id)) { //checks if the new users should go before the first users
+
+		return vector<User>::iterator(users.begin());
+
+	}
+
+	if (id >(users[users.size() - 1].id)) { //checks if the users should go in the last position
+
+		return vector<User>::iterator(users.end());
+
+	}
+
+	while (first <= last)
+	{
+
+		middle = int((first + last) / 2); //calcs the new middle
+
+		if (id > users[middle].id) { //if the new users is larger than the middle the entire first half can be ruled out
+
+			first = middle + 1;
+
+		}
+		else if (id == users[middle].id || (id > users[middle - 1].id && id < users[middle].id)) { //if middle equals the new users or if the users is larger then the middle but smaller then the one past the middle it reurns the pos of the middle
+
+			return vector<User>::iterator(users.begin() + middle);
+
+		}
+		else { //the new users is smaller than the middle then everything larger than middle can be ruled out
+
+			last = middle - 1;
+
+		}
+
+	}
+
+	errorMsg("The binary search in User Database::Search has failed and was unable to find the correct position for " + to_string(id) + ". This users will not be added to the database."); //if the above while loops exits than an error occured
+	return vector<User>::iterator();
 
 }
 
@@ -150,7 +208,7 @@ void UserDatabase::Add(User user)
 	do
 	{
 		user.id = rand() % MAX_USERS;
-	} while (findWith(user.id >= 0)); //checks if the id has already been used
+	} while (findWith(user.id) != -1); //checks if the id has already been used
 
 	//bens code to find the position it should be added based on its ID
 
@@ -171,11 +229,11 @@ int UserDatabase::findWith(int ID)
 int UserDatabase::findWith(string _firstname, string _lastname)
 {
 
-	for (int i = 0; i < users.size() - 1; i++)
+	for (int i = 0; i < users.size() - 1; i++) //loops trough all users to find a user matching the passed strings
 	{
 		if (users[i].firstName == uppercase(_firstname) && users[i].lastName == uppercase(_lastname)) { return i; }
 	}
-	return -1;
+	return -1; //returns -1 if it could not find a match
 }
 
 UserDatabase::UserDatabase(string filename, int *_authCode)
