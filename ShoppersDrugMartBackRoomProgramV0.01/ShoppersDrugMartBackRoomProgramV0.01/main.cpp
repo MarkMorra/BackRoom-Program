@@ -19,6 +19,7 @@ void selectItem(User **user);
 
 //Cady's changes start here
 void logout();
+void changePermissions(Permissions *perms);
 void resetItem(Item *item, Logger *log);
 void viewLogs();
 void resetUserDatabase(User **user);
@@ -60,7 +61,7 @@ int main() {
 
 void onStart() {
 
-	int *authCode = new int; //all datafiles containe a random generated authCode. All databases generated at the same time contain the same authCode, this is to verifiy that a password database corisponding to a item database is not used to access antoher database
+	long long int *authCode = new long long int; //all datafiles containe a random generated authCode. All databases generated at the same time contain the same authCode, this is to verifiy that a password database corisponding to a item database is not used to access antoher database
 	*authCode = 0;
 	
 	srand(time(NULL));
@@ -315,13 +316,14 @@ void logon(User **user) {
 			cout << "Please enter you first name: ";
 			getline(cin, first);
 
-			cout << "\nPlease enter your last name: ";
+			system("cls");
+			cout << "Please enter your last name: ";
 			getline(cin, last);
 
 			do
 			{
 				system("cls"); //Clears the screen
-				cout << "\nPlease enter your password: ";
+				cout << "Please enter your password: ";
 
 				for (int i = 0; i < password.length(); i++)
 				{
@@ -423,7 +425,7 @@ void menu(User **user) //Cady's changes start here
 
 	do
 	{
-		selection = navigatableMenu("You are on the main menu screen.\nThe options you see listed are based on your premission level.\nIf you belive there is a mistake with your permission see your manager.", avalibleOptions, amount, C_BLUE, C_LGREY);
+		selection = navigatableMenu("You are on the main menu screen.\nThe options you see listed are based on your premission level.\nIf you belive there is a mistake with your permission see your manager.", avalibleOptions, amount,selection, C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
@@ -714,14 +716,14 @@ void itemMenu(User **user)
 
 	
 	//calcs number of items
-	if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->itemsPerPage))) { //how many items on the page
+	if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //how many items on the page
 
 
-		amount += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->itemsPerPage); //calculates how many items there are on the last page and adjusts the amount accordingly
+		amount += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
 
 	} else {
 
-		amount += gItemDatabase->itemsPerPage; //if we are on a middle page, the number of items on the page is the max
+		amount += gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
 
 	}
 
@@ -731,7 +733,7 @@ void itemMenu(User **user)
 		amount += 1;
 
 	}
-	else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->itemsPerPage))) { //if its the last page, only show previous page option
+	else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //if its the last page, only show previous page option
 
 		amount += 1;
 
@@ -797,7 +799,7 @@ void itemMenu(User **user)
 
 	} while (corrispondingIndex[selection] != 0);
 
-	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->itemsPerPage) >= gItemDatabase->length()) ? (true) : (true)); i++) {
+	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->GetItemsPerPage()) >= gItemDatabase->length()) ? (true) : (true)); i++) {
 
 
 
@@ -957,7 +959,7 @@ void EditGerneralSetting() {
 	{
 		modifyedOptions[0] = options[0];
 		modifyedOptions[1] = options[1] + to_string(gLogger->GetSecondsBeforeMsgDelete()/3600) + " hours";
-		modifyedOptions[2] = options[2] + to_string(gItemDatabase->itemsPerPage);
+		modifyedOptions[2] = options[2] + to_string(gItemDatabase->GetItemsPerPage());
 		selection = navigatableMenu("You are editing the general settings for the program\nAnything you change will be automaticly saved", modifyedOptions, numOfOptions, selection, C_BLUE, C_WHITE); //displays the menu to the user
 
 		switch (selection)
@@ -987,10 +989,50 @@ void EditGerneralSetting() {
 				cout << "Error, value must be grater then zero\nHow many inventory items would you like to display per page: ";
 				cin >> temp;
 			}
-			gItemDatabase->itemsPerPage = temp; //sets it;
+			gItemDatabase->GetItemsPerPage(temp); //sets it;
 			break;
 		}
 
 
 	} while (selection != 0);
+}
+
+User createNewUser()
+{
+	string firstName, lastName, password;
+
+	system("cls");
+
+	cout << "Please enter the new user's firstname: ";
+	getline(cin, firstName);
+
+	cout << "Please enter " << firstName << "'s lastname: ";
+	getline(cin, lastName);
+
+	cout << "Please enter " << firstName << "'s password: ";
+	getline(cin, password);
+
+	Permissions perms;
+
+	changePermissions(&perms);
+
+	return User(0, firstName, lastName, password, perms);
+
+}
+
+void changePermissions(Permissions *perms)
+{
+
+	string baseOptions[] = { "","" };
+	const int numberOfOptions  = 2;
+	string options[numberOfOptions];
+	int selection = 0;
+
+	do
+	{
+
+
+
+	} while (selection != 0);
+
 }

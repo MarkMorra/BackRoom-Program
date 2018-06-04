@@ -101,13 +101,14 @@ User::User(int _ID, string _firstName, string _lastName, string _password, Permi
 class UserDatabase //main job is to store the array os Users
 {
 public:
-	UserDatabase(string filename, int *_authCode);
+	UserDatabase(string filename, long long int *_authCode);
 	~UserDatabase();
 
 	int findWith(int ID); //find a user with a specific id and return an index representring thier position
 	int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
 	void checkCredentials(User **user, string _firstName, string _lastName, string _password);
 	void clear();
+	vector<User>::iterator Search(int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
 
 	void Add(User user);
 private:
@@ -210,10 +211,83 @@ void UserDatabase::Add(User user)
 		user.id = rand() % MAX_USERS;
 	} while (findWith(user.id) != -1); //checks if the id has already been used
 
-	//bens code to find the position it should be added based on its ID
+	vector<User>::iterator it;
 
-	//users.insert(); ---actaully add id
-	
+	it = Search(user.id);
+
+	if (it._Ptr == NULL) {
+
+		users.push_back(user);
+
+	}
+	else if (it == users.end()) {
+
+		users.push_back(user);
+
+	}
+	else if ((*it).id == user.id) {
+
+		cout << "This item already exists.";
+
+	}
+	else {
+
+		users.insert(it,user);
+
+	}
+}
+
+vector<User>::iterator UserDatabase::Search(int id) { //returns an itterator pointing to the position in which the new user should be inserted
+
+	int first, middle, last;
+
+	first = 0;
+	last = users.size() - 1;
+
+	if (users.size() == 0) { //checks if the vector is size zero, if it is returns an ittorator pointing to pos 0
+
+		return vector<User>::iterator(users.begin());
+
+	}
+
+	if (id < (users[0].id)) { //checks if the new item should go before the first item
+
+		return vector<User>::iterator(users.begin());
+
+	}
+
+	if (id >(users[users.size() - 1].id)) { //checks if the item should go in the last position
+
+		return vector<User>::iterator(users.end());
+
+	}
+
+	while (first <= last)
+	{
+
+		middle = int((first + last) / 2); //calcs the new middle
+
+		if (id > users[middle].id) { //if the new item is larger than the middle the entire first half can be ruled out
+
+			first = middle + 1;
+
+		}
+		else if (id == users[middle].id || (id > users[middle - 1].id && id < users[middle].id)) { //if middle equals the new item or if the item is larger then the middle but smaller then the one past the middle it reurns the pos of the middle
+
+			return vector<User>::iterator(users.begin() + middle);
+
+		}
+		else { //the new item is smaller than the middle then everything larger than middle can be ruled out
+
+			last = middle - 1;
+
+		}
+
+	}
+
+	errorMsg("The binary search in User Database::Search has failed and was unable to find the correct position for " + to_string(id) + ". This item will not be added to the database."); //if the above while loops exits than an error occured
+	return vector<User>::iterator();
+
 }
 
 int UserDatabase::findWith(int ID)
@@ -237,7 +311,7 @@ int UserDatabase::findWith(string _firstname, string _lastname)
 	return -1; //returns -1 if it could not find a match
 }
 
-UserDatabase::UserDatabase(string filename, int *_authCode)
+UserDatabase::UserDatabase(string filename, long long int *_authCode)
 {
 
 	filePath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path

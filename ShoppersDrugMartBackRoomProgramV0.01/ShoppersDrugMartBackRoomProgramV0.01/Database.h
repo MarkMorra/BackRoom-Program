@@ -264,7 +264,6 @@ void ItemDatabase::Reload() {
 
 	Item temp;
 	long long int temp_authCode;
-	int temp_itemsPerPage;
 
 	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
@@ -278,7 +277,7 @@ void ItemDatabase::Reload() {
 		return;
 	}
 
-	fread(&temp_itemsPerPage, sizeof(temp_authCode), 1, file);
+	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
