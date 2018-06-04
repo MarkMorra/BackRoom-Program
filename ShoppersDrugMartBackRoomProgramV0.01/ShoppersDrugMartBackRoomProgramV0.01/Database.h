@@ -76,6 +76,7 @@ public:
 	vector<Item>::iterator Search(int upc);
 	void Reload();
 	void Save();
+	string buildItem(int index);
 	vector<Item*>* Find();
 	vector<Item*>* Find(char type, int num);
 	vector<Item*>* Find(char type, float num);
@@ -311,6 +312,12 @@ void ItemDatabase::Save()
 	}
 
 	fclose(file);
+
+}
+
+string ItemDatabase::buildItem(int index) {
+
+	return (to_string(items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + items[index].amount);
 
 }
 
