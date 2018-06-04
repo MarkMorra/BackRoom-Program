@@ -69,7 +69,7 @@ Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _p
 class ItemDatabase {
 
 public:
-	ItemDatabase(string filename, int *_authCode);
+	ItemDatabase(string filename, long long int *_authCode);
 	~ItemDatabase();
 	void Clear();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
@@ -94,7 +94,7 @@ private:
 
 };
 
-ItemDatabase::ItemDatabase(string filename, int *_authCode)
+ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 {
 
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path

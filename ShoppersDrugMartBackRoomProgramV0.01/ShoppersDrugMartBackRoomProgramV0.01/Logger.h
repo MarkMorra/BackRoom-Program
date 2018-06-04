@@ -83,7 +83,7 @@ private:
 
 };
 
-Logger::Logger(string filename, int *_authCode)
+Logger::Logger(string filename, long long int *_authCode)
 {
 
 	Filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
