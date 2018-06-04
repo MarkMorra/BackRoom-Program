@@ -22,12 +22,8 @@ void logout();
 void resetItem(Item *item, Logger *log);
 void viewLogs();
 void resetUserDatabase(User **user);
-void settings(User **user, Logger *log);
+void deleteItemDatabase(User **user);
 void itemMenu(User **user);
-void viewItem(Item *item);
-void viewItemLogs(Logger *log);
-void changePrice(Item *item, Logger *log);
-void changeInventory(Item *item, Logger *log);
 void help();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -431,12 +427,12 @@ void menu(User **user) //Cady's changes start here
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
 		case 1:
-			break;
-		case 2:
 			itemMenu(user);
 			break;
-		case 3:
+		case 2:
 			viewLogs();
+			break;
+		case 3:
 			break;
 		case 4:
 			//addUser();
@@ -444,6 +440,7 @@ void menu(User **user) //Cady's changes start here
 		case 5:
 			break;
 		case 6:
+			deleteItemDatabase(user);
 			break;
 		case 7:
 			resetUserDatabase(user);
@@ -691,7 +688,6 @@ void deleteItemDatabase(User **user)
 			{
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the ItemDatabase");
 				gItemDatabase->Clear();
-				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
 				choice = 'N'; //this is to stop the while loop
 			}
 		} while (choice == 'Y');
@@ -700,10 +696,6 @@ void deleteItemDatabase(User **user)
 	delete returnedUser;
 }
 
-void settings(User **user, Logger *log)
-{
-
-}
 
 void itemMenu(User **user)
 {
@@ -809,25 +801,6 @@ void itemMenu(User **user)
 
 }
 
-void viewItem(Item *item)
-{
-
-}
-
-void viewItemLogs(Logger *log)
-{
-
-}
-
-void changePrice(Item *item, Logger *log)
-{
-
-}
-
-void changeInventory(Item *item, Logger *log)
-{
-
-}
 
 void help()//Help screen displays instructions on how to use the program and answers to frequently asked questions
 {
