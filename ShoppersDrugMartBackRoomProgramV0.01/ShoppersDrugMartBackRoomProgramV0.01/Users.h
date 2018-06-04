@@ -108,11 +108,13 @@ public:
 	int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
 	void checkCredentials(User **user, string _firstName, string _lastName, string _password);
 	void clear();
+	int size();
+	User* pos(int index);
 	vector<User>::iterator Search(int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
 
 	void Add(User user);
 private:
-	vector<User> users;
+	vector<User> users; //returns a pointer to a user at a givin index in the vector
 	string filePath;
 	
 	void reload();
@@ -148,6 +150,16 @@ void UserDatabase::clear() //clears the database
 	save();
 	reload();
 
+}
+
+int UserDatabase::size()
+{
+	return users.size();
+}
+
+User* UserDatabase::pos(int index) //returns a pointer to a user at a givin index in the vector
+{
+	return &(users[index]);
 }
 
 vector<User>::iterator UserDatabase::search(int id) //returns an itterator pointing to the position in which the new users should be inserted

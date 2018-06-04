@@ -489,13 +489,14 @@ void resetItem(Item *item, Logger *log)
 
 void viewLogs()
 {
-	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by User"};
-	int numOfOptions = 3;
+	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by User (might not work)"};
+	int numOfOptions = 4;
 	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes" , "View Ammount Changes" , "View Item Information Changes"};
 	int numOfSearchByTypeOptions = 4;
 	
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
-	int choice = 0;
+	int choice = 0; //saves your selection on the main view logs menu
+	int subChoice = 0; //saves the users choice in any sub menus
 
 	gLogger->display(&headerString); //fills the string with all the logs
 
@@ -529,10 +530,14 @@ void viewLogs()
 			}
 			break;
 		case 3:
-
-			system("cls");
-			cout << headerString;
-			cout << "\n\nPlease ";
+			string *users;
+			users = new string[gUserDatabase->size()];
+			for (int i = 0; i < gUserDatabase->size(); i++)
+			{
+				users[i] = string(gUserDatabase->pos(i)->firstName) + ' ' + string(gUserDatabase->pos(i)->lastName);
+			}
+			subChoice = navigatableMenu("Please select the user you would like to see the logs for.", users, &headerString, gUserDatabase->size(), C_BLUE, C_WHITE);
+			gLogger->display(&headerString, gUserDatabase->pos(subChoice)->id, 'A');
 		}
 	} while (true);
 	
@@ -700,7 +705,6 @@ void deleteItemDatabase(User **user)
 	delete returnedUser;
 }
 
-
 void itemMenu(User **user)
 {
 
@@ -841,7 +845,6 @@ void itemMenu(User **user)
 	}
 
 }
-
 
 void help()//Help screen displays instructions on how to use the program and answers to frequently asked questions
 {
@@ -1051,7 +1054,7 @@ User createNewUser()
 
 	changePermissions(&perms);
 
-	return User(0, firstName, lastName, password, perms);
+	return User(0, uppercase(firstName), uppercase(lastName), password, perms);
 
 }
 
