@@ -502,6 +502,11 @@ void viewLogs()
 
 	do
 	{
+		if (headerString == "")
+		{
+			headerString = "There were no Logs that mactched your search requirements";
+		}
+
 		choice = navigatableMenu("You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
 		switch (choice)
