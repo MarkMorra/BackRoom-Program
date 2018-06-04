@@ -71,6 +71,7 @@ class ItemDatabase {
 public:
 	ItemDatabase(string filename, int *_authCode);
 	~ItemDatabase();
+	void Clear();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
 	vector<Item>::iterator Search(int upc);
 	void Reload();
@@ -134,6 +135,16 @@ ItemDatabase::~ItemDatabase() {
 	Save();
 
 	items.clear();
+
+}
+
+void ItemDatabase::Clear() {
+
+	items.clear();
+
+	Save();
+
+	Reload();
 
 }
 

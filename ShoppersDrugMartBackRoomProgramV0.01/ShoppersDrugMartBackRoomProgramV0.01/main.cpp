@@ -42,8 +42,6 @@ int main() {
 
 	User **user = new User*;
 
-	int test = (3 / 2);
-
 	onStart(); //Initializes important variables such as for databases, menu highlights etc. when program first starts
 	welcome(); //First display of the program shows a welcome screen to the user
 	
@@ -638,20 +636,37 @@ void itemMenu(User **user)
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
 
-	if (currentPage == 0) {
-
-		amount += 1;
-
-	} else if (currentPage == (gItemDatabase->length % gItemDatabase->itemsPerPage)) { //if its the last page, only show previous page option
+	
+	//calcs number of items
+	if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->itemsPerPage))) { //how many items on the page
 
 
+		amount += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->itemsPerPage); //calculates how many items there are on the last page and adjusts the amount accordingly
 
-	} else if (true) { //if its not the first or last, show both next and previous
+	} else {
 
-
+		amount += gItemDatabase->itemsPerPage; //if we are on a middle page, the number of items on the page is the max
 
 	}
 
+	//calcs number of nav buttons
+	if (currentPage == 0) { //if first page, we only want to show next page
+
+		amount += 1;
+
+	}
+	else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->itemsPerPage))) { //if its the last page, only show previous page option
+
+		amount += 1;
+
+	}
+	else { //if its not the first or last, show both next and previous
+
+		amount += 2;
+
+	}
+
+	//calcs number of perms
 	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
 	{
 
@@ -662,7 +677,7 @@ void itemMenu(User **user)
 
 	}
 
-	//if (int i = 0; i < 0; i++)
+	//for (int i = 0; i < 0; i++)
 
 	avalibleOptions = new string[amount];
 	corrispondingIndex = new int[amount];
