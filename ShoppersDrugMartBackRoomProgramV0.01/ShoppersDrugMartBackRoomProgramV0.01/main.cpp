@@ -718,7 +718,7 @@ void itemMenu(User **user)
 	//calcs number of items
 	if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //how many items on the page
 
-		numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->itemsPerPage); //calculates how many items there are on the last page and adjusts the amount accordingly
+		numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
 
 		amount += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
 
@@ -773,7 +773,7 @@ void itemMenu(User **user)
 	for (j; j < numItemsPage; j++) { //add items to navigatable menu
 
 		corrispondingIndex[j] = j;
-		avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->itemsPerPage) + j);
+		avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
 	
 	}
 
@@ -802,10 +802,10 @@ void itemMenu(User **user)
 	for (j; j < changingOptions; j++) //makes the array of string to be passed to the menu function
 	{
 
-		if ((*user)->permission.permissionsIM[i - changingOptions] == true)
+		if ((*user)->permission.permissionsIM[j - changingOptions] == true)
 		{
-			corrispondingIndex[i] = i + 1;
-			avalibleOptions[pos] = allOptions[i];
+			corrispondingIndex[j] = j + 1;
+			avalibleOptions[pos] = allOptions[j];
 			pos++;
 		}
 

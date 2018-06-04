@@ -74,8 +74,6 @@ public:
 	void Clear();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
 	vector<Item>::iterator Search(int upc);
-	void Reload();
-	void Save();
 	string buildItem(int index);
 	vector<Item*>* Find();
 	vector<Item*>* Find(char type, int num);
@@ -332,7 +330,7 @@ void ItemDatabase::Save()
 
 string ItemDatabase::buildItem(int index) {
 
-	return (to_string(items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + items[index].amount);
+	return (to_string(items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
 
 }
 
