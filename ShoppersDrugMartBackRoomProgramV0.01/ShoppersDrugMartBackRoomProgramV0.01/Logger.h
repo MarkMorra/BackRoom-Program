@@ -68,6 +68,8 @@ public:
 	void display(string *str);
 	void display(string *str, int searchNumber, char intType); //search number is UPCCode, PLUCode or userid. intType specifies which one (U=upc,P=PLU,a=user)
 	void display(string *str, char type);
+	void GetSecondsBeforeMsgDelete(int _seconds);
+	int GetSecondsBeforeMsgDelete();
 
 
 private:
@@ -301,6 +303,17 @@ void Logger::display(string *str, char _type) //allows messages of a certin type
 		*str = "There were no Logs that mactched your search requirements";
 	}
 
+}
+
+void Logger::GetSecondsBeforeMsgDelete(int _seconds)
+{
+	secondsBeforeMsgDelete = _seconds;
+	save();
+}
+
+int Logger::GetSecondsBeforeMsgDelete()
+{
+	return secondsBeforeMsgDelete;
 }
 
 void Logger::display(string *str) //disaplyes all log messages

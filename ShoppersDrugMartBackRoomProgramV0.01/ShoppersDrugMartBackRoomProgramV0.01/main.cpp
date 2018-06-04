@@ -25,6 +25,7 @@ void resetUserDatabase(User **user);
 void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void help();
+void EditGerneralSetting();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -438,6 +439,7 @@ void menu(User **user) //Cady's changes start here
 			//addUser();
 			break;
 		case 5:
+			EditGerneralSetting();
 			break;
 		case 6:
 			deleteItemDatabase(user);
@@ -941,4 +943,54 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
 	
 	return selection;
+}
+
+void EditGerneralSetting() {
+
+	int selection = 0;
+	int temp;
+	string options[] = {"Exit", "How long to store log messages: ", "How many inventory items to display per page: " }; //all the options before they have speciific information added to them
+	const int numOfOptions = 3;
+	string modifyedOptions[numOfOptions]; //all the options after they have specific infortion added to them (it takes the string from options and appends text to the option)
+
+	do
+	{
+		modifyedOptions[0] = options[0];
+		modifyedOptions[1] = options[1] + to_string(gLogger->GetSecondsBeforeMsgDelete()/3600) + " hours";
+		modifyedOptions[2] = options[2] + to_string(gItemDatabase->itemsPerPage);
+		selection = navigatableMenu("You are editing the general settings for the program\nAnything you change will be automaticly saved", modifyedOptions, numOfOptions, selection, C_BLUE, C_WHITE); //displays the menu to the user
+
+		switch (selection)
+		{
+		case 1:
+			system("cls");
+			cout << "How many hours would you like to store log messages for: "; //gets the input from the user
+			cin >> temp;
+
+			while (temp <= 0) //error trap
+			{
+				system("cls");
+				cout << "Error, time must be grater then zero\nHow many hours would you like to store log messages for: ";
+				cin >> temp;
+			}
+			gLogger->GetSecondsBeforeMsgDelete(temp * 3600); //convert the hours to seconds and then sets it;
+			break;
+
+		case 2:
+			system("cls");
+			cout << "How many inventory items would you like to display per page: "; //gets the input from the user
+			cin >> temp;
+
+			while (temp <= 0) //error trap
+			{
+				system("cls");
+				cout << "Error, value must be grater then zero\nHow many inventory items would you like to display per page: ";
+				cin >> temp;
+			}
+			gItemDatabase->itemsPerPage = temp; //sets it;
+			break;
+		}
+
+
+	} while (selection != 0);
 }
