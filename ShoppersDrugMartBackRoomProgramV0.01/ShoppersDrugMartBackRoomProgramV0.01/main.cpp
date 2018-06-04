@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Logger.h"
 #include "Database.h"
 #include "Users.h"
@@ -689,7 +690,7 @@ void deleteItemDatabase(User **user)
 			else
 			{
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the ItemDatabase");
-				gItemDatabase->clear();
+				gItemDatabase->Clear();
 				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
 				choice = 'N'; //this is to stop the while loop
 			}
@@ -697,7 +698,6 @@ void deleteItemDatabase(User **user)
 	}
 
 	delete returnedUser;
-}
 }
 
 void settings(User **user, Logger *log)
