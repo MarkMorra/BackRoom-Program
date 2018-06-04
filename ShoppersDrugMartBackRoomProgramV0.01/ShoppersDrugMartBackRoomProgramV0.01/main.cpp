@@ -749,6 +749,8 @@ void itemMenu(User **user)
 	}
 
 	//calcs number of perms
+	int pos = amount;  //this number is iterated everytime the user has access to a command
+
 	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
 	{
 
@@ -761,17 +763,17 @@ void itemMenu(User **user)
 
 	//for (int i = 0; i < 0; i++)
 
+	int changingOptions = amount - pos;
+
 	avalibleOptions = new string[amount];
-	corrispondingIndex = new int[amount];
+	corrispondingIndex = new int[changingOptions];
 
-	int pos = 1; //this number is iterated everytime the user has access to a command
-
-	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //makes the array of string to be passed to the menu function
+	for (int i = 0; i < changingOptions; i++) //makes the array of string to be passed to the menu function
 	{
 
-		if ((*user)->permission.permissionsIM[i] == true)
+		if ((*user)->permission.permissionsIM[i - changingOptions] == true)
 		{
-			corrispondingIndex[pos] = i + 1;
+			corrispondingIndex[i] = i + 1;
 			avalibleOptions[pos] = allOptions[i];
 			pos++;
 		}
