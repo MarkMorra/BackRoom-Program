@@ -22,13 +22,10 @@ void logout();
 void resetItem(Item *item, Logger *log);
 void viewLogs();
 void resetUserDatabase(User **user);
-void settings(User **user, Logger *log);
+void deleteItemDatabase(User **user);
 void itemMenu(User **user);
-void viewItem(Item *item);
-void viewItemLogs(Logger *log);
-void changePrice(Item *item, Logger *log);
-void changeInventory(Item *item, Logger *log);
 void help();
+void EditGerneralSetting();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -431,19 +428,21 @@ void menu(User **user) //Cady's changes start here
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
 		case 1:
-			break;
-		case 2:
 			itemMenu(user);
 			break;
-		case 3:
+		case 2:
 			viewLogs();
+			break;
+		case 3:
 			break;
 		case 4:
 			//addUser();
 			break;
 		case 5:
+			EditGerneralSetting();
 			break;
 		case 6:
+			deleteItemDatabase(user);
 			break;
 		case 7:
 			resetUserDatabase(user);
@@ -691,7 +690,6 @@ void deleteItemDatabase(User **user)
 			{
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the ItemDatabase");
 				gItemDatabase->Clear();
-				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
 				choice = 'N'; //this is to stop the while loop
 			}
 		} while (choice == 'Y');
@@ -700,10 +698,6 @@ void deleteItemDatabase(User **user)
 	delete returnedUser;
 }
 
-void settings(User **user, Logger *log)
-{
-
-}
 
 void itemMenu(User **user)
 {
@@ -844,25 +838,6 @@ void itemMenu(User **user)
 
 }
 
-void viewItem(Item *item)
-{
-
-}
-
-void viewItemLogs(Logger *log)
-{
-
-}
-
-void changePrice(Item *item, Logger *log)
-{
-
-}
-
-void changeInventory(Item *item, Logger *log)
-{
-
-}
 
 void help()//Help screen displays instructions on how to use the program and answers to frequently asked questions
 {
@@ -947,15 +922,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	{
 		system("cls");
 
-		cout << endl << "\t\t\t\t  __  __                  ";
-		cout << endl << "\t\t\t\t |  \\/  |                 ";
-		cout << endl << "\t\t\t\t | \\  / | ___ _ __  _   _ ";
-		cout << endl << "\t\t\t\t | |\\/| |/ _ \\  _ \\| | | |";
-		cout << endl << "\t\t\t\t | |  | |  __/ | | | |_| |";
-		cout << endl << "\t\t\t\t |_|  |_|\\___|_| |_|\\__,_|";
-
-
-		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+		cout << ((*headerText == "") ? ("") : (*headerText + "\n\n\n")) << ((title == "") ? ("") : (title + "\n\n")) << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
@@ -1009,4 +976,54 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
 	
 	return selection;
+}
+
+void EditGerneralSetting() {
+
+	int selection = 0;
+	int temp;
+	string options[] = {"Exit", "How long to store log messages: ", "How many inventory items to display per page: " }; //all the options before they have speciific information added to them
+	const int numOfOptions = 3;
+	string modifyedOptions[numOfOptions]; //all the options after they have specific infortion added to them (it takes the string from options and appends text to the option)
+
+	do
+	{
+		modifyedOptions[0] = options[0];
+		modifyedOptions[1] = options[1] + to_string(gLogger->GetSecondsBeforeMsgDelete()/3600) + " hours";
+		modifyedOptions[2] = options[2] + to_string(gItemDatabase->itemsPerPage);
+		selection = navigatableMenu("You are editing the general settings for the program\nAnything you change will be automaticly saved", modifyedOptions, numOfOptions, selection, C_BLUE, C_WHITE); //displays the menu to the user
+
+		switch (selection)
+		{
+		case 1:
+			system("cls");
+			cout << "How many hours would you like to store log messages for: "; //gets the input from the user
+			cin >> temp;
+
+			while (temp <= 0) //error trap
+			{
+				system("cls");
+				cout << "Error, time must be grater then zero\nHow many hours would you like to store log messages for: ";
+				cin >> temp;
+			}
+			gLogger->GetSecondsBeforeMsgDelete(temp * 3600); //convert the hours to seconds and then sets it;
+			break;
+
+		case 2:
+			system("cls");
+			cout << "How many inventory items would you like to display per page: "; //gets the input from the user
+			cin >> temp;
+
+			while (temp <= 0) //error trap
+			{
+				system("cls");
+				cout << "Error, value must be grater then zero\nHow many inventory items would you like to display per page: ";
+				cin >> temp;
+			}
+			gItemDatabase->itemsPerPage = temp; //sets it;
+			break;
+		}
+
+
+	} while (selection != 0);
 }

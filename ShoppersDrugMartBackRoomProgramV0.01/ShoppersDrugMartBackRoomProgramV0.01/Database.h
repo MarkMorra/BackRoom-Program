@@ -69,7 +69,7 @@ Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _p
 class ItemDatabase {
 
 public:
-	ItemDatabase(string filename, int *_authCode);
+	ItemDatabase(string filename, long long int *_authCode);
 	~ItemDatabase();
 	void Clear();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
@@ -82,17 +82,22 @@ public:
 	vector<Item*>* Find(char type, float num);
 	vector<Item*>* Find(char type, string text);
 	int length();
-	int itemsPerPage;
+	int GetItemsPerPage();
+	void GetItemsPerPage(int _items);
 
 private:
 	string filepath;
 	vector<Item> items;
+	int itemsPerPage;
+
+	void Reload();
+	void Save();
 
 	long long int authCode;
 
 };
 
-ItemDatabase::ItemDatabase(string filename, int *_authCode)
+ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 {
 
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
@@ -153,6 +158,17 @@ int ItemDatabase::length() {
 
 	return(items.size());
 
+}
+
+inline int ItemDatabase::GetItemsPerPage()
+{
+	return itemsPerPage;
+}
+
+void ItemDatabase::GetItemsPerPage(int _items)
+{
+	itemsPerPage = _items;
+	Save();
 }
 
 void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale) {
