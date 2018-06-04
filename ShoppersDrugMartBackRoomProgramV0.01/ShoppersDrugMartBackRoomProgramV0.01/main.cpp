@@ -887,15 +887,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	{
 		system("cls");
 
-		cout << endl << "\t\t\t\t  __  __                  ";
-		cout << endl << "\t\t\t\t |  \\/  |                 ";
-		cout << endl << "\t\t\t\t | \\  / | ___ _ __  _   _ ";
-		cout << endl << "\t\t\t\t | |\\/| |/ _ \\  _ \\| | | |";
-		cout << endl << "\t\t\t\t | |  | |  __/ | | | |_| |";
-		cout << endl << "\t\t\t\t |_|  |_|\\___|_| |_|\\__,_|";
-
-
-		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+		cout << ((*headerText == "") ? ("") : (*headerText + "\n\n\n")) << ((title == "") ? ("") : (title + "\n\n")) << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
