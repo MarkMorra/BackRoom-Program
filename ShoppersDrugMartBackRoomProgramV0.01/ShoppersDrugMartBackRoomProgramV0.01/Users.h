@@ -218,7 +218,8 @@ void UserDatabase::Add(User user)
 
 int UserDatabase::findWith(int ID)
 {
-	for (int i = 0; i < users.size() -1; i++)
+	int temp = users.size();
+	for (int i = 0; i < int(users.size()) - 1; i++)
 	{
 		if (users[i].id == ID) { return i; }
 	}
@@ -229,7 +230,7 @@ int UserDatabase::findWith(int ID)
 int UserDatabase::findWith(string _firstname, string _lastname)
 {
 
-	for (int i = 0; i < users.size() - 1; i++) //loops trough all users to find a user matching the passed strings
+	for (int i = 0; i < int(users.size()) - 1; i++) //loops trough all users to find a user matching the passed strings
 	{
 		if (users[i].firstName == uppercase(_firstname) && users[i].lastName == uppercase(_lastname)) { return i; }
 	}
