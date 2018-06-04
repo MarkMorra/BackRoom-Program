@@ -42,6 +42,8 @@ int main() {
 
 	User **user = new User*;
 
+	int test = (3 / 2);
+
 	onStart(); //Initializes important variables such as for databases, menu highlights etc. when program first starts
 	welcome(); //First display of the program shows a welcome screen to the user
 	
@@ -559,7 +561,7 @@ void itemMenu(User **user)
 
 		amount += 1;
 
-	} else if (currentPage == ) { //if its the last page, only show previous page option
+	} else if (currentPage == (gItemDatabase->length % gItemDatabase->itemsPerPage)) { //if its the last page, only show previous page option
 
 
 
