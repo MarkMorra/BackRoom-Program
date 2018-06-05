@@ -19,16 +19,14 @@ void selectItem(User **user);
 
 //Cady's changes start here
 void logout();
+void changePermissions(Permissions *perms);
 void resetItem(Item *item, Logger *log);
 void viewLogs();
 void resetUserDatabase(User **user);
-void settings(User **user, Logger *log);
+void deleteItemDatabase(User **user);
 void itemMenu(User **user);
-void viewItem(Item *item);
-void viewItemLogs(Logger *log);
-void changePrice(Item *item, Logger *log);
-void changeInventory(Item *item, Logger *log);
 void help();
+void EditGerneralSetting();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -63,7 +61,7 @@ int main() {
 
 void onStart() {
 
-	int *authCode = new int; //all datafiles containe a random generated authCode. All databases generated at the same time contain the same authCode, this is to verifiy that a password database corisponding to a item database is not used to access antoher database
+	long long int *authCode = new long long int; //all datafiles containe a random generated authCode. All databases generated at the same time contain the same authCode, this is to verifiy that a password database corisponding to a item database is not used to access antoher database
 	*authCode = 0;
 	
 	srand(time(NULL));
@@ -318,13 +316,14 @@ void logon(User **user) {
 			cout << "Please enter you first name: ";
 			getline(cin, first);
 
-			cout << "\nPlease enter your last name: ";
+			system("cls");
+			cout << "Please enter your last name: ";
 			getline(cin, last);
 
 			do
 			{
 				system("cls"); //Clears the screen
-				cout << "\nPlease enter your password: ";
+				cout << "Please enter your password: ";
 
 				for (int i = 0; i < password.length(); i++)
 				{
@@ -432,19 +431,21 @@ void menu(User **user) //Cady's changes start here
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
 		case 1:
-			break;
-		case 2:
 			itemMenu(user);
 			break;
-		case 3:
+		case 2:
 			viewLogs();
+			break;
+		case 3:
 			break;
 		case 4:
 			//addUser();
 			break;
 		case 5:
+			EditGerneralSetting();
 			break;
 		case 6:
+			deleteItemDatabase(user);
 			break;
 		case 7:
 			resetUserDatabase(user);
@@ -489,13 +490,14 @@ void resetItem(Item *item, Logger *log)
 
 void viewLogs()
 {
-	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by User"};
-	int numOfOptions = 3;
+	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by User (might not work)"};
+	int numOfOptions = 4;
 	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes" , "View Ammount Changes" , "View Item Information Changes"};
 	int numOfSearchByTypeOptions = 4;
 	
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
-	int choice = 0;
+	int choice = 0; //saves your selection on the main view logs menu
+	int subChoice = 0; //saves the users choice in any sub menus
 
 	gLogger->display(&headerString); //fills the string with all the logs
 
@@ -529,10 +531,14 @@ void viewLogs()
 			}
 			break;
 		case 3:
-
-			system("cls");
-			cout << headerString;
-			cout << "\n\nPlease ";
+			string *users;
+			users = new string[gUserDatabase->size()];
+			for (int i = 0; i < gUserDatabase->size(); i++)
+			{
+				users[i] = string(gUserDatabase->pos(i)->firstName) + ' ' + string(gUserDatabase->pos(i)->lastName);
+			}
+			subChoice = navigatableMenu("Please select the user you would like to see the logs for.", users, &headerString, gUserDatabase->size(), C_BLUE, C_WHITE);
+			gLogger->display(&headerString, gUserDatabase->pos(subChoice)->id, 'A');
 		}
 	} while (true);
 	
@@ -692,18 +698,12 @@ void deleteItemDatabase(User **user)
 			{
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the ItemDatabase");
 				gItemDatabase->Clear();
-				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
 				choice = 'N'; //this is to stop the while loop
 			}
 		} while (choice == 'Y');
 	}
 
 	delete returnedUser;
-}
-
-void settings(User **user, Logger *log)
-{
-
 }
 
 void itemMenu(User **user)
@@ -718,37 +718,45 @@ void itemMenu(User **user)
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
-
+	int numItemsPage = 0, navButtons = 0;
 	
 	//calcs number of items
-	if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->itemsPerPage))) { //how many items on the page
+	if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //how many items on the page
 
+		numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
 
-		amount += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->itemsPerPage); //calculates how many items there are on the last page and adjusts the amount accordingly
+		amount += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
 
 	} else {
 
-		amount += gItemDatabase->itemsPerPage; //if we are on a middle page, the number of items on the page is the max
+		amount += gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
 
 	}
 
+	amount += numItemsPage;
+	
 	//calcs number of nav buttons
 	if (currentPage == 0) { //if first page, we only want to show next page
 
-		amount += 1;
+		navButtons = 0;
+		amount++;
 
 	}
-	else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->itemsPerPage))) { //if its the last page, only show previous page option
+	else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //if its the last page, only show previous page option
 
-		amount += 1;
+		navButtons = 1;
+		amount++;
 
 	}
 	else { //if its not the first or last, show both next and previous
 
+		navButtons = 2;
 		amount += 2;
 
 	}
 
+	int pos = amount;  //this number is iterated everytime the user has access to a command
+	
 	//calcs number of perms
 	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
 	{
@@ -760,20 +768,49 @@ void itemMenu(User **user)
 
 	}
 
-	//for (int i = 0; i < 0; i++)
+	int changingOptions = amount - pos;
 
 	avalibleOptions = new string[amount];
 	corrispondingIndex = new int[amount];
 
-	int pos = 1; //this number is iterated everytime the user has access to a command
+	int j = 0;
 
-	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //makes the array of string to be passed to the menu function
+	for (j; j < numItemsPage; j++) { //add items to navigatable menu
+
+		corrispondingIndex[j] = j;
+		avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
+	
+	}
+
+	j++;
+
+	if (navButtons == 0) {
+
+		avalibleOptions[j] = pageOptions[0];
+		corrispondingIndex[j] = j;
+
+	} else if (navButtons == 1) {
+
+		avalibleOptions[j] = pageOptions[1];
+		corrispondingIndex[j] = j;
+
+	} else if (navButtons == 2) {
+
+		avalibleOptions[j] = pageOptions[0];
+		corrispondingIndex[j] = j;
+		j++;
+		avalibleOptions[j] = pageOptions[1];
+		corrispondingIndex[j] = j;
+
+	}
+
+	for (j; j < changingOptions; j++) //makes the array of string to be passed to the menu function
 	{
 
-		if ((*user)->permission.permissionsIM[i] == true)
+		if ((*user)->permission.permissionsIM[j - changingOptions] == true)
 		{
-			corrispondingIndex[pos] = i + 1;
-			avalibleOptions[pos] = allOptions[i];
+			corrispondingIndex[j] = j + 1;
+			avalibleOptions[pos] = allOptions[j];
 			pos++;
 		}
 
@@ -802,31 +839,11 @@ void itemMenu(User **user)
 
 	} while (corrispondingIndex[selection] != 0);
 
-	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->itemsPerPage) >= gItemDatabase->length()) ? (true) : (true)); i++) {
+	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->GetItemsPerPage()) >= gItemDatabase->length()) ? (true) : (true)); i++) {
 
 
 
 	}
-
-}
-
-void viewItem(Item *item)
-{
-
-}
-
-void viewItemLogs(Logger *log)
-{
-
-}
-
-void changePrice(Item *item, Logger *log)
-{
-
-}
-
-void changeInventory(Item *item, Logger *log)
-{
 
 }
 
@@ -913,6 +930,14 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	{
 		system("cls");
 
+		cout << endl << "\t\t\t\t  __  __                  ";
+		cout << endl << "\t\t\t\t |  \\/  |                 ";
+		cout << endl << "\t\t\t\t | \\  / | ___ _ __  _   _ ";
+		cout << endl << "\t\t\t\t | |\\/| |/ _ \\  _ \\| | | |";
+		cout << endl << "\t\t\t\t | |  | |  __/ | | | |_| |";
+		cout << endl << "\t\t\t\t |_|  |_|\\___|_| |_|\\__,_|";
+
+
 		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
@@ -967,4 +992,94 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	} while (choice[0] != 13); //if they pressed enter it returns the value of the curently selected item;
 	
 	return selection;
+}
+
+void EditGerneralSetting() {
+
+	int selection = 0;
+	int temp;
+	string options[] = {"Exit", "How long to store log messages: ", "How many inventory items to display per page: " }; //all the options before they have speciific information added to them
+	const int numOfOptions = 3;
+	string modifyedOptions[numOfOptions]; //all the options after they have specific infortion added to them (it takes the string from options and appends text to the option)
+
+	do
+	{
+		modifyedOptions[0] = options[0];
+		modifyedOptions[1] = options[1] + to_string(gLogger->GetSecondsBeforeMsgDelete()/3600) + " hours";
+		modifyedOptions[2] = options[2] + to_string(gItemDatabase->GetItemsPerPage());
+		selection = navigatableMenu("You are editing the general settings for the program\nAnything you change will be automaticly saved", modifyedOptions, numOfOptions, selection, C_BLUE, C_WHITE); //displays the menu to the user
+
+		switch (selection)
+		{
+		case 1:
+			system("cls");
+			cout << "How many hours would you like to store log messages for: "; //gets the input from the user
+			cin >> temp;
+
+			while (temp <= 0) //error trap
+			{
+				system("cls");
+				cout << "Error, time must be grater then zero\nHow many hours would you like to store log messages for: ";
+				cin >> temp;
+			}
+			gLogger->GetSecondsBeforeMsgDelete(temp * 3600); //convert the hours to seconds and then sets it;
+			break;
+
+		case 2:
+			system("cls");
+			cout << "How many inventory items would you like to display per page: "; //gets the input from the user
+			cin >> temp;
+
+			while (temp <= 0) //error trap
+			{
+				system("cls");
+				cout << "Error, value must be grater then zero\nHow many inventory items would you like to display per page: ";
+				cin >> temp;
+			}
+			gItemDatabase->GetItemsPerPage(temp); //sets it;
+			break;
+		}
+
+
+	} while (selection != 0);
+}
+
+User createNewUser()
+{
+	string firstName, lastName, password;
+
+	system("cls");
+
+	cout << "Please enter the new user's firstname: ";
+	getline(cin, firstName);
+
+	cout << "Please enter " << firstName << "'s lastname: ";
+	getline(cin, lastName);
+
+	cout << "Please enter " << firstName << "'s password: ";
+	getline(cin, password);
+
+	Permissions perms;
+
+	changePermissions(&perms);
+
+	return User(0, uppercase(firstName), uppercase(lastName), password, perms);
+
+}
+
+void changePermissions(Permissions *perms)
+{
+
+	string baseOptions[] = { "","" };
+	const int numberOfOptions  = 2;
+	string options[numberOfOptions];
+	int selection = 0;
+
+	do
+	{
+
+
+
+	} while (selection != 0);
+
 }

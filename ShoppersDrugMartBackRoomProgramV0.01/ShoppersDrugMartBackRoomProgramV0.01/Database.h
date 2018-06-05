@@ -69,29 +69,33 @@ Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _p
 class ItemDatabase {
 
 public:
-	ItemDatabase(string filename, int *_authCode);
+	ItemDatabase(string filename, long long int *_authCode);
 	~ItemDatabase();
 	void Clear();
 	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
 	vector<Item>::iterator Search(int upc);
-	void Reload();
-	void Save();
+	string buildItem(int index);
 	vector<Item*>* Find();
 	vector<Item*>* Find(char type, int num);
 	vector<Item*>* Find(char type, float num);
 	vector<Item*>* Find(char type, string text);
 	int length();
-	int itemsPerPage;
+	int GetItemsPerPage();
+	void GetItemsPerPage(int _items);
 
 private:
 	string filepath;
 	vector<Item> items;
+	int itemsPerPage;
+
+	void Reload();
+	void Save();
 
 	long long int authCode;
 
 };
 
-ItemDatabase::ItemDatabase(string filename, int *_authCode)
+ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 {
 
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
@@ -152,6 +156,17 @@ int ItemDatabase::length() {
 
 	return(items.size());
 
+}
+
+inline int ItemDatabase::GetItemsPerPage()
+{
+	return itemsPerPage;
+}
+
+void ItemDatabase::GetItemsPerPage(int _items)
+{
+	itemsPerPage = _items;
+	Save();
 }
 
 void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale) {
@@ -250,7 +265,6 @@ void ItemDatabase::Reload() {
 
 	Item temp;
 	long long int temp_authCode;
-	int temp_itemsPerPage;
 
 	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
@@ -264,7 +278,7 @@ void ItemDatabase::Reload() {
 		return;
 	}
 
-	fread(&temp_itemsPerPage, sizeof(temp_authCode), 1, file);
+	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
@@ -311,6 +325,12 @@ void ItemDatabase::Save()
 	}
 
 	fclose(file);
+
+}
+
+string ItemDatabase::buildItem(int index) {
+
+	return (to_string(items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
 
 }
 

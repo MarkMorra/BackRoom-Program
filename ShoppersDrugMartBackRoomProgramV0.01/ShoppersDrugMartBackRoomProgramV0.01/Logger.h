@@ -62,12 +62,14 @@ string Log::display() {
 class Logger
 {
 public:
-	Logger(string Filename, int *_authCode); //filename is the location of the file the log data is saved in
+	Logger(string Filename, long long int *_authCode); //filename is the location of the file the log data is saved in
 	~Logger();
 	void addItem(int UPCCode, int Userid, int PLUCode, char type, string message);
 	void display(string *str);
 	void display(string *str, int searchNumber, char intType); //search number is UPCCode, PLUCode or userid. intType specifies which one (U=upc,P=PLU,a=user)
 	void display(string *str, char type);
+	void GetSecondsBeforeMsgDelete(int _seconds);
+	int GetSecondsBeforeMsgDelete();
 
 
 private:
@@ -81,7 +83,7 @@ private:
 
 };
 
-Logger::Logger(string filename, int *_authCode)
+Logger::Logger(string filename, long long int *_authCode)
 {
 
 	Filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
@@ -160,7 +162,7 @@ void Logger::reload() {
 	{
 		decrypt(temp.message, CHAR_IN_LOG_MSG); //decrypts the msg saved in file
 		decrypt(&(temp.type), 1); //decrypts char saved in file
-		if ((difftime(temp.timeLogged, time(NULL))) <= secondsBeforeMsgDelete) //if the message is older then the specified time it dose not get written into memory and thus when the file is rewiritten too this log msg is not included
+		if ((difftime(time(NULL),temp.timeLogged)) <= secondsBeforeMsgDelete) //if the message is older then the specified time it dose not get written into memory and thus when the file is rewiritten too this log msg is not included
 		{
 			log.push_back(temp); //add it to the list
 		}
@@ -301,6 +303,17 @@ void Logger::display(string *str, char _type) //allows messages of a certin type
 		*str = "There were no Logs that mactched your search requirements";
 	}
 
+}
+
+void Logger::GetSecondsBeforeMsgDelete(int _seconds)
+{
+	secondsBeforeMsgDelete = _seconds;
+	save();
+}
+
+int Logger::GetSecondsBeforeMsgDelete()
+{
+	return secondsBeforeMsgDelete;
 }
 
 void Logger::display(string *str) //disaplyes all log messages
