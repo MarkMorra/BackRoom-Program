@@ -432,7 +432,8 @@ void menu(User **user) //Cady's changes start here
 
 	do
 	{
-		selection = navigatableMenu("You are on the main menu screen.\nThe options you see listed are based on your premission level.\nIf you belive there is a mistake with your permission see your manager.", avalibleOptions, amount,selection, C_BLUE, C_LGREY);
+		
+		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.",avalibleOptions, amount, C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
@@ -939,7 +940,15 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	{
 		system("cls");
 
-		cout << ((*headerText == "") ? ("") : (*headerText + "\n\n\n")) << ((title == "") ? ("") : (title + "\n\n")) << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
+		cout << endl << "\t\t\t\t  __  __                  ";
+		cout << endl << "\t\t\t\t |  \\/  |                 ";
+		cout << endl << "\t\t\t\t | \\  / | ___ _ __  _   _ ";
+		cout << endl << "\t\t\t\t | |\\/| |/ _ \\  _ \\| | | |";
+		cout << endl << "\t\t\t\t | |  | |  __/ | | | |_| |";
+		cout << endl << "\t\t\t\t |_|  |_|\\___|_| |_|\\__,_|";
+
+
+		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
