@@ -43,13 +43,13 @@ Item::Item() {
 
 void Item::Display() {
 
-	cout << "Name:\t\t" << name
-		<< "\nDesc:\t\t" << desc
-		<< "\nUPC:\t\t" << upc
-		<< "\nPLU:\t\t" << plu
-		<< "\nPrice:\t\t"; printf("$%0.2f", price);
-	cout << "\nSale Price:\t"; printf("$%0.2f", sale);
-	cout << "\nPurchase Cost:\t"; printf("$%0.2f", cost);
+	cout << " Name:\t\t" << name
+		<< "\n Desc:\t\t" << desc
+		<< "\n UPC:\t\t" << upc
+		<< "\n PLU:\t\t" << plu
+		<< "\n Price:\t\t"; printf("$%0.2f", price);
+	cout << "\n Sale Price:\t"; printf("$%0.2f", sale);
+	cout << "\n Purchase Cost:\t"; printf("$%0.2f", cost);
 
 }
 
@@ -111,7 +111,7 @@ ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 		file = fopen(filepath.c_str(), "w"); //if it dosent it try to create it
 		if (file == NULL) //checks if it was sucessful
 		{
-			errorMsg("Error, Unable to open Logger file, Path: \"" + filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?"); //displays error msg
+			errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the Item Database constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file?"); //displays error msg
 		}
 		else
 		{
@@ -186,7 +186,7 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 
 	} else if ((*it).upc == upc) {
 	
-		cout << "This item already exists.";
+		cout << " This item already exists.";
 	
 	} else {
 	
@@ -244,7 +244,7 @@ vector<Item>::iterator ItemDatabase::Search(int upc) { //returns an itterator po
 
 	}
 
-	errorMsg("The binary search in Item Database::Search has failed and was unable to find the correct position for " + to_string(upc) + ". This item will not be added to the database."); //if the above while loops exits than an error occured
+	errorMsg(" The binary search in Item Database::Search has failed and was unable to find the correct position for " + to_string(upc) + ".\n This item will not be added to the database."); //if the above while loops exits than an error occured
 	return vector<Item>::iterator();
 
 }
@@ -257,7 +257,7 @@ void ItemDatabase::Reload() {
 
 	if (file == NULL)
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + filepath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?");
+		errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the Logger::reload function\n Please check if the data folder was deleted.");
 		return;
 	}
 
@@ -274,7 +274,7 @@ void ItemDatabase::Reload() {
 	}
 	else if (authCode != temp_authCode)
 	{
-		errorMsg("Error, authCode mismatch in database.dat . This is most likely casued by someone tampering with the data files. To prevent data theft if you continue to use the program without restoring the data files to their original state the item database file will be deleted");
+		errorMsg(" Error; authCode mismatch in database.dat. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the item database file will be deleted unless returned to its original state.");
 		return;
 	}
 
@@ -303,7 +303,7 @@ void ItemDatabase::Save()
 
 	if (file == NULL)
 	{
-		errorMsg("Error, Unable to open Item Database file, Path: \"" + filepath + "\" The file pointer was NULL. This occured in the ItemDatabase::save function");
+		errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the ItemDatabase::save function");
 		return;
 	}
 
