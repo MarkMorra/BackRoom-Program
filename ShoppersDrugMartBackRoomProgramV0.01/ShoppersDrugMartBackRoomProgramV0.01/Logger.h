@@ -90,7 +90,7 @@ Logger::Logger(string filename, long long int *_authCode)
 	
 	authCode = *_authCode;
 
-	secondsBeforeMsgDelete = 2592000; //sets it to the defult of 30 days
+	secondsBeforeMsgDelete = 2592000; //sets it to the default of 30 days
 
 	FILE *file;
 	file = fopen(Filepath.c_str(), "r");
@@ -99,7 +99,7 @@ Logger::Logger(string filename, long long int *_authCode)
 		file = fopen(Filepath.c_str(), "w"); //if it dosent it try to create it
 		if (file == NULL) //checks if it was sucessful
 		{
-			errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?"); //displays error msg
+			errorMsg(" Error! Unable to open Logger file; Path: \"" + Filepath + "\" The file pointer was NULL.\n This occured in the Logger constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file."); //displays error msg
 		}
 		else
 		{
@@ -135,7 +135,7 @@ void Logger::reload() {
 
 	if (file == NULL) //makes sure file opend sucessfully
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?"); //display error msg
+		errorMsg(" Error. Unable to open Logger file; Path: \"" + Filepath + "\" The file pointer was NULL.\n This occurred in the Logger::reload function\n Please check if the data folder deleted."); //display error msg
 		return;
 	}
 
@@ -152,7 +152,7 @@ void Logger::reload() {
 	}
 	else if (authCode != temp_authCode)
 	{
-		errorMsg("Error, authCode mismatch in Logger.log. This is most likely casued by someone tampering with the data files. To prevent data theft if you continue to use the program without restoring the data files to their original state the log file will be deleted");
+		errorMsg(" Error; authCode mismatch in Logger.log. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the log file will be deleted unless return to its original state.");
 		return;
 	}
 
@@ -182,7 +182,7 @@ void Logger::save()
 
 	if (file == NULL) //make sure file opend sucessfully
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::save function"); //dispalys error msg
+		errorMsg(" Error! Unable to open Logger file; Path: \"" + Filepath + "\" The file pointer was NULL.\n This occurred in the Logger::save function."); //dispalys error msg
 		return;
 	}
 
@@ -323,7 +323,7 @@ void Logger::display(string *str) //disaplyes all log messages
 
 	if (*str == "")
 	{
-		*str = "There were no Logs that mactched your search requirements";
+		*str = "\n There were no logs that matched your search requirements";
 	}
 
 }

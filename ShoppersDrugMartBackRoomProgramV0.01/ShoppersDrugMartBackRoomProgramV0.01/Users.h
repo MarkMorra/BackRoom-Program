@@ -230,7 +230,7 @@ vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator 
 
 	}
 
-	errorMsg("The binary search in User Database::Search has failed and was unable to find the correct position for " + to_string(id) + ". This users will not be added to the database."); //if the above while loops exits than an error occured
+	errorMsg(" The binary search in User Database::Search has failed and was unable to find the correct position for " + to_string(id) + ".\n This user will not be added to the database."); //if the above while loops exits then an error occured
 	return vector<User>::iterator();
 
 }
@@ -258,7 +258,7 @@ long int UserDatabase::Add(User user)
 	}
 	else if ((*it).id == user.id) {
 
-		cout << "This item already exists.";
+		cout << "\n This item already exists.";
 
 	}
 	else {
@@ -305,7 +305,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 		file = fopen(filePath.c_str(), "w"); //if it dosent it try to create it
 		if (file == NULL) //checks if it was sucessful
 		{
-			errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger constructior. An attemt was made to create a new file but that failed. Does a folder named data exist in same directory as the exe?"); //displays error msg
+			errorMsg(" Error! Unable to open Logger file; Path: \"" + filePath + "\" The file pointer was NULL.\n This occurred in the Logger constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file?"); //displays error msg
 		}
 		else
 		{
@@ -334,13 +334,13 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 
 		system("cls");
 
-		cout << "There are currently no user accounts.\n The following steps will allow you to create a new user account with full privalages\n\nPlease enter a first name: ";
+		cout << " There are currently no user accounts.\n The following steps will allow you to create a new user account with full privileges\n\n Please enter a first name: ";
 		getline(cin, firstname);
 
-		cout << "\nPlease enter a last name: ";
+		cout << "\n Please enter a last name: ";
 		getline(cin, lastname);
 
-		cout << "\nPlease enter a password: ";
+		cout << "\n Please enter a password: ";
 		getline(cin, password);
 
 		Permissions permissions;
@@ -360,7 +360,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 			permissions.permissionsI[i] = true;
 		}
 
-		cout << "\nThe account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions)) << "\nPress enter to continue..."; //displays the new account id
+		cout << "\n The account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions)) << "\n Press enter to continue..."; //displays the new account id
 		while (_getch() != 13);
 		save();
 	}
@@ -380,7 +380,7 @@ void UserDatabase::reload()
 
 	if (file == NULL)
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger::reload function\nWas the data folder deleted?");
+		errorMsg(" Error! Unable to open users file; Path: \"" + filePath + "\" The file pointer was NULL. This occurred in the UserDatabase::reload function\n Please check if the data folder was deleted");
 		return;
 	}
 
@@ -397,7 +397,7 @@ void UserDatabase::reload()
 	}
 	else if (authCode != temp_authCode)
 	{
-		errorMsg("Error, authCode mismatch in users.dat . This is most likely casued by someone tampering with the data files.  To prevent data theft if you continue to use the program without restoring the data files to their original state the users file will be deleted");
+		errorMsg(" Error; authCode mismatch in users.dat. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the user files will be deleted if not restored to their original state.");
 		return;
 	}
 
@@ -413,7 +413,7 @@ void UserDatabase::reload()
 
 	if (users.size() < 0)
 	{
-		errorMsg("Error, There was no data in user database, was the file deleted? Please resart the program to reload from the file. If the error persists place a copy of the same users.dat file that has been deleted in the data folder. If this is not an option delete the users.dat file in the data folder. this will unfortuanatlly result in all other data being wiped to prevent data theft, sorry for the inconveniance");
+		errorMsg(" Error! There was no data in user database. Please check if the file was deleted.\n Please restart the program to reload from the file. If the error persists place a copy of the same users.dat file that has been deleted in the data folder.\n If this is not an option delete the users.dat file in the data folder. This will unfortunately result in all other data being wiped to prevent data theft.\n We apologize for the inconvenience");
 	}
 }
 
@@ -428,7 +428,7 @@ void UserDatabase::save()
 
 	if (file == NULL)
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger::save function");
+		errorMsg(" Error! Unable to open Logger file; Path: \"" + filePath + "\" The file pointer was NULL. This occurred in the Logger::save function.");
 		return;
 	}
 
