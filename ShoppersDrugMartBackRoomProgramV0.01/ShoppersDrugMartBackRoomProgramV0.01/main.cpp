@@ -27,7 +27,7 @@ void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void help();
 void EditGerneralSetting();
-User createNewUser();
+long int createNewUser();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -1106,9 +1106,10 @@ void EditGerneralSetting() {
 	} while (selection != 0);
 }
 
-User createNewUser()
+long int createNewUser()
 {
 	string firstName, lastName, password;
+	long int id;
 
 	system("cls");
 
@@ -1125,16 +1126,16 @@ User createNewUser()
 
 	changePermissions(&perms);
 
-	return User(0, uppercase(firstName), uppercase(lastName), password, perms);
+	id = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
 
 }
 
 void changePermissions(Permissions *perms)
 {
 
-	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Add Another User" , "Reset Database" , "Edit General Settings", ""};
-	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "" };
-	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "","" };
+	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Change Another Users Settings" , "Add Another User" , "Edit General Settings","Reset Database" , "Reset Users"};
+	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
+	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
 	
 	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1] = {"Exit"};
 	int selection = 0;
@@ -1143,30 +1144,30 @@ void changePermissions(Permissions *perms)
 	{
 		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
 		{
-			options[i + 1] = baseMMOptions[i] + ((perms->permissionsMM[i]) ? (": True") : (": Fasle"));
+			options[i + 1] = baseMMOptions[i] + ((perms->permissionsMM[i]) ? (": True") : (": False"));
 		}
 		for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++)
 		{
-			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + ((perms->permissionsIM[i - NUMBER_OF_MMPERMISSIONS]) ? (": True") : (": Fasle"));
+			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + ((perms->permissionsIM[i - NUMBER_OF_MMPERMISSIONS]) ? (": True") : (": False"));
 		}
 		for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++)
 		{
-			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + ((perms->permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS]) ? (": True") : (": Fasle"));
+			options[i + 1] = baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + ((perms->permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS]) ? (": True") : (": False"));
 		}
 
-		navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
 
 		if (selection < NUMBER_OF_MMPERMISSIONS + 1)
 		{
-			perms->permissionsMM[selection -1] *= -1;
+			perms->permissionsMM[selection -1] = !perms->permissionsMM[selection - 1];
 		}
 		else if (selection < NUMBER_OF_IMPERMISSIONS + 1)
 		{
-			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -1] *= -1;
+			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -1] = !perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 1];
 		}
 		else
 		{
-			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -1] *= -1;
+			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -1] = !perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 1];
 		}
 
 	} while (selection != 0);
