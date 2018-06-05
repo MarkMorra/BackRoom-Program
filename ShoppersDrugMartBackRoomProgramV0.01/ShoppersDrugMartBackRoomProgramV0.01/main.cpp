@@ -739,11 +739,9 @@ void itemMenu(User **user)
 
 		numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
 
-		amount += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
-
 	} else {
 
-		amount += gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
+		numItemsPage += gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
 
 	}
 
