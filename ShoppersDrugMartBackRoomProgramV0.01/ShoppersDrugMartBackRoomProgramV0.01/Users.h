@@ -7,7 +7,8 @@
 #include "stringFunctions.h"
 using namespace std;
 
-#define MAX_USERS 2000
+#define MAX_USER_ID 999999999
+#define MIN_USER_ID 100000000
 
 #define FILE_PREFIX ""
 #define FILE_SUFFIX "/users.dat"
@@ -71,15 +72,19 @@ Permissions::Permissions()
 class User //Contains usernames and passwords of each user, accessed through UserDatabase class
 {
 public:
-	User(int ID,string _firstName,string _lastName, string _password, Permissions _permissions);
+	User(long int ID,string _firstName,string _lastName, string _password, Permissions _permissions);
 	User();
 	
 	Permissions permission;
 	char firstName[LENGTH_OF_USER_STRINGS];
 	char lastName[LENGTH_OF_USER_STRINGS];
 	char password[LENGTH_OF_USER_STRINGS];
-	int id;
+	long int id;
+	void remove();
 	
+private:
+	bool deleted; //saves if this user has been deleted, if it has been deleted it is not actaully removed for logging purposes
+
 };
 
 User::User() //default constructor just sets all value to zero
@@ -87,15 +92,22 @@ User::User() //default constructor just sets all value to zero
 	id = 0;
 	strcpy(firstName, "");
 	strcpy(lastName, "");
+	deleted = false;
 }
 
-User::User(int _ID, string _firstName, string _lastName, string _password, Permissions _permissions) //a constructor that sets the value based on the values passes
+void User::remove()
+{
+	deleted = false;
+}
+
+User::User(long int _ID, string _firstName, string _lastName, string _password, Permissions _permissions) //a constructor that sets the value based on the values passes
 {
 	id = _ID;
 	strcpy(firstName, uppercase(_firstName).c_str());
 	strcpy(lastName, uppercase(_lastName).c_str());
 	strcpy(password, _password.c_str());
 	permission = _permissions;
+	deleted = false;
 };
 
 class UserDatabase //main job is to store the array os Users
@@ -104,13 +116,15 @@ public:
 	UserDatabase(string filename, long long int *_authCode);
 	~UserDatabase();
 
-	int findWith(int ID); //find a user with a specific id and return an index representring thier position
+	int findWith(long int ID); //find a user with a specific id and return an index representring thier position
 	int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
-	void checkCredentials(User **user, string _firstName, string _lastName, string _password);
+	void checkCredentials(User **user, string _firstName, string _lastName, string _password, long int id);
 	void clear();
 	int size();
+	void remove(vector<User>::iterator pos);
+	void remove(int index);
 	User* pos(int index);
-	vector<User>::iterator Search(int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
+	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
 
 	void Add(User user);
 private:
@@ -119,12 +133,11 @@ private:
 	
 	void reload();
 	void save();
-	vector<User>::iterator search(int upc); //when a new user is added this function binary searches to find the position that the new user should be inserted into
 
 	int authCode;
 };
 
-void UserDatabase::checkCredentials(User **user,string _firstName, string _lastName, string _password) //returns a pointer to a pointer to a user if the firstname, lastname and password match
+void UserDatabase::checkCredentials(User **user,string _firstName, string _lastname, string _password, long int id) //returns a pointer to a pointer to a user if the firstname, lastname and password match
 {
 	vector<User>::iterator it;
 
@@ -132,7 +145,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastN
 
 	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && string(it->lastName) == uppercase(_lastName) && string(it->password) == _password) //checks if the current element is eqaul to the string passed
+		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id) //checks if the current element is eqaul to the string passed
 		{
 			*user = &(*it); //sets points to the user that matched the passed strings
 			return;
@@ -157,12 +170,22 @@ int UserDatabase::size()
 	return users.size();
 }
 
+void UserDatabase::remove(vector<User>::iterator pos)
+{
+	(*pos).remove();
+}
+
+void UserDatabase::remove(int index)
+{
+	users[index].remove();
+}
+
 User* UserDatabase::pos(int index) //returns a pointer to a user at a givin index in the vector
 {
 	return &(users[index]);
 }
 
-vector<User>::iterator UserDatabase::search(int id) //returns an itterator pointing to the position in which the new users should be inserted
+vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator pointing to the position in which the new users should be inserted
 { 
 
 	int first, middle, last;
@@ -220,7 +243,7 @@ void UserDatabase::Add(User user)
 {
 	do
 	{
-		user.id = rand() % MAX_USERS;
+		user.id = (rand() % (MAX_USER_ID - MIN_USER_ID)) + MIN_USER_ID;
 	} while (findWith(user.id) != -1); //checks if the id has already been used
 
 	vector<User>::iterator it;
@@ -249,60 +272,7 @@ void UserDatabase::Add(User user)
 	}
 }
 
-vector<User>::iterator UserDatabase::Search(int id) { //returns an itterator pointing to the position in which the new user should be inserted
-
-	int first, middle, last;
-
-	first = 0;
-	last = users.size() - 1;
-
-	if (users.size() == 0) { //checks if the vector is size zero, if it is returns an ittorator pointing to pos 0
-
-		return vector<User>::iterator(users.begin());
-
-	}
-
-	if (id < (users[0].id)) { //checks if the new item should go before the first item
-
-		return vector<User>::iterator(users.begin());
-
-	}
-
-	if (id >(users[users.size() - 1].id)) { //checks if the item should go in the last position
-
-		return vector<User>::iterator(users.end());
-
-	}
-
-	while (first <= last)
-	{
-
-		middle = int((first + last) / 2); //calcs the new middle
-
-		if (id > users[middle].id) { //if the new item is larger than the middle the entire first half can be ruled out
-
-			first = middle + 1;
-
-		}
-		else if (id == users[middle].id || (id > users[middle - 1].id && id < users[middle].id)) { //if middle equals the new item or if the item is larger then the middle but smaller then the one past the middle it reurns the pos of the middle
-
-			return vector<User>::iterator(users.begin() + middle);
-
-		}
-		else { //the new item is smaller than the middle then everything larger than middle can be ruled out
-
-			last = middle - 1;
-
-		}
-
-	}
-
-	errorMsg("The binary search in User Database::Search has failed and was unable to find the correct position for " + to_string(id) + ". This item will not be added to the database."); //if the above while loops exits than an error occured
-	return vector<User>::iterator();
-
-}
-
-int UserDatabase::findWith(int ID)
+int UserDatabase::findWith(long int ID)
 {
 	int temp = users.size();
 	for (int i = 0; i < int(users.size()) - 1; i++)
@@ -387,7 +357,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 			permissions.permissionsIM[i] = true;
 		}
 
-		users.push_back(User(0, firstname, lastname, password, permissions));
+		Add(User(0, firstname, lastname, password, permissions));
 		save();
 	}
 }
@@ -474,4 +444,5 @@ void UserDatabase::save()
 	fclose(file);
 
 }
+
 

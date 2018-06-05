@@ -295,7 +295,8 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 void logon(User **user) {
 
-	string first, last, password; //saves the logon information
+	string first, last, password, temp; //saves the logon information
+	long int id;
 	char passChar; //saves the most recent character enetered by the user when typing their password
 	char choice;
 	string choiceName[] = { "Log On" , "Exit" };
@@ -317,8 +318,14 @@ void logon(User **user) {
 			getline(cin, first);
 
 			system("cls");
+			fflush(stdin);
 			cout << "Please enter your last name: ";
 			getline(cin, last);
+
+			system("cls");
+			cout << "Please enter your employee id: ";
+			cin >> id;
+			getline(cin, temp); //this is to eat the character left over by cin
 
 			do
 			{
@@ -353,7 +360,7 @@ void logon(User **user) {
 
 			} while (passChar != 13);
 
-			gUserDatabase->checkCredentials(user, first, last, password);
+			gUserDatabase->checkCredentials(user, first, last, password, id);
 
 			if (*user == NULL)
 			{
@@ -503,6 +510,11 @@ void viewLogs()
 
 	do
 	{
+		if (headerString == "")
+		{
+			headerString = "There were no Logs that mactched your search requirements";
+		}
+
 		choice = navigatableMenu("You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
 		switch (choice)
@@ -595,7 +607,7 @@ void resetUserDatabase(User **user)
 				}
 			} while (passChar != 13); //continues if they press enter
 
-			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password);  //checks if the 
+			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the 
 
 			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
 			{
@@ -676,7 +688,7 @@ void deleteItemDatabase(User **user)
 				}
 			} while (passChar != 13); //continues if they press enter
 
-			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password);  //checks if the 
+			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password , (*user)->id);  //checks if the 
 
 			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
 			{
