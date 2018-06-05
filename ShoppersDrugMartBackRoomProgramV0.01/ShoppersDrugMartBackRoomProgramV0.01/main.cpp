@@ -749,7 +749,7 @@ void itemMenu(User **user)
 
 		avalibleOptions = new string[amount];
 		corrispondingIndex = new int[amount];
-		int pos = 0;
+		int pos = 1;
 
 
 		corrispondingIndex[0] = 0;
