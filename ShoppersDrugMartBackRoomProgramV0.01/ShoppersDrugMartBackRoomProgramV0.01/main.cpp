@@ -27,6 +27,7 @@ void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void help();
 void EditGerneralSetting();
+User createNewUser();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -448,7 +449,7 @@ void menu(User **user) //Cady's changes start here
 		case 3:
 			break;
 		case 4:
-			//addUser();
+			createNewUser();
 			break;
 		case 5:
 			EditGerneralSetting();
@@ -486,7 +487,7 @@ void displayItemStats(User **user, Item *item)
 	
 
 }
-//Cady's changes begin here
+
 void logout()
 {
 
@@ -1140,15 +1141,42 @@ User createNewUser()
 void changePermissions(Permissions *perms)
 {
 
-	string baseOptions[] = { "","" };
-	const int numberOfOptions  = 2;
-	string options[numberOfOptions];
+	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Add Another User" , "Reset Database" , "Edit General Settings", ""};
+	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "" };
+	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "","" };
+	
+	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1] = {"Exit"};
 	int selection = 0;
 
 	do
 	{
+		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+		{
+			options[i + 1] = baseMMOptions[i] + ((perms->permissionsMM[i]) ? (": True") : (": Fasle"));
+		}
+		for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++)
+		{
+			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + ((perms->permissionsIM[i - NUMBER_OF_MMPERMISSIONS]) ? (": True") : (": Fasle"));
+		}
+		for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++)
+		{
+			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + ((perms->permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS]) ? (": True") : (": Fasle"));
+		}
 
+		navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS, selection, C_BLUE, C_WHITE);
 
+		if (selection < NUMBER_OF_MMPERMISSIONS + 1)
+		{
+			perms->permissionsMM[selection -1] *= -1;
+		}
+		else if (selection < NUMBER_OF_IMPERMISSIONS + 1)
+		{
+			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -1] *= -1;
+		}
+		else
+		{
+			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -1] *= -1;
+		}
 
 	} while (selection != 0);
 
