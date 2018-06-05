@@ -299,11 +299,13 @@ void logon(User **user) {
 	long int id;
 	char passChar; //saves the most recent character enetered by the user when typing their password
 	char choice;
-	string choiceName[] = { "Log On" , "Exit" };
+	string choiceName[] = { "Log On" , "Exit Program" };
 	int selection = 0;
 
 
-	selection = navigatableMenu("You are currently on the welcome screen",choiceName, 2, C_BLUE, C_WHITE);
+	selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)",choiceName, 2, C_BLUE, C_WHITE);
+
+
 
 	switch (selection)
 	{
@@ -559,7 +561,7 @@ void viewLogs()
 
 void resetUserDatabase(User **user)
 {
-	string options[] = { "NO, I DO NOT WANT TO DELELTE THE DATABASE", "YES, I WANT TO PERMANTLY DELETE THE USER DATABASE" };
+	string options[] = { "NO, I DO NOT WANT TO DELETE THE DATABASE", "YES, I WANT TO PERMANENTLY DELETE THE USER DATABASE" };
 	int numOfOptions = 2;
 
 	int selection;
@@ -567,7 +569,7 @@ void resetUserDatabase(User **user)
 	char passChar,choice;
 	User **returnedUser = new User*;
 
-	selection = navigatableMenu("ARE YOU ABSOLUTLY SURE THAT YOU WANT TO RESET THE USER DATABSE?\nTHIS OPERATION CAN NOT BE UNDONE!", options, numOfOptions, C_BLUE, C_WHITE); //created menu to ask user
+	selection = navigatableMenu("ARE YOU ABSOLUTELY SURE THAT YOU WANT TO RESET THE USER DATABASE?\nTHIS OPERATION CANNOT BE UNDONE!", options, numOfOptions, C_BLUE, C_WHITE); //created menu to ask user
 	if (selection == 0) //true if they pick no
 	{
 		return;
@@ -580,7 +582,7 @@ void resetUserDatabase(User **user)
 			do
 			{
 				system("cls");
-				cout << "Please enter your password to cofirm deletion: ";
+				cout << " Please enter your password to confirm deletion: ";
 
 				for (int i = 0; i < password.length(); i++) //displays * according to how many chars enterd
 				{
@@ -640,7 +642,7 @@ void resetUserDatabase(User **user)
 
 void deleteItemDatabase(User **user)
 {
-	string options[] = { "NO, I DO NOT WANT TO DELELTE THE ITEM DATABASE", "YES, I WANT TO PERMANTLY DELETE THE ITEM DATABASE" };
+	string options[] = { "NO, I DO NOT WANT TO DELETE THE ITEM DATABASE", "YES, I WANT TO PERMANENTLY DELETE THE ITEM DATABASE" };
 	int numOfOptions = 2;
 
 	int selection;
@@ -648,7 +650,7 @@ void deleteItemDatabase(User **user)
 	char passChar, choice;
 	User **returnedUser = new User*;
 
-	selection = navigatableMenu("ARE YOU ABSOLUTLY SURE THAT YOU WANT TO RESET THE ITEM DATABSE?\nTHIS OPERATION CAN NOT BE UNDONE!", options, numOfOptions, C_BLUE, C_WHITE); //created menu to ask user
+	selection = navigatableMenu("ARE YOU ABSOLUTELY SURE THAT YOU WANT TO RESET THE ITEM DATABASE?\nTHIS OPERATION CANNOT BE UNDONE!", options, numOfOptions, C_BLUE, C_WHITE); //created menu to ask user
 	if (selection == 0) //true if they pick no
 	{
 		return;
@@ -661,7 +663,7 @@ void deleteItemDatabase(User **user)
 			do //gets the user to enter password
 			{
 				system("cls");
-				cout << "Please enter your password to cofirm deletion: ";
+				cout << "Please enter your password to confirm deletion: ";
 
 				for (int i = 0; i < password.length(); i++) //displays * according to how many chars enterd
 				{
@@ -941,13 +943,6 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	do
 	{
 		system("cls");
-
-		cout << endl << "\t\t\t\t  __  __                  ";
-		cout << endl << "\t\t\t\t |  \\/  |                 ";
-		cout << endl << "\t\t\t\t | \\  / | ___ _ __  _   _ ";
-		cout << endl << "\t\t\t\t | |\\/| |/ _ \\  _ \\| | | |";
-		cout << endl << "\t\t\t\t | |  | |  __/ | | | |_| |";
-		cout << endl << "\t\t\t\t |_|  |_|\\___|_| |_|\\__,_|";
 
 
 		cout << *headerText << endl << endl << endl << title << endl << endl << "Use the up and down arrows on the keyboard to highligh an option.\nThen press enter to select the highlighted option." << endl;
