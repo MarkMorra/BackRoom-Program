@@ -7,8 +7,8 @@
 #include "stringFunctions.h"
 using namespace std;
 
-#define MAX_USER_ID 999999999
-#define MIN_USER_ID 100000000
+#define MAX_USER_ID 9999999
+#define MIN_USER_ID 1000000
 
 #define FILE_PREFIX ""
 #define FILE_SUFFIX "/users.dat"
@@ -24,13 +24,9 @@ using namespace std;
 
 #define NUMBER_OF_MMPERMISSIONS 7 //number of bools in permissions bool array
 
+#define IM_ADD_ITEM 0//IM means item menu
 
-#define IM_SORT_UPC 0 //IM means item menu
-#define IM_SORT_PRICE 1
-#define IM_SORT_AMOUNT 2
-#define IM_ADD_ITEM 2
-
-#define NUMBER_OF_IMPERMISSIONS 4
+#define NUMBER_OF_IMPERMISSIONS 1
 
 
 #define I_MODIFY_ITEM 0 //I means items
