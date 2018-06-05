@@ -12,7 +12,7 @@ void encrypt(char *string) //encrypts a string of unknown length
 		if (pos == 0)
 		{
 			previousValue = *string; 
-			*string += 10; //ads a ten to the first character
+			*string += 10; //adds a ten to the first character
 		}
 		else
 		{

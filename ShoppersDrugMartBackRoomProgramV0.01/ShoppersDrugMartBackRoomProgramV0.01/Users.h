@@ -258,7 +258,7 @@ long int UserDatabase::Add(User user)
 	}
 	else if ((*it).id == user.id) {
 
-		cout << "This item already exists.";
+		cout << "\n This item already exists.";
 
 	}
 	else {
@@ -305,7 +305,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 		file = fopen(filePath.c_str(), "w"); //if it dosent it try to create it
 		if (file == NULL) //checks if it was sucessful
 		{
-			errorMsg(" Error! Unable to open Logger file; Path: \"" + filePath + "\" The file pointer was NULL. This occurred in the Logger constructor. An attempt to create a new file has failed. Please check if a folder named data exists in same directory as the executable file?"); //displays error msg
+			errorMsg(" Error! Unable to open Logger file; Path: \"" + filePath + "\" The file pointer was NULL.\n This occurred in the Logger constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file?"); //displays error msg
 		}
 		else
 		{
@@ -360,7 +360,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 			permissions.permissionsI[i] = true;
 		}
 
-		cout << "\nThe account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions)) << "\nPress enter to continue..."; //displays the new account id
+		cout << "\n The account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions)) << "\n Press enter to continue..."; //displays the new account id
 		while (_getch() != 13);
 		save();
 	}
@@ -380,7 +380,7 @@ void UserDatabase::reload()
 
 	if (file == NULL)
 	{
-		errorMsg(" Error! Unable to open Logger file; Path: \"" + filePath + "\" The file pointer was NULL. This occured in the Logger::reload function\n Please check if the data folder was deleted");
+		errorMsg(" Error! Unable to open users file; Path: \"" + filePath + "\" The file pointer was NULL. This occurred in the UserDatabase::reload function\n Please check if the data folder was deleted");
 		return;
 	}
 
@@ -397,7 +397,7 @@ void UserDatabase::reload()
 	}
 	else if (authCode != temp_authCode)
 	{
-		errorMsg(" Error; authCode mismatch in users.dat. This is most likely casued by someone tampering with the data files.\n To prevent data theft, the user files will be deleted if not restored to their original state.");
+		errorMsg(" Error; authCode mismatch in users.dat. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the user files will be deleted if not restored to their original state.");
 		return;
 	}
 

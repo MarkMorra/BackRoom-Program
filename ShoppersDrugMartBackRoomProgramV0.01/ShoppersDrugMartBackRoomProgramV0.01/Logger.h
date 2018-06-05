@@ -90,7 +90,7 @@ Logger::Logger(string filename, long long int *_authCode)
 	
 	authCode = *_authCode;
 
-	secondsBeforeMsgDelete = 2592000; //sets it to the defult of 30 days
+	secondsBeforeMsgDelete = 2592000; //sets it to the default of 30 days
 
 	FILE *file;
 	file = fopen(Filepath.c_str(), "r");
@@ -152,7 +152,7 @@ void Logger::reload() {
 	}
 	else if (authCode != temp_authCode)
 	{
-		errorMsg(" Error; authCode mismatch in Logger.log. This is most likely casued by someone tampering with the data files. To prevent data theft if you continue to use the program without restoring the data files to their original state the log file will be deleted");
+		errorMsg(" Error; authCode mismatch in Logger.log. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the log file will be deleted unless return to its original state.");
 		return;
 	}
 
@@ -182,7 +182,7 @@ void Logger::save()
 
 	if (file == NULL) //make sure file opend sucessfully
 	{
-		errorMsg("Error, Unable to open Logger file, Path: \"" + Filepath + "\" The file pointer was NULL. This occured in the Logger::save function"); //dispalys error msg
+		errorMsg(" Error! Unable to open Logger file; Path: \"" + Filepath + "\" The file pointer was NULL.\n This occurred in the Logger::save function."); //dispalys error msg
 		return;
 	}
 
@@ -323,7 +323,7 @@ void Logger::display(string *str) //disaplyes all log messages
 
 	if (*str == "")
 	{
-		*str = "There were no Logs that mactched your search requirements";
+		*str = "\n There were no logs that matched your search requirements";
 	}
 
 }
