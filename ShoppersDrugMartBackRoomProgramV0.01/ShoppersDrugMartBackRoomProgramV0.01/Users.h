@@ -7,8 +7,8 @@
 #include "stringFunctions.h"
 using namespace std;
 
-#define MAX_USER_ID 999999999
-#define MIN_USER_ID 100000000
+#define MAX_USER_ID 9999999
+#define MIN_USER_ID 1000000
 
 #define FILE_PREFIX ""
 #define FILE_SUFFIX "/users.dat"
@@ -24,13 +24,9 @@ using namespace std;
 
 #define NUMBER_OF_MMPERMISSIONS 7 //number of bools in permissions bool array
 
+#define IM_ADD_ITEM 0//IM means item menu
 
-#define IM_SORT_UPC 0 //IM means item menu
-#define IM_SORT_PRICE 1
-#define IM_SORT_AMOUNT 2
-#define IM_ADD_ITEM 2
-
-#define NUMBER_OF_IMPERMISSIONS 4
+#define NUMBER_OF_IMPERMISSIONS 1
 
 
 #define I_MODIFY_ITEM 0 //I means items
@@ -125,8 +121,8 @@ public:
 	void remove(int index);
 	User* pos(int index);
 	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
+	long int Add(User user);
 
-	void Add(User user);
 private:
 	vector<User> users; //returns a pointer to a user at a givin index in the vector
 	string filePath;
@@ -239,7 +235,7 @@ vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator 
 
 }
 
-void UserDatabase::Add(User user)
+long int UserDatabase::Add(User user)
 {
 	do
 	{
@@ -270,6 +266,8 @@ void UserDatabase::Add(User user)
 		users.insert(it,user);
 
 	}
+
+	return user.id;
 }
 
 int UserDatabase::findWith(long int ID)
@@ -357,7 +355,13 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 			permissions.permissionsIM[i] = true;
 		}
 
-		Add(User(0, firstname, lastname, password, permissions));
+		for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++)
+		{
+			permissions.permissionsI[i] = true;
+		}
+
+		cout << "\nThe account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions)) << "\nPress enter to continue..."; //displays the new account id
+		while (_getch() != 13);
 		save();
 	}
 }
