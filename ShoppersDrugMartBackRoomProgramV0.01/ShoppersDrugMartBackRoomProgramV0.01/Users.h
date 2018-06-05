@@ -7,7 +7,8 @@
 #include "stringFunctions.h"
 using namespace std;
 
-#define MAX_USERS 999999999
+#define MAX_USER_ID 999999999
+#define MIN_USER_ID 100000000
 
 #define FILE_PREFIX ""
 #define FILE_SUFFIX "/users.dat"
@@ -117,7 +118,7 @@ public:
 
 	int findWith(long int ID); //find a user with a specific id and return an index representring thier position
 	int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
-	void checkCredentials(User **user, string _firstName, string _lastName, string _password);
+	void checkCredentials(User **user, string _firstName, string _lastName, string _password, long int id);
 	void clear();
 	int size();
 	void remove(vector<User>::iterator pos);
@@ -136,7 +137,7 @@ private:
 	int authCode;
 };
 
-void UserDatabase::checkCredentials(User **user,string _firstName, string _lastName, string _password) //returns a pointer to a pointer to a user if the firstname, lastname and password match
+void UserDatabase::checkCredentials(User **user,string _firstName, string _lastname, string _password, long int id) //returns a pointer to a pointer to a user if the firstname, lastname and password match
 {
 	vector<User>::iterator it;
 
@@ -144,7 +145,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastN
 
 	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && string(it->lastName) == uppercase(_lastName) && string(it->password) == _password) //checks if the current element is eqaul to the string passed
+		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id) //checks if the current element is eqaul to the string passed
 		{
 			*user = &(*it); //sets points to the user that matched the passed strings
 			return;
@@ -242,7 +243,7 @@ void UserDatabase::Add(User user)
 {
 	do
 	{
-		user.id = rand() % MAX_USERS;
+		user.id = (rand() % (MAX_USER_ID - MIN_USER_ID)) + MIN_USER_ID;
 	} while (findWith(user.id) != -1); //checks if the id has already been used
 
 	vector<User>::iterator it;
