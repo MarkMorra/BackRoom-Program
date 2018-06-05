@@ -798,7 +798,7 @@ void itemMenu(User **user)
 	for (j; j < changingOptions; j++) //makes the array of string to be passed to the menu function
 	{
 
-		if ((*user)->permission.permissionsIM[i - changingOptions] == true)
+		if ((*user)->permission.permissionsIM[j - changingOptions] == true)
 		{
 			corrispondingIndex[i] = i + 1;
 			avalibleOptions[pos] = allOptions[i];
