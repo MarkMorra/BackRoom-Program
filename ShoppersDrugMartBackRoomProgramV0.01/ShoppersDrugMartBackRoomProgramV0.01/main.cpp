@@ -816,12 +816,12 @@ void itemMenu(User **user)
 
 	}
 
-	for (j; j < changingOptions; j++) //makes the array of string to be passed to the menu function
+	for (j; j < amount; j++) //makes the array of string to be passed to the menu function
 	{
 
-		if ((*user)->permission.permissionsIM[j - changingOptions] == true)
+		if ((*user)->permission.permissionsIM[abs(j - changingOptions)] == true)
 		{
-			corrispondingIndex[j] = j + 1;
+			corrispondingIndex[j] = amount - j;
 			avalibleOptions[pos] = allOptions[j];
 			pos++;
 		}
@@ -851,11 +851,11 @@ void itemMenu(User **user)
 
 	} while (corrispondingIndex[selection] != 0);
 
-	for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->GetItemsPerPage()) >= gItemDatabase->length()) ? (true) : (true)); i++) {
+	/*for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->GetItemsPerPage()) >= gItemDatabase->length()) ? (true) : (true)); i++) {
 
 
 
-	}
+	}*/
 
 }
 
