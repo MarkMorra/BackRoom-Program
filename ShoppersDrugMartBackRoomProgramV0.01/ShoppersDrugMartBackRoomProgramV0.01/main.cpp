@@ -105,7 +105,7 @@ void welcome() { //Welcome function to display opening message when program firs
 	cout << endl << "                |_| |_|                                                                       |___|              ";
 
 	//Instructs user how to proceed and displays the version of the program
-	cout << endl << endl << " Shoppers Backroom Program " << VERSION << endl << endl << endl << " Press enter to continue...";
+	cout << endl << endl << " Shoppers Backroom Program Version " << VERSION << endl << endl << endl << " Press enter to continue...";
 	
 	//If user presses page up button (this option is not displayed as it is only for testing), they reach a test menu, if they press enter they proceed to regular menu
 	while ((choice = _getch()) != 13 && choice != 73);
@@ -404,7 +404,7 @@ void logon(User **user) {
 void menu(User **user) //Cady's changes start here
 {
 	int selection = 0;
-	string allOptions[] = {"Items" , "View Logs" , "Change Another User's Settings" , "Create new User Account" , "Edit General Settings" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = {"View Items" , "View Logs" , "Change Another User's Settings" , "Create New User Account" , "Edit General Settings" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database"}; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
@@ -506,52 +506,60 @@ void resetItem(Item *item, Logger *log)
 
 void addItem(User **user, Logger *log) {
 
-	string msg;
 	long long int upc;
-	int plu;
+	long long int plu;
 	int amount;
 	string name;
 	string desc;
 	float price;
 	float cost;
 	float sale;
-	string *str;
-
-	cout << "upc: ";
+	
+	cout << "UPC: ";
 	cin >> upc;
 
-	cout << "plu: ";
-	cin >> plu;
+	if ((gItemDatabase->Find('u', upc))->size() == 0) {
 
-	cout << "amount: ";
-	cin >> amount;
+		cout << "PLU: ";
+		cin >> plu;
 
-	cout << "name";
-	getline(cin, name);
+		cout << "Amount: ";
+		cin >> amount;
 
-	cout << "desc";
-	getline(cin, desc);
+		cout << "Name: ";
+		getline(cin, name);
 
-	cout << "price: ";
-	cin >> price;
+		cout << "Description: ";
+		getline(cin, desc);
 
-	cout << "cost: ";
-	cin >> cost;
+		cout << "Price: ";
+		cin >> price;
 
-	cout << "sale price: ";
-	cin >> sale;
+		cout << "Cost: ";
+		cin >> cost;
 
-	gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+		cout << "Sale Price: ";
+		cin >> sale;
 
-	gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+
+		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+	
+	} else {
+
+
+
+	}
+
+
 
 }
 
 void viewLogs()
 {
-	string options[] = { "Exit" , "View All Logs", "Search By Type", "Search by User (might not work)"};
+	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User (might not work)"};
 	int numOfOptions = 4;
-	string SearchByType[] = { "View Logons and logoffs" , "View Price Changes" , "View Ammount Changes" , "View Item Information Changes"};
+	string SearchByType[] = { "View Log Ons and Log Offs" , "View Price Changes" , "View Amount Changes" , "View Item Information Changes"};
 	int numOfSearchByTypeOptions = 4;
 	
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
@@ -567,17 +575,17 @@ void viewLogs()
 			headerString = " There were no Logs that mactched your search requirements";
 		}
 
-		choice = navigatableMenu(" You are in the View Logs menu\n\n", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
+		choice = navigatableMenu("   _   _ _                 _\n  | | | (_)               | |\n  | | | |_  _____      __ | |     ___   __ _ ___\n  | | | | |/ _ \\ \\ /\\ / / | |    / _ \\ / _` / __|\n  \\ \\_/ / |  __/\\ V  V /  | |___| (_) | (_| \\__ \\\n   \\___/|_|\\___| \\_/\\_/   \\_____/\\___/ \\__, |___/\n                                        __/ |\n                                       |___/", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
 		switch (choice)
 		{
 		case 0:
-			return; //returns if they pick exit
+			return; //returns if they pick return to main menu
 		case 1:
 			gLogger->display(&headerString); //fills the string with all the logs when they select view all
 			break;
 		case 2:
-			choice = navigatableMenu(" You are in the View Logs menu", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
+			choice = navigatableMenu("   _   _ _                 _\n  | | | (_)               | |\n  | | | |_  _____      __ | |     ___   __ _ ___\n  | | | | |/ _ \\ \\ /\\ / / | |    / _ \\ / _` / __|\n  \\ \\_/ / |  __/\\ V  V /  | |___| (_) | (_| \\__ \\\n   \\___/|_|\\___| \\_/\\_/   \\_____/\\___/ \\__, |___/\n                                        __/ |\n                                       |___/", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
 
 			switch (choice)
 			{
@@ -778,7 +786,7 @@ void itemMenu(User **user)
 	string *itemsToDisplay;
 	string *itemsOnPage;
 	string pageOptions[] = { "Next Page", "Previous Page" };
-	string allOptions[] = { "Back to menu", "Add Item", "Sort by UPC", "Sort by price", "Sort by amount" }; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = { "Back to Menu", "Add Item", "Sort by UPC", "Sort by Price", "Sort by Amount" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
@@ -1111,7 +1119,7 @@ void EditGerneralSetting() {
 
 	int selection = 0;
 	int temp;
-	string options[] = {"Exit", "How long to store log messages: ", "How many inventory items to display per page: " }; //all the options before they have speciific information added to them
+	string options[] = {"Return to Main Menu", "How long to store log messages: ", "How many inventory items to display per page: " }; //all the options before they have speciific information added to them
 	const int numOfOptions = 3;
 	string modifyedOptions[numOfOptions]; //all the options after they have specific infortion added to them (it takes the string from options and appends text to the option)
 
@@ -1120,7 +1128,7 @@ void EditGerneralSetting() {
 		modifyedOptions[0] = options[0];
 		modifyedOptions[1] = options[1] + to_string(gLogger->GetSecondsBeforeMsgDelete()/3600) + " hours";
 		modifyedOptions[2] = options[2] + to_string(gItemDatabase->GetItemsPerPage());
-		selection = navigatableMenu("You are editing the general settings for the program\nAnything you change will be automaticly saved", modifyedOptions, numOfOptions, selection, C_BLUE, C_WHITE); //displays the menu to the user
+		selection = navigatableMenu("\t _____      _   _   _\n\t/  ___|    | | | | (_)\n\t\\ `--.  ___| |_| |_ _ _ __   __ _ ___ \n\t `--. \\/ _ \\ __| __| | '_ \\ / _` / __|\n\t/\\__/ /  __/ |_| |_| | | | | (_| \\__ \\\n\t\\____/ \\___|\\__|\\__|_|_| |_|\\__, |___/\n\t                             __/ |\n\t                            |___/\n\n     Any changes made will automatically be saved", modifyedOptions, numOfOptions, selection, C_BLUE, C_WHITE); //displays the menu to the user
 
 		switch (selection)
 		{
