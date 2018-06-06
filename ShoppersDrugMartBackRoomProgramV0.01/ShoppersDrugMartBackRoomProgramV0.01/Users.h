@@ -46,6 +46,7 @@ public:
 	bool permissionsMM[NUMBER_OF_MMPERMISSIONS];
 	bool permissionsIM[NUMBER_OF_IMPERMISSIONS];
 	bool permissionsI[NUMBER_OF_IPERMISSIONS];
+	string createString();
 };
 
 Permissions::Permissions() 
@@ -67,6 +68,30 @@ Permissions::Permissions()
 
 }
 
+string Permissions::createString()
+{
+	string str;
+
+	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Change Another Users Settings" , "Add Another User" , "Edit General Settings","Reset Database" , "Reset Users" };
+	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
+	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
+
+	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+	{
+		str += baseMMOptions[i] + (permissionsMM[i] ? (": True") : (": False")) + '\n';
+	}
+	for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++)
+	{
+		str += baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + (permissionsIM[i - NUMBER_OF_MMPERMISSIONS] ? (": True") : (": False")) + '\n';
+	}
+	for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++)
+	{
+		str += baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + (permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] ? (": True") : (": False")) + '\n';
+	}
+
+	return string(str,str.length()-1); //returns the string with the last '\n' removed
+}
+
 class User //Contains usernames and passwords of each user, accessed through UserDatabase class
 {
 public:
@@ -79,6 +104,7 @@ public:
 	char password[LENGTH_OF_USER_STRINGS];
 	long int id;
 	void remove();
+	void display();
 	
 private:
 	bool deleted; //saves if this user has been deleted, if it has been deleted it is not actaully removed for logging purposes
@@ -96,6 +122,13 @@ User::User() //default constructor just sets all value to zero
 void User::remove()
 {
 	deleted = false;
+}
+
+void User::display()
+{
+	cout << firstName << " " << lastName << endl
+		<< "ID: " << id << endl
+		<< permission.createString();
 }
 
 User::User(long int _ID, string _firstName, string _lastName, string _password, Permissions _permissions) //a constructor that sets the value based on the values passes

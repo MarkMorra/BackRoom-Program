@@ -1189,6 +1189,16 @@ long int createNewUser()
 
 	id = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
 
+	system("cls");
+
+	User newUser = *gUserDatabase->pos(gUserDatabase->findWith(id));
+
+	cout << "New User added sucessfully\n\n";
+	newUser.display();
+	cout << "\n\nPress enter to continue...";
+
+	while (_getch() != 13);
+
 	return id;
 
 }
@@ -1196,45 +1206,50 @@ long int createNewUser()
 void changePermissions(Permissions *perms)
 {
 
-	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Change Another Users Settings" , "Add Another User" , "Edit General Settings","Reset Database" , "Reset Users"};
-	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
-	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
+	Permissions permsCopy = *perms;
 	
-	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1] = {"Exit"};
+	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = {"Exit", "Save and Exit"};
+	string permissions = perms->createString();
 	int selection = 0;
 
 	do
 	{
-		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+		int i = 2;
+		int pos = 0;
+		do
 		{
-			options[i + 1] = baseMMOptions[i] + ((perms->permissionsMM[i]) ? (": True") : (": False"));
-		}
-		for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++)
-		{
-			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + ((perms->permissionsIM[i - NUMBER_OF_MMPERMISSIONS]) ? (": True") : (": False"));
-		}
-		for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++)
-		{
-			options[i + 1] = baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + ((perms->permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS]) ? (": True") : (": False"));
-		}
+			options[i] = "";
+			do
+			{
+				options[i] += permissions[pos];
+				pos++;
+			} while (permissions[pos] != '\n' && permissions[pos] != '\0');
+			if (permissions[pos] != '\0') { pos++; }
+			i++;
+		} while (permissions[pos] != '\0' && i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2);
 
 		selection = navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
 
 		if (selection == 0)
 		{
+			*perms = permsCopy;
 			return;
 		}
-		else if (selection < NUMBER_OF_MMPERMISSIONS + 1)
+		else if (selection == 1)
 		{
-			perms->permissionsMM[selection -1] = !perms->permissionsMM[selection - 1];
+			return;
 		}
-		else if (selection < NUMBER_OF_IMPERMISSIONS + 1)
+		else if (selection < NUMBER_OF_MMPERMISSIONS + 2)
 		{
-			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -1] = !perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 1];
+			perms->permissionsMM[selection -2] = !perms->permissionsMM[selection - 2];
+		}
+		else if (selection < NUMBER_OF_IMPERMISSIONS + 2)
+		{
+			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -2] = !perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 2];
 		}
 		else
 		{
-			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -1] = !perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 1];
+			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -2] = !perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 2];
 		}
 
 	} while (selection != 0);

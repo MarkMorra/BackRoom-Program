@@ -206,7 +206,7 @@ void Logger::save()
 void Logger::addItem(long long int UPCCode, long long int PLUCode, long int Userid, char type, string message)
 {
 
-	log.push_front(Log(UPCCode,PLUCode,Userid,type,message)); //adds a new log msg to the front of the list
+	log.push_back(Log(UPCCode,PLUCode,Userid,type,message)); //adds a new log msg to the front of the list
 
 	save(); //saves the new log to the file
 
@@ -315,7 +315,7 @@ void Logger::display(string *str) //disaplyes all log messages
 	while (it != log.end()) //loops untill end of the list
 	{
 		i++;
-		*str += to_string(i) + ") ";
+		*str += (i<10 ? string(" "): string("")) + (i<100 ? " " : "") + (i<1000 ? " " : "") + (i<10000 ? " " : "") + to_string(i) + " ) ";
 		*str += it->display();
 		*str += "\n";
 		it++;
