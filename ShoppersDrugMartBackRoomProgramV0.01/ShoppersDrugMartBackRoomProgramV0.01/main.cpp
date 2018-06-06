@@ -304,97 +304,100 @@ void logon(User **user) {
 	int selection = 0;
 
 
-	selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)",choiceName, 3, selection,C_BLUE, C_WHITE);
-
-
-
-	switch (selection)
+	do
 	{
-	case 0:
-		help("Logon Screen");
-		break;
-	case 1: //user wants to logon
-		do
+		selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)", choiceName, 3, selection, C_BLUE, C_WHITE);
+
+		switch (selection)
 		{
-			*user = NULL;
-			password = "";
-
-			system("cls"); //Clears the screen
-			cout << " Please enter you first name: ";
-			getline(cin, first);
-
-			system("cls");
-			fflush(stdin);
-			cout << " Please enter your last name: ";
-			getline(cin, last);
-
-			system("cls");
-			cout << " Please enter your employee id: ";
-			cin >> id;
-			getline(cin, temp); //this is to eat the character left over by cin
-
+		case 0:
+			help("Logon Screen");
+			break;
+		case 1: //user wants to logon
 			do
 			{
+				*user = NULL;
+				password = "";
+
 				system("cls"); //Clears the screen
-				cout << " Please enter your password: ";
+				cout << " Please enter you first name: ";
+				getline(cin, first);
 
-				for (int i = 0; i < password.length(); i++)
-				{
-					cout << '*';
-				}
-
-				fflush(stdin);
-				do
-				{
-					passChar = _getch();
-				} while (passChar == '\0');
-
-
-				if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
-				{
-					if (password.length() > 0)
-					{
-						password.pop_back(); //deletes the last character
-					}
-				}
-				else if (passChar != 13)
-				{
-					password += passChar;
-				}
-
-
-
-			} while (passChar != 13);
-
-			gUserDatabase->checkCredentials(user, first, last, password, id);
-
-			if (*user == NULL)
-			{
 				system("cls");
-				cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
+				fflush(stdin);
+				cout << " Please enter your last name: ";
+				getline(cin, last);
+
+				system("cls");
+				cout << " Please enter your employee id: ";
+				cin >> id;
+				getline(cin, temp); //this is to eat the character left over by cin
 
 				do
 				{
+					system("cls"); //Clears the screen
+					cout << " Please enter your password: ";
+
+					for (int i = 0; i < password.length(); i++)
+					{
+						cout << '*';
+					}
+
 					fflush(stdin);
 					do
 					{
-						choice = _getch();
-					} while (choice == '\0');
-					choice = toupper(choice);
+						passChar = _getch();
+					} while (passChar == '\0');
 
-				} while (choice != 'Y' && choice != 'N');
-			}
-			else
-			{
-				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
-			}
 
-		} while (choice == 'Y' && *user == NULL);
-		return;
-	case 2:
-		*user = NULL;
-		return;
-	}
+					if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
+					{
+						if (password.length() > 0)
+						{
+							password.pop_back(); //deletes the last character
+						}
+					}
+					else if (passChar != 13)
+					{
+						password += passChar;
+					}
+
+
+
+				} while (passChar != 13);
+
+				gUserDatabase->checkCredentials(user, first, last, password, id);
+
+				if (*user == NULL)
+				{
+					system("cls");
+					cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
+
+					do
+					{
+						fflush(stdin);
+						do
+						{
+							choice = _getch();
+						} while (choice == '\0');
+						choice = toupper(choice);
+
+					} while (choice != 'Y' && choice != 'N');
+				}
+				else
+				{
+					gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
+				}
+
+			} while (choice == 'Y' && *user == NULL);
+			return;
+		case 2:
+			*user = NULL;
+			return;
+		}
+
+	} while (true);
+	
 
 }
 
@@ -966,21 +969,21 @@ void help(string whereToReturn)//Help screen displays instructions on how to use
 {
 	system("cls");
 
-	//Graphics for help screen displays coding company logo and the title
-	cout << endl << "	         +s++o											         +s++o         ";
-	cout << endl << "	        +y												        +y             ";
-	cout << endl << "	   ``   +y    `//ssooo`   _    _ ______ _      _____  	   ``   +y    `//ssooo`  ";
-	cout << endl << "	  //y`    ds++om//    .d  | |  | |  ____| |    |  __ \ 	  //y`    ds++om//    .d  "; 
-	cout << endl << "	  so     d...`h:    `//  | |__| | |__  | |    | |__) |	  so     d...`h:    `//  ";
-	cout << endl << "	   //ssoohy:..-+dy//`     |  __  |  __| | |    |  ___/ 	   //ssoohy:..-+dy//`     ";
-	cout << endl << "	         `-yos`  :d-    | |  | | |____| |____| |   				  `-yos`  :d-    ";
-	cout << endl << "	     `     oy     -d    |_|  |_|______|______|_|		      `     oy     -d    ";
-	cout << endl << "	     //s-`:ys`   :+s:									      //s-`:ys`   :+s:   ";
-	cout << endl << "	      //sys//     +//										       //sys//     +//     ";
+	//Graphics for help screen displays coding company logo and the title          |      |
+	cout << endl << "	         +s++o                                                   +s++o";
+	cout << endl << "	        +y                                                      +y";
+	cout << endl << "	   ``   +y    `//ssooo`    _    _ ______ _      _____      ``   +y    `//ssooo`  ";
+	cout << endl << "	  //y`    ds++om//    .d  | |  | |  ____| |    |  __ \\    //y`    ds++om//    .d  "; 
+	cout << endl << "	  so     d...`h:    `//   | |__| | |__  | |    | |__) |    so     d...`h:    `//  ";
+	cout << endl << "	   //ssoohy:..-+dy//`     |  __  |  __| | |    |  ___/     //ssoohy:..-+dy//`     ";
+	cout << endl << "	         `-yos`  :d-      | |  | | |____| |____| |               `-yos`  :d-    ";
+	cout << endl << "	     `     oy     -d      |_|  |_|______|______|_|           `     oy     -d    ";
+	cout << endl << "	     //s-`:ys`   :+s:                                        //s-`:ys`   :+s:   ";
+	cout << endl << "	      //sys//     +//                                         //sys//     +//";
 
 	//Explains how the user should maneuver through the program using the keyboard
 	cout << endl << endl << endl << " How to Maneuver: Use the arrow keys to move up and down the selections.";
-	cout << " Press enter to confirm your selection. Press enter anytime the screen pauses to continue the program.";
+	cout << endl << " Press enter to confirm your selection. Press enter anytime the screen pauses to continue the program.";
 	
 	//Explains to the user how they should exit the program
 	cout << endl << endl << " How to Exit: One can only exit from the log in screen. Therefore, select log out to return";
