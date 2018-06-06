@@ -737,6 +737,8 @@ void itemMenu(User **user)
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
 	int numItemsPage = 0, navButtons = 0;
 
+	(*user)->permission.permissionsIM[0] = false;
+
 	if (gItemDatabase->length() == 0) {
 
 		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
@@ -750,11 +752,9 @@ void itemMenu(User **user)
 		}
 
 		avalibleOptions = new string[amount];
-		corrispondingIndex = new int[amount];
 		int pos = 1;
 
 
-		corrispondingIndex[0] = 0;
 		avalibleOptions[0] = allOptions[0];
 
 		for (int j = 1; j < amount; j++) //makes the array of string to be passed to the menu function
@@ -762,7 +762,6 @@ void itemMenu(User **user)
 
 			if ((*user)->permission.permissionsIM[j] == true)
 			{
-				corrispondingIndex[pos] = j + 1;
 				avalibleOptions[pos] = allOptions[j];
 				pos++;
 			}
@@ -773,24 +772,16 @@ void itemMenu(User **user)
 		{
 			selection = navigatableMenu("No items to display.", avalibleOptions, amount, start, C_BLUE, C_LGREY);
 
-			switch (corrispondingIndex[selection]) //calls the selected function when they press enter
+			switch (selection) //calls the selected function when they press enter
 			{
 			case 1:
+				//add item
 				break;
-			case 2:
-				itemMenu(user);
-				break;
-			case 3:
-				viewLogs();
-				break;
-			case 4:
-
-				break;
-			case 5:
+			default:
 				break;
 			}
 
-		} while (corrispondingIndex[selection] != 0);
+		} while (selection != 0);
 
 	} else {
 
