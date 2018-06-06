@@ -132,7 +132,7 @@ private:
 	void reload();
 	void save();
 
-	int authCode;
+	long long int authCode;
 };
 
 void UserDatabase::checkCredentials(User **user,string _firstName, string _lastname, string _password, long int id) //returns a pointer to a pointer to a user if the firstname, lastname and password match
@@ -143,7 +143,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastn
 
 	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || ENABLE_NO_PASSWORD_CHECK) //checks if the current element is eqaul to the string passed
+		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || (ENABLE_NO_PASSWORD_CHECK && string(it->firstName) == uppercase(_firstName))) //checks if the current element is eqaul to the string passed
 		{
 			*user = &(*it); //sets points to the user that matched the passed strings
 			return;

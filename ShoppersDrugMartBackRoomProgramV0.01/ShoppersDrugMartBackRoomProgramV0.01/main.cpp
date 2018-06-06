@@ -121,7 +121,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 {
 	char choice, dis;
 	string msg;
-	int upc;
+	long long int upc;
 	int plu;
 	int amount;
 	string name;
@@ -504,6 +504,49 @@ void resetItem(Item *item, Logger *log)
 
 }
 
+void addItem(User **user, Logger *log) {
+
+	string msg;
+	long long int upc;
+	int plu;
+	int amount;
+	string name;
+	string desc;
+	float price;
+	float cost;
+	float sale;
+	string *str;
+
+	cout << "upc: ";
+	cin >> upc;
+
+	cout << "plu: ";
+	cin >> plu;
+
+	cout << "amount: ";
+	cin >> amount;
+
+	cout << "name";
+	getline(cin, name);
+
+	cout << "desc";
+	getline(cin, desc);
+
+	cout << "price: ";
+	cin >> price;
+
+	cout << "cost: ";
+	cin >> cost;
+
+	cout << "sale price: ";
+	cin >> sale;
+
+	gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+
+	gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+
+}
+
 void viewLogs()
 {
 	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User (might not work)"};
@@ -741,7 +784,7 @@ void itemMenu(User **user)
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
 	int numItemsPage = 0, navButtons = 0;
 
-	(*user)->permission.permissionsIM[0] = false;
+	//(*user)->permission.permissionsIM[0] = false;
 
 	if (gItemDatabase->length() == 0) {
 
