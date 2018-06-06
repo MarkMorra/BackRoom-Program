@@ -114,14 +114,14 @@ public:
 	UserDatabase(string filename, long long int *_authCode);
 	~UserDatabase();
 
-	int findWith(long int ID); //find a user with a specific id and return an index representring thier position
-	int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
+	long int findWith(long int ID); //find a user with a specific id and return an index representring thier position
+	long int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
 	void checkCredentials(User **user, string _firstName, string _lastName, string _password, long int id);
 	void clear();
 	int size();
 	void remove(vector<User>::iterator pos);
-	void remove(int index);
-	User* pos(int index);
+	void remove(long int index);
+	User* pos(long int index);
 	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
 	long int Add(User user);
 
@@ -173,12 +173,12 @@ void UserDatabase::remove(vector<User>::iterator pos)
 	(*pos).remove();
 }
 
-void UserDatabase::remove(int index)
+void UserDatabase::remove(long int index)
 {
 	users[index].remove();
 }
 
-User* UserDatabase::pos(int index) //returns a pointer to a user at a givin index in the vector
+User* UserDatabase::pos(long int index) //returns a pointer to a user at a givin index in the vector
 {
 	return &(users[index]);
 }
@@ -269,10 +269,11 @@ long int UserDatabase::Add(User user)
 
 	}
 
+	save();
 	return user.id;
 }
 
-int UserDatabase::findWith(long int ID)
+long int UserDatabase::findWith(long int ID)
 {
 	int temp = users.size();
 	for (int i = 0; i < int(users.size()) - 1; i++)
@@ -283,7 +284,7 @@ int UserDatabase::findWith(long int ID)
 	return -1; //if no user with this id exists -1 is returned;
 }
 
-int UserDatabase::findWith(string _firstname, string _lastname)
+long int UserDatabase::findWith(string _firstname, string _lastname)
 {
 
 	for (int i = 0; i < int(users.size()) - 1; i++) //loops trough all users to find a user matching the passed strings
@@ -389,7 +390,7 @@ void UserDatabase::reload()
 	users.clear();
 
 	User temp;
-	int temp_authCode;
+	long long int temp_authCode;
 
 	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 

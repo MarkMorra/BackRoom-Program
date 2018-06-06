@@ -142,7 +142,7 @@ void Logger::reload() {
 	log.clear(); //clearslog data from logger
 
 	Log temp;
-	int temp_authCode;
+	long long int temp_authCode;
 
 	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 

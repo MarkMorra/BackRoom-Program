@@ -258,7 +258,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 					cout << "upc: ";
 					cin >> tempupc;
 
-					retItems = gItemDatabase->Find(tempupc, 'u');
+					retItems = gItemDatabase->Find(tempupc, "u");
 
 					(*retItems)[0]->Display();
 
@@ -689,7 +689,9 @@ void resetUserDatabase(User **user)
 			{
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the UserDatabase");
 				gUserDatabase->clear();
+				long int userID = (*user)->id;
 				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
+				*user = gUserDatabase->pos(gUserDatabase->findWith(userID));
 				choice = 'N'; //this is to stop the while loop
 			}
 		} while (choice == 'Y');
