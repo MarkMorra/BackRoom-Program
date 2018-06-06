@@ -506,44 +506,52 @@ void resetItem(Item *item, Logger *log)
 
 void addItem(User **user, Logger *log) {
 
-	string msg;
 	long long int upc;
-	int plu;
+	long long int plu;
 	int amount;
 	string name;
 	string desc;
 	float price;
 	float cost;
 	float sale;
-	string *str;
-
-	cout << "upc: ";
+	
+	cout << "UPC: ";
 	cin >> upc;
 
-	cout << "plu: ";
-	cin >> plu;
+	if ((gItemDatabase->Find('u', upc))->size() == 0) {
 
-	cout << "amount: ";
-	cin >> amount;
+		cout << "PLU: ";
+		cin >> plu;
 
-	cout << "name";
-	getline(cin, name);
+		cout << "Amount: ";
+		cin >> amount;
 
-	cout << "desc";
-	getline(cin, desc);
+		cout << "Name: ";
+		getline(cin, name);
 
-	cout << "price: ";
-	cin >> price;
+		cout << "Description: ";
+		getline(cin, desc);
 
-	cout << "cost: ";
-	cin >> cost;
+		cout << "Price: ";
+		cin >> price;
 
-	cout << "sale price: ";
-	cin >> sale;
+		cout << "Cost: ";
+		cin >> cost;
 
-	gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+		cout << "Sale Price: ";
+		cin >> sale;
 
-	gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+
+		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+	
+	} else {
+
+
+
+	}
+
+
 
 }
 

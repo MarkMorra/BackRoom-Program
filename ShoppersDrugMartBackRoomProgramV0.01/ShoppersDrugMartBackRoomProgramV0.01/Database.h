@@ -77,7 +77,7 @@ public:
 	vector<Item>::iterator Search(long long int upc);
 	string buildItem(int index);
 	vector<Item*>* Find();
-	vector<Item*>* Find(char type, int num);
+	vector<Item*>* Find(char type, long long int num);
 	vector<Item*>* Find(char type, float num);
 	vector<Item*>* Find(char type, string text);
 	int length();
@@ -187,7 +187,7 @@ void ItemDatabase::Add(long long int upc, long long int plu, int amount, string 
 
 	} else if ((*it).upc == upc) {
 	
-		cout << " This item already exists.";
+		errorMsg("In ItemDatabase::Add, the UPC already existed after it should have been checked.");
 	
 	} else {
 	
@@ -351,7 +351,7 @@ vector<Item*>* ItemDatabase::Find() {
 
 }
 
-vector<Item*>* ItemDatabase::Find(char type, int num) {
+vector<Item*>* ItemDatabase::Find(char type, long long int num) {
 
 	vector<Item*>* found;
 
