@@ -470,7 +470,7 @@ void menu(User **user) //Cady's changes start here
 
 	} while (corrispondingIndex[selection] != 0);
 
-	gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + "logged off");
+	gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged off");
 
 	delete[] corrispondingIndex;
 	delete[] avalibleOptions;
@@ -1210,7 +1210,11 @@ void changePermissions(Permissions *perms)
 
 		selection = navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
 
-		if (selection < NUMBER_OF_MMPERMISSIONS + 1)
+		if (selection == 0)
+		{
+			return;
+		}
+		else if (selection < NUMBER_OF_MMPERMISSIONS + 1)
 		{
 			perms->permissionsMM[selection -1] = !perms->permissionsMM[selection - 1];
 		}
