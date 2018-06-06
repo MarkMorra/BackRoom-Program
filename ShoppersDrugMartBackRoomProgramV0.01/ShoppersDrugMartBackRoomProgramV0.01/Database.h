@@ -18,13 +18,14 @@ using namespace std;
 class Item {
 
 public:
-	int upc, plu, amount;
+	long long int upc, plu;
+	int amount;
 	char name[NAME_LEN], desc[DESC_LEN];
 	float price, cost, sale;
 	
 	Item();
 	void Display();
-	Item(int _upc, int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
+	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
 
 };
 
@@ -53,7 +54,7 @@ void Item::Display() {
 
 }
 
-Item::Item(int _upc, int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale) {
+Item::Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale) {
 
 	upc = _upc;
 	plu = _plu;
@@ -72,8 +73,8 @@ public:
 	ItemDatabase(string filename, long long int *_authCode);
 	~ItemDatabase();
 	void Clear();
-	void Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale);
-	vector<Item>::iterator Search(int upc);
+	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);
+	vector<Item>::iterator Search(long long int upc);
 	string buildItem(int index);
 	vector<Item*>* Find();
 	vector<Item*>* Find(char type, int num);
@@ -169,7 +170,7 @@ void ItemDatabase::GetItemsPerPage(int _items)
 	Save();
 }
 
-void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, float price, float cost, float sale) {
+void ItemDatabase::Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale) {
 
 
 	vector<Item>::iterator it;
@@ -198,7 +199,7 @@ void ItemDatabase::Add(int upc, int plu, int amount, string name, string desc, f
 
 }
 
-vector<Item>::iterator ItemDatabase::Search(int upc) { //returns an itterator pointing to the position in which the new item should be inserted
+vector<Item>::iterator ItemDatabase::Search(long long int upc) { //returns an itterator pointing to the position in which the new item should be inserted
 
 	int first, middle, last;
 
@@ -514,5 +515,7 @@ vector<Item*>* ItemDatabase::Find(char type, string text) {
 		return found;
 
 	}
+
+	return NULL;
 
 }

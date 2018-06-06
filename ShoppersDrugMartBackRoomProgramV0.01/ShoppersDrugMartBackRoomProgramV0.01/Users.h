@@ -130,7 +130,7 @@ private:
 	void reload();
 	void save();
 
-	int authCode;
+	long long int authCode;
 };
 
 void UserDatabase::checkCredentials(User **user,string _firstName, string _lastname, string _password, long int id) //returns a pointer to a pointer to a user if the firstname, lastname and password match

@@ -16,21 +16,21 @@ using namespace std;
 class Log
 {
 public:
-	Log(int _UPCCode, int _PLUCode, int _Userid, char _type, string message);
+	Log(long long int _UPCCode, long long int _PLUCode, long int _Userid, char _type, string message);
 	Log();
 	~Log();
 	string display();
 	
 	time_t timeLogged; //time when the log msg was created
-	int UPCCode; //-1 if not applicable
-	int PLUCode; //-1 if not applicable
-	int Userid; //id of the user who made the change -1 if not applicable
+	long long int UPCCode; //-1 if not applicable
+	long long int PLUCode; //-1 if not applicable
+	long int Userid; //id of the user who made the change -1 if not applicable
 	char type; //the type of log
 	//g = generic, p = price change, a = amount change, n = new item, l = login/logout, i = item information changes (eg the description was changed)
 	char message[CHAR_IN_LOG_MSG];
 };
 
-Log::Log(int _UPCCode, int _PLUCode, int _Userid, char _type, string _message)
+Log::Log(long long int _UPCCode, long long int _PLUCode, long int _Userid, char _type, string _message)
 {
 	timeLogged = time(NULL);
 
@@ -64,7 +64,7 @@ class Logger
 public:
 	Logger(string Filename, long long int *_authCode); //filename is the location of the file the log data is saved in
 	~Logger();
-	void addItem(int UPCCode, int Userid, int PLUCode, char type, string message);
+	void addItem(long long int UPCCode, long long int PLUCode, long int Userid, char type, string message);
 	void display(string *str);
 	void display(string *str, int searchNumber, char intType); //search number is UPCCode, PLUCode or userid. intType specifies which one (U=upc,P=PLU,a=user)
 	void display(string *str, char type);
@@ -74,7 +74,7 @@ public:
 
 private:
 
-	int authCode;
+	long long int authCode;
 	long int secondsBeforeMsgDelete; //how many seconds old a message has to be for it to get deleted
 	void reload(); //reloads logger data using data in file
 	void save(); //saves logger data to file
@@ -203,7 +203,7 @@ void Logger::save()
 
 }
 
-void Logger::addItem(int UPCCode, int PLUCode, int Userid, char type, string message)
+void Logger::addItem(long long int UPCCode, long long int PLUCode, long int Userid, char type, string message)
 {
 
 	log.push_front(Log(UPCCode,PLUCode,Userid,type,message)); //adds a new log msg to the front of the list
