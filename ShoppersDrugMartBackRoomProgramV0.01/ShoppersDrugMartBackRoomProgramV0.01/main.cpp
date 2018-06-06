@@ -1072,11 +1072,37 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 			if (selection == i) //highlights the choice if it is the selected one
 			{
 				cout << "  > ";
-				changeColour(selectedBackground, selectedForeground, options[i]); //sets the colour of the highlighted option based on values passed in
+				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
+				int pos = 0;
+				while (options[i][pos] != '\0')
+				{
+					if (options[i][pos] != '\n')
+					{
+						cout << "\n    ";
+					}
+					else
+					{
+						cout << options[i][pos];
+					}
+					pos++;
+				}
 			}
 			else
 			{
-				cout << "    " << options[i];
+				cout << "    ";
+				int pos = 0;
+				while (options[i][pos] != '\0')
+				{
+					if (options[i][pos] != '\n')
+					{
+						cout << "\n    ";
+					}
+					else
+					{
+						cout << options[i][pos];
+					}
+					pos++;
+				}
 			}
 		}
 
