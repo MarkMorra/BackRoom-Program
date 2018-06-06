@@ -1004,7 +1004,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 		system("cls");
 
 
-		cout << *headerText << endl << endl << endl << title << endl << endl << " Use the up and down arrows on the keyboard to highlight an option.\n Then press enter to select the highlighted option." << endl;
+		cout << *headerText << endl << endl << endl << title << endl << endl << "" << endl;
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
