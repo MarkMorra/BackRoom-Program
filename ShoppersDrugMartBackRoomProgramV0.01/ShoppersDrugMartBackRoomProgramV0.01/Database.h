@@ -382,7 +382,7 @@ vector<Item*>* ItemDatabase::Find(char type, long long int num) {
 			}
 			else {
 
-				last = middle + 1;
+				last = middle - 1;
 
 			}
 
