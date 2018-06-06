@@ -923,21 +923,21 @@ void help(string whereToReturn)//Help screen displays instructions on how to use
 {
 	system("cls");
 
-	//Graphics for help screen displays coding company logo and the title
-	cout << endl << "	         +s++o											         +s++o         ";
-	cout << endl << "	        +y												        +y             ";
-	cout << endl << "	   ``   +y    `//ssooo`   _    _ ______ _      _____  	   ``   +y    `//ssooo`  ";
-	cout << endl << "	  //y`    ds++om//    .d  | |  | |  ____| |    |  __ \ 	  //y`    ds++om//    .d  "; 
-	cout << endl << "	  so     d...`h:    `//  | |__| | |__  | |    | |__) |	  so     d...`h:    `//  ";
-	cout << endl << "	   //ssoohy:..-+dy//`     |  __  |  __| | |    |  ___/ 	   //ssoohy:..-+dy//`     ";
-	cout << endl << "	         `-yos`  :d-    | |  | | |____| |____| |   				  `-yos`  :d-    ";
-	cout << endl << "	     `     oy     -d    |_|  |_|______|______|_|		      `     oy     -d    ";
-	cout << endl << "	     //s-`:ys`   :+s:									      //s-`:ys`   :+s:   ";
-	cout << endl << "	      //sys//     +//										       //sys//     +//     ";
+	//Graphics for help screen displays coding company logo and the title          |      |
+	cout << endl << "	         +s++o                                                   +s++o";
+	cout << endl << "	        +y                                                      +y";
+	cout << endl << "	   ``   +y    `//ssooo`    _    _ ______ _      _____      ``   +y    `//ssooo`  ";
+	cout << endl << "	  //y`    ds++om//    .d  | |  | |  ____| |    |  __ \\    //y`    ds++om//    .d  "; 
+	cout << endl << "	  so     d...`h:    `//   | |__| | |__  | |    | |__) |    so     d...`h:    `//  ";
+	cout << endl << "	   //ssoohy:..-+dy//`     |  __  |  __| | |    |  ___/     //ssoohy:..-+dy//`     ";
+	cout << endl << "	         `-yos`  :d-      | |  | | |____| |____| |               `-yos`  :d-    ";
+	cout << endl << "	     `     oy     -d      |_|  |_|______|______|_|           `     oy     -d    ";
+	cout << endl << "	     //s-`:ys`   :+s:                                        //s-`:ys`   :+s:   ";
+	cout << endl << "	      //sys//     +//                                         //sys//     +//";
 
 	//Explains how the user should maneuver through the program using the keyboard
 	cout << endl << endl << endl << " How to Maneuver: Use the arrow keys to move up and down the selections.";
-	cout << " Press enter to confirm your selection. Press enter anytime the screen pauses to continue the program.";
+	cout << endl << " Press enter to confirm your selection. Press enter anytime the screen pauses to continue the program.";
 	
 	//Explains to the user how they should exit the program
 	cout << endl << endl << " How to Exit: One can only exit from the log in screen. Therefore, select log out to return";
