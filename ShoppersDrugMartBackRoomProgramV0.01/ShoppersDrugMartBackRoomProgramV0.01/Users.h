@@ -7,6 +7,8 @@
 #include "stringFunctions.h"
 using namespace std;
 
+#define ENABLE_NO_PASSWORD_CHECK true
+
 #define MAX_USER_ID 9999999
 #define MIN_USER_ID 1000000
 
@@ -141,7 +143,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastn
 
 	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id) //checks if the current element is eqaul to the string passed
+		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || ENABLE_NO_PASSWORD_CHECK) //checks if the current element is eqaul to the string passed
 		{
 			*user = &(*it); //sets points to the user that matched the passed strings
 			return;

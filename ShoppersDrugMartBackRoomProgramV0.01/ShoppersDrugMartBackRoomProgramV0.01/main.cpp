@@ -304,97 +304,100 @@ void logon(User **user) {
 	int selection = 0;
 
 
-	selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)",choiceName, 3, selection,C_BLUE, C_WHITE);
-
-
-
-	switch (selection)
+	do
 	{
-	case 0:
-		help("Logon Screen");
-		break;
-	case 1: //user wants to logon
-		do
+		selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)", choiceName, 3, selection, C_BLUE, C_WHITE);
+
+		switch (selection)
 		{
-			*user = NULL;
-			password = "";
-
-			system("cls"); //Clears the screen
-			cout << " Please enter you first name: ";
-			getline(cin, first);
-
-			system("cls");
-			fflush(stdin);
-			cout << " Please enter your last name: ";
-			getline(cin, last);
-
-			system("cls");
-			cout << " Please enter your employee id: ";
-			cin >> id;
-			getline(cin, temp); //this is to eat the character left over by cin
-
+		case 0:
+			help("Logon Screen");
+			break;
+		case 1: //user wants to logon
 			do
 			{
+				*user = NULL;
+				password = "";
+
 				system("cls"); //Clears the screen
-				cout << " Please enter your password: ";
+				cout << " Please enter you first name: ";
+				getline(cin, first);
 
-				for (int i = 0; i < password.length(); i++)
-				{
-					cout << '*';
-				}
-
-				fflush(stdin);
-				do
-				{
-					passChar = _getch();
-				} while (passChar == '\0');
-
-
-				if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
-				{
-					if (password.length() > 0)
-					{
-						password.pop_back(); //deletes the last character
-					}
-				}
-				else if (passChar != 13)
-				{
-					password += passChar;
-				}
-
-
-
-			} while (passChar != 13);
-
-			gUserDatabase->checkCredentials(user, first, last, password, id);
-
-			if (*user == NULL)
-			{
 				system("cls");
-				cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
+				fflush(stdin);
+				cout << " Please enter your last name: ";
+				getline(cin, last);
+
+				system("cls");
+				cout << " Please enter your employee id: ";
+				cin >> id;
+				getline(cin, temp); //this is to eat the character left over by cin
 
 				do
 				{
+					system("cls"); //Clears the screen
+					cout << " Please enter your password: ";
+
+					for (int i = 0; i < password.length(); i++)
+					{
+						cout << '*';
+					}
+
 					fflush(stdin);
 					do
 					{
-						choice = _getch();
-					} while (choice == '\0');
-					choice = toupper(choice);
+						passChar = _getch();
+					} while (passChar == '\0');
 
-				} while (choice != 'Y' && choice != 'N');
-			}
-			else
-			{
-				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
-			}
 
-		} while (choice == 'Y' && *user == NULL);
-		return;
-	case 2:
-		*user = NULL;
-		return;
-	}
+					if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
+					{
+						if (password.length() > 0)
+						{
+							password.pop_back(); //deletes the last character
+						}
+					}
+					else if (passChar != 13)
+					{
+						password += passChar;
+					}
+
+
+
+				} while (passChar != 13);
+
+				gUserDatabase->checkCredentials(user, first, last, password, id);
+
+				if (*user == NULL)
+				{
+					system("cls");
+					cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
+
+					do
+					{
+						fflush(stdin);
+						do
+						{
+							choice = _getch();
+						} while (choice == '\0');
+						choice = toupper(choice);
+
+					} while (choice != 'Y' && choice != 'N');
+				}
+				else
+				{
+					gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
+				}
+
+			} while (choice == 'Y' && *user == NULL);
+			return;
+		case 2:
+			*user = NULL;
+			return;
+		}
+
+	} while (true);
+	
 
 }
 
