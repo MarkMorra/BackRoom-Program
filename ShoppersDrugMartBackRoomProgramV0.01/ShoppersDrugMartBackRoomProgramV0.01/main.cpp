@@ -918,8 +918,10 @@ void itemMenu(User **user)
 
 }
 
-void help()//Help screen displays instructions on how to use the program and answers to frequently asked questions
+void help(string whereToReturn)//Help screen displays instructions on how to use the program and answers to frequently asked questions
 {
+	system("cls");
+
 	//Graphics for help screen displays coding company logo and the title
 	cout << endl << "	         +s++o											         +s++o         ";
 	cout << endl << "	        +y												        +y             ";
@@ -958,7 +960,7 @@ void help()//Help screen displays instructions on how to use the program and ans
 	cout << endl << " resetting the user database will automatically become the admin.";
 
 	//Instructs the user how to continue the program after the screen pauses
-	cout << endl << endl << " Please press the enter key to return to the main menu...";
+	cout << endl << endl << " Please press the enter key to return to the " << whereToReturn << "...";
 
 	getchar();//Pauses the screen so user can read help screen until user hits enter key
 }
@@ -1129,6 +1131,8 @@ long int createNewUser()
 	changePermissions(&perms);
 
 	id = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
+
+	return id;
 
 }
 
