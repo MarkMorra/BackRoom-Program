@@ -253,12 +253,12 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					break;
 				case '2':
-					int tempupc;
+					long long int tempupc;
 
 					cout << "upc: ";
 					cin >> tempupc;
 
-					retItems = gItemDatabase->Find(tempupc, "u");
+					retItems = gItemDatabase->Find('u', tempupc);
 
 					(*retItems)[0]->Display();
 
@@ -504,7 +504,7 @@ void resetItem(Item *item, Logger *log)
 
 }
 
-void addItem(User **user, Logger *log) {
+void addItem(User **user) {
 
 	long long int upc;
 	long long int plu;
@@ -515,6 +515,8 @@ void addItem(User **user, Logger *log) {
 	float cost;
 	float sale;
 	
+	system("cls");
+
 	cout << "UPC: ";
 	cin >> upc;
 
@@ -527,6 +529,7 @@ void addItem(User **user, Logger *log) {
 		cin >> amount;
 
 		cout << "Name: ";
+		getline(cin, name);
 		getline(cin, name);
 
 		cout << "Description: ";
@@ -547,7 +550,7 @@ void addItem(User **user, Logger *log) {
 	
 	} else {
 
-
+		cout << "This item already exists.";
 
 	}
 
@@ -832,7 +835,7 @@ void itemMenu(User **user)
 			switch (selection) //calls the selected function when they press enter
 			{
 			case 1:
-				//add item
+				addItem(user);
 				break;
 			default:
 				break;
@@ -843,9 +846,9 @@ void itemMenu(User **user)
 	} else {
 
 		//calcs number of items
-		if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //how many items on the page
+		if (currentPage == (((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1)) { //how many items on the page
 
-			numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
+			numItemsPage += (gItemDatabase->length() - (currentPage * gItemDatabase->GetItemsPerPage())); //calculates how many items there are on the last page and adjusts the amount accordingly
 
 		}
 		else {
