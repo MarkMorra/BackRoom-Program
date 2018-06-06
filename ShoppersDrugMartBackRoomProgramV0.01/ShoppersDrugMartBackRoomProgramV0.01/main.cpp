@@ -300,17 +300,19 @@ void logon(User **user) {
 	long int id;
 	char passChar; //saves the most recent character enetered by the user when typing their password
 	char choice;
-	string choiceName[] = { "Log On" , "Exit Program" };
+	string choiceName[] = { "Help" , "Log On" , "Exit Program" };
 	int selection = 0;
 
 
-	selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)",choiceName, 2, C_BLUE, C_WHITE);
+	selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)",choiceName, 3, selection,C_BLUE, C_WHITE);
 
 
 
 	switch (selection)
 	{
-	case 0: //user wants to logon
+	case 0:
+		help();
+	case 1: //user wants to logon
 		do
 		{
 			*user = NULL;
@@ -388,7 +390,7 @@ void logon(User **user) {
 
 		} while (choice == 'Y' && *user == NULL);
 		return;
-	case 1:
+	case 2:
 		*user = NULL;
 		return;
 	}
