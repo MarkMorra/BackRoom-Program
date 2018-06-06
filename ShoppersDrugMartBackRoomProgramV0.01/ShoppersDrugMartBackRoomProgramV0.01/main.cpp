@@ -25,7 +25,7 @@ void viewLogs();
 void resetUserDatabase(User **user);
 void deleteItemDatabase(User **user);
 void itemMenu(User **user);
-void help();
+void help(string whereToReturn);
 void EditGerneralSetting();
 long int createNewUser();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
@@ -311,7 +311,8 @@ void logon(User **user) {
 	switch (selection)
 	{
 	case 0:
-		help();
+		help("Logon Screen");
+		break;
 	case 1: //user wants to logon
 		do
 		{
