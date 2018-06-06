@@ -27,6 +27,7 @@ void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void help();
 void EditGerneralSetting();
+long int createNewUser();
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -299,17 +300,19 @@ void logon(User **user) {
 	long int id;
 	char passChar; //saves the most recent character enetered by the user when typing their password
 	char choice;
-	string choiceName[] = { "Log On" , "Exit Program" };
+	string choiceName[] = { "Help" , "Log On" , "Exit Program" };
 	int selection = 0;
 
 
-	selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)",choiceName, 2, C_BLUE, C_WHITE);
+	selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)",choiceName, 3, selection,C_BLUE, C_WHITE);
 
 
 
 	switch (selection)
 	{
-	case 0: //user wants to logon
+	case 0:
+		help();
+	case 1: //user wants to logon
 		do
 		{
 			*user = NULL;
@@ -387,7 +390,7 @@ void logon(User **user) {
 
 		} while (choice == 'Y' && *user == NULL);
 		return;
-	case 1:
+	case 2:
 		*user = NULL;
 		return;
 	}
@@ -448,7 +451,7 @@ void menu(User **user) //Cady's changes start here
 		case 3:
 			break;
 		case 4:
-			//addUser();
+			createNewUser();
 			break;
 		case 5:
 			EditGerneralSetting();
@@ -486,7 +489,7 @@ void displayItemStats(User **user, Item *item)
 	
 
 }
-//Cady's changes begin here
+
 void logout()
 {
 
@@ -728,108 +731,159 @@ void itemMenu(User **user)
 	string *itemsToDisplay;
 	string *itemsOnPage;
 	string pageOptions[] = { "Next Page", "Previous Page" };
-	string allOptions[] = { "Sort by UPC", "Sort by price", "Sort by amount", "Add Item", "Back to menu"}; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = { "Back to menu", "Add Item", "Sort by UPC", "Sort by price", "Sort by amount" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
 	int numItemsPage = 0, navButtons = 0;
-	
-	//calcs number of items
-	if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //how many items on the page
 
-		numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
+	(*user)->permission.permissionsIM[0] = false;
+
+	if (gItemDatabase->length() == 0) {
+
+		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
+		{
+
+			if ((*user)->permission.permissionsIM[i] == true)
+			{
+				amount++;
+			}
+
+		}
+
+		avalibleOptions = new string[amount];
+		int pos = 1;
+
+
+		avalibleOptions[0] = allOptions[0];
+
+		for (int j = 1; j < amount; j++) //makes the array of string to be passed to the menu function
+		{
+
+			if ((*user)->permission.permissionsIM[j] == true)
+			{
+				avalibleOptions[pos] = allOptions[j];
+				pos++;
+			}
+
+		}
+
+		do
+		{
+			selection = navigatableMenu("No items to display.", avalibleOptions, amount, start, C_BLUE, C_LGREY);
+
+			switch (selection) //calls the selected function when they press enter
+			{
+			case 1:
+				//add item
+				break;
+			default:
+				break;
+			}
+
+		} while (selection != 0);
 
 	} else {
 
-		numItemsPage += gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
+		//calcs number of items
+		if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //how many items on the page
 
-	}
+			numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
 
-	amount += numItemsPage;
-	
-	//calcs number of nav buttons
-	if (currentPage == 0) { //if first page, we only want to show next page
+		}
+		else {
 
-		navButtons = 0;
-		amount++;
+			numItemsPage += gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
 
-	}
-	else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //if its the last page, only show previous page option
+		}
 
-		navButtons = 1;
-		amount++;
+		amount += numItemsPage;
 
-	}
-	else { //if its not the first or last, show both next and previous
+		//calcs number of nav buttons
+		if (currentPage == 0) { //if first page, we only want to show next page
 
-		navButtons = 2;
-		amount += 2;
-
-	}
-
-	int pos = amount;  //this number is iterated everytime the user has access to a command
-	
-	//calcs number of perms
-	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
-	{
-
-		if ((*user)->permission.permissionsIM[i] == true)
-		{
+			navButtons = 0;
 			amount++;
+
+		}
+		else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //if its the last page, only show previous page option
+
+			navButtons = 1;
+			amount++;
+
+		}
+		else { //if its not the first or last, show both next and previous
+
+			navButtons = 2;
+			amount += 2;
+
 		}
 
-	}
+		int pos = amount;  //this number is iterated everytime the user has access to a command
 
-	int changingOptions = amount - pos;
-
-	avalibleOptions = new string[amount];
-	corrispondingIndex = new int[amount];
-
-	int j = 0;
-
-	for (j; j < numItemsPage; j++) { //add items to navigatable menu
-
-		corrispondingIndex[j] = j;
-		avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
-	
-	}
-
-	j++;
-
-	if (navButtons == 0) {
-
-		avalibleOptions[j] = pageOptions[0];
-		corrispondingIndex[j] = j;
-
-	} else if (navButtons == 1) {
-
-		avalibleOptions[j] = pageOptions[1];
-		corrispondingIndex[j] = j;
-
-	} else if (navButtons == 2) {
-
-		avalibleOptions[j] = pageOptions[0];
-		corrispondingIndex[j] = j;
-		j++;
-		avalibleOptions[j] = pageOptions[1];
-		corrispondingIndex[j] = j;
-
-	}
-
-	for (j; j < amount; j++) //makes the array of string to be passed to the menu function
-	{
-
-		if ((*user)->permission.permissionsIM[abs(j - changingOptions)] == true)
+		//calcs number of perms
+		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
 		{
-			corrispondingIndex[j] = amount - j;
-			avalibleOptions[pos] = allOptions[j];
-			pos++;
+
+			if ((*user)->permission.permissionsIM[i] == true)
+			{
+				amount++;
+			}
+
 		}
 
-	}
+		int changingOptions = amount - pos;
 
-	do
-	{
+		avalibleOptions = new string[amount];
+		corrispondingIndex = new int[amount];
+
+		int j = 0;
+
+		for (j; j < numItemsPage; j++) { //add items to navigatable menu
+
+			corrispondingIndex[j] = j;
+			avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
+
+		}
+
+		j++;
+
+		if (navButtons == 0) {
+
+			avalibleOptions[j] = pageOptions[0];
+			corrispondingIndex[j] = j;
+
+		}
+		else if (navButtons == 1) {
+
+			avalibleOptions[j] = pageOptions[1];
+			corrispondingIndex[j] = j;
+
+		}
+		else if (navButtons == 2) {
+
+			avalibleOptions[j] = pageOptions[0];
+			corrispondingIndex[j] = j;
+			j++;
+			avalibleOptions[j] = pageOptions[1];
+			corrispondingIndex[j] = j;
+
+		}
+
+		for (j; j < amount; j++) //makes the array of string to be passed to the menu function
+		{
+
+			if ((*user)->permission.permissionsIM[abs(j - changingOptions)] == true)
+			{
+				corrispondingIndex[j] = amount - j;
+				avalibleOptions[pos] = allOptions[j];
+				pos++;
+			}
+
+		}
+
+		do
+		{
 		selection = navigatableMenu("Item Database", avalibleOptions, amount, start, C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
@@ -849,7 +903,12 @@ void itemMenu(User **user)
 			break;
 		}
 
-	} while (corrispondingIndex[selection] != 0);
+		} while (corrispondingIndex[selection] != 0);
+	
+	}
+
+	
+		
 
 	/*for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->GetItemsPerPage()) >= gItemDatabase->length()) ? (true) : (true)); i++) {
 
@@ -1049,9 +1108,10 @@ void EditGerneralSetting() {
 	} while (selection != 0);
 }
 
-User createNewUser()
+long int createNewUser()
 {
 	string firstName, lastName, password;
+	long int id;
 
 	system("cls");
 
@@ -1068,22 +1128,49 @@ User createNewUser()
 
 	changePermissions(&perms);
 
-	return User(0, uppercase(firstName), uppercase(lastName), password, perms);
+	id = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
 
 }
 
 void changePermissions(Permissions *perms)
 {
 
-	string baseOptions[] = { "","" };
-	const int numberOfOptions  = 2;
-	string options[numberOfOptions];
+	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Change Another Users Settings" , "Add Another User" , "Edit General Settings","Reset Database" , "Reset Users"};
+	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
+	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
+	
+	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1] = {"Exit"};
 	int selection = 0;
 
 	do
 	{
+		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+		{
+			options[i + 1] = baseMMOptions[i] + ((perms->permissionsMM[i]) ? (": True") : (": False"));
+		}
+		for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++)
+		{
+			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + ((perms->permissionsIM[i - NUMBER_OF_MMPERMISSIONS]) ? (": True") : (": False"));
+		}
+		for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++)
+		{
+			options[i + 1] = baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + ((perms->permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS]) ? (": True") : (": False"));
+		}
 
+		selection = navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
 
+		if (selection < NUMBER_OF_MMPERMISSIONS + 1)
+		{
+			perms->permissionsMM[selection -1] = !perms->permissionsMM[selection - 1];
+		}
+		else if (selection < NUMBER_OF_IMPERMISSIONS + 1)
+		{
+			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -1] = !perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 1];
+		}
+		else
+		{
+			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -1] = !perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 1];
+		}
 
 	} while (selection != 0);
 

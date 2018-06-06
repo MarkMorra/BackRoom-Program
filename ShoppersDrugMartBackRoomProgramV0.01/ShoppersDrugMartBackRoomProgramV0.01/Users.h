@@ -16,11 +16,11 @@ using namespace std;
 //used to acces a specific command in the permsissions bool array inside of permisssions class
 #define MM_ITEMS 0 //MM means main menu
 #define MM_VIEWLOGS 1
-#define MM_ADDANDEDITUSER 2
-#define MM_RESETITEM 3
+#define MM_CHANGEUSERPERMISSIONS 2
+#define MM_ADDANDEDITUSER 3
 #define MM_GENERALSETTINGS 4
-#define MM_RESETUSERS 5
-#define MM_RESETLOGS 6
+#define MM_RESETITEM 5
+#define MM_RESETUSERS 6
 
 #define NUMBER_OF_MMPERMISSIONS 7 //number of bools in permissions bool array
 
@@ -239,7 +239,7 @@ long int UserDatabase::Add(User user)
 {
 	do
 	{
-		user.id = (rand() % (MAX_USER_ID - MIN_USER_ID)) + MIN_USER_ID;
+		user.id = ((((long long int)rand()) * rand()) % (MAX_USER_ID - MIN_USER_ID)) + MIN_USER_ID;
 	} while (findWith(user.id) != -1); //checks if the id has already been used
 
 	vector<User>::iterator it;
