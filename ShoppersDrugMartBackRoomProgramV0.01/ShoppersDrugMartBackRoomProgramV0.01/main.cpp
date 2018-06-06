@@ -27,7 +27,7 @@ void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void help(string whereToReturn);
 void EditGerneralSetting();
-long int createNewUser();
+User* createNewUser(User** user);
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -442,7 +442,7 @@ void menu(User **user) //Cady's changes start here
 	do
 	{
 		
-		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.",avalibleOptions, amount, C_BLUE, C_LGREY);
+		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.\nIf you belive there is a mistake with your permissions, see your manager",avalibleOptions, amount, selection , C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
@@ -455,7 +455,7 @@ void menu(User **user) //Cady's changes start here
 		case 3:
 			break;
 		case 4:
-			createNewUser();
+			createNewUser(user);
 			break;
 		case 5:
 			EditGerneralSetting();
@@ -694,7 +694,7 @@ void resetUserDatabase(User **user)
 				gUserDatabase->clear();
 				long int userID = (*user)->id;
 				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
-				*user = gUserDatabase->pos(gUserDatabase->findWith(userID));
+				*user = gUserDatabase->findWith(userID);
 				choice = 'N'; //this is to stop the while loop
 			}
 		} while (choice == 'Y');
@@ -1170,7 +1170,7 @@ void EditGerneralSetting() {
 	} while (selection != 0);
 }
 
-long int createNewUser()
+User* createNewUser(User** user)
 {
 	string firstName, lastName, password;
 	long int id;
@@ -1190,19 +1190,21 @@ long int createNewUser()
 
 	changePermissions(&perms);
 
-	id = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
+	id = (*user)->id; //saves the id of the current signed in user
+
+	User *newUser = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
+
+	*user = gUserDatabase->findWith(id); //resets the pointer pointing to the logged on in user becasue somtimes when adding a new user to the user to the vector the buffer runs out and the entire vector need to be be realocated, meaning if the pointer the current logged in user is not updated it will no longer point to a valid memory adress
 
 	system("cls");
 
-	User newUser = *gUserDatabase->pos(gUserDatabase->findWith(id));
-
 	cout << "New User added sucessfully\n\n";
-	newUser.display();
+	newUser->display();
 	cout << "\n\nPress enter to continue...";
 
 	while (_getch() != 13);
 
-	return id;
+	return newUser;
 
 }
 
@@ -1212,11 +1214,12 @@ void changePermissions(Permissions *perms)
 	Permissions permsCopy = *perms;
 	
 	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = {"Exit", "Save and Exit"};
-	string permissions = perms->createString();
+	string permissions;
 	int selection = 0;
 
 	do
 	{
+		permissions = perms->createString();
 		int i = 2;
 		int pos = 0;
 		do

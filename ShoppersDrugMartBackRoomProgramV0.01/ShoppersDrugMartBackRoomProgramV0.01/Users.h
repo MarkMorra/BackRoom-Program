@@ -89,7 +89,7 @@ string Permissions::createString()
 		str += baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + (permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] ? (": True") : (": False")) + '\n';
 	}
 
-	return string(str,str.length()-1); //returns the string with the last '\n' removed
+	return string(str, 0 ,str.length()-1); //returns the string with the last '\n' removed
 }
 
 class User //Contains usernames and passwords of each user, accessed through UserDatabase class
@@ -124,11 +124,12 @@ void User::remove()
 	deleted = false;
 }
 
-void User::display()
+void User::display() //displays a users name ass well as their permissions
 {
-	cout << firstName << " " << lastName << endl
-		<< "ID: " << id << endl
-		<< permission.createString();
+	cout << firstName << ", " << lastName << endl //shows name
+		<< "ID: " << id << endl //thier id
+		<< endl
+		<< permission.createString(); //shows permissions
 }
 
 User::User(long int _ID, string _firstName, string _lastName, string _password, Permissions _permissions) //a constructor that sets the value based on the values passes
@@ -147,8 +148,8 @@ public:
 	UserDatabase(string filename, long long int *_authCode);
 	~UserDatabase();
 
-	long int findWith(long int ID); //find a user with a specific id and return an index representring thier position
-	long int findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
+	User* findWith(long int ID); //find a user with a specific id and return an index representring thier position
+	User* findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
 	void checkCredentials(User **user, string _firstName, string _lastName, string _password, long int id);
 	void clear();
 	int size();
@@ -156,7 +157,7 @@ public:
 	void remove(long int index);
 	User* pos(long int index);
 	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
-	long int Add(User user);
+	User* Add(User user);
 
 private:
 	vector<User> users; //returns a pointer to a user at a givin index in the vector
@@ -189,24 +190,22 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastn
 
 void UserDatabase::clear() //clears the database
 {
-
 	users.clear();
 	save();
 	reload();
-
 }
 
-int UserDatabase::size()
+int UserDatabase::size() //returns the number od users in the users vector
 {
 	return users.size();
 }
 
-void UserDatabase::remove(vector<User>::iterator pos)
+void UserDatabase::remove(vector<User>::iterator pos)  //removes a users pointed to by the passed iterator
 {
 	(*pos).remove();
 }
 
-void UserDatabase::remove(long int index)
+void UserDatabase::remove(long int index)  //removes a users with the corisponding index
 {
 	users[index].remove();
 }
@@ -270,12 +269,12 @@ vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator 
 
 }
 
-long int UserDatabase::Add(User user)
+User* UserDatabase::Add(User user)
 {
 	do
 	{
 		user.id = ((((long long int)rand()) * rand()) % (MAX_USER_ID - MIN_USER_ID)) + MIN_USER_ID;
-	} while (findWith(user.id) != -1); //checks if the id has already been used
+	} while (findWith(user.id) != NULL); //checks if the id has already been used
 
 	vector<User>::iterator it;
 
@@ -301,30 +300,29 @@ long int UserDatabase::Add(User user)
 		users.insert(it,user);
 
 	}
-
 	save();
-	return user.id;
+
+	return (findWith(user.id));
 }
 
-long int UserDatabase::findWith(long int ID)
+User* UserDatabase::findWith(long int ID)
 {
-	int temp = users.size();
-	for (int i = 0; i < int(users.size()) - 1; i++)
+	for (int i = 0; i < int(users.size()); i++)
 	{
-		if (users[i].id == ID) { return i; }
+		if (users[i].id == ID) { return &(users[i]); }
 	}
 
-	return -1; //if no user with this id exists -1 is returned;
+	return NULL; //if no user with this id exists -1 is returned;
 }
 
-long int UserDatabase::findWith(string _firstname, string _lastname)
+User* UserDatabase::findWith(string _firstname, string _lastname)
 {
 
-	for (int i = 0; i < int(users.size()) - 1; i++) //loops trough all users to find a user matching the passed strings
+	for (int i = 0; i < int(users.size()); i++) //loops trough all users to find a user matching the passed strings
 	{
-		if (users[i].firstName == uppercase(_firstname) && users[i].lastName == uppercase(_lastname)) { return i; }
+		if (users[i].firstName == uppercase(_firstname) && users[i].lastName == uppercase(_lastname)) { return &(users[i]); }
 	}
-	return -1; //returns -1 if it could not find a match
+	return NULL; //returns -1 if it could not find a match
 }
 
 UserDatabase::UserDatabase(string filename, long long int *_authCode)
@@ -396,7 +394,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 			permissions.permissionsI[i] = true;
 		}
 
-		cout << "\n The account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions)) << "\n Press enter to continue..."; //displays the new account id
+		cout << "\n The account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions))->id << "\n Press enter to continue..."; //displays the new account id
 		while (_getch() != 13);
 		save();
 	}
