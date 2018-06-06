@@ -143,7 +143,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastn
 
 	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || ENABLE_NO_PASSWORD_CHECK) //checks if the current element is eqaul to the string passed
+		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || (ENABLE_NO_PASSWORD_CHECK && string(it->firstName) == uppercase(_firstName))) //checks if the current element is eqaul to the string passed
 		{
 			*user = &(*it); //sets points to the user that matched the passed strings
 			return;
