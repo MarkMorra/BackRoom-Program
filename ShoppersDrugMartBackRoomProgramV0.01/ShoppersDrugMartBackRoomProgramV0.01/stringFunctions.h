@@ -29,7 +29,7 @@ HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 void changeColour() //no paramters means it gets reverted to default (grey on black)
 {
 
-	changeColour(C_DEFAULT_BACK,C_DEFAULT_FORE); //change thses to change the default colour
+	SetConsoleTextAttribute(console, C_DEFAULT_BACK * 0x10 + C_DEFAULT_FORE); //change thses to change the default colour
 
 }
 
@@ -54,7 +54,7 @@ void changeColour(int backGroundBefore, int foreGroundBefore, string str) //sets
 
 	SetConsoleTextAttribute(console, backGroundBefore * 0x10 + foreGroundBefore);
 	cout << str;
-	SetConsoleTextAttribute(console, C_DEFAULT);
+	SetConsoleTextAttribute(console, C_DEFAULT_BACK * 0x10 + C_DEFAULT_FORE);
 
 }
 

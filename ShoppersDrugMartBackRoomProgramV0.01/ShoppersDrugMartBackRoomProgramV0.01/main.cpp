@@ -1140,8 +1140,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	{
 		system("cls");
 
-
-		cout << *headerText << endl << endl << endl << title << endl << endl << "" << endl;
+		cout << ((*headerText == "") ? ("") : (*headerText + "\n\n\n")) << ((title == "") ? ("") : (title + "\n\n\n"));
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
