@@ -321,12 +321,22 @@ void logon(User **user) {
 
 				system("cls"); //Clears the screen
 				cout << " Please enter you first name: ";
-				getline(cin, first);
+				cin.clear();
+				fflush(stdin);
+				do
+				{
+					getline(cin, first);
+				} while (first == "");
 
 				system("cls");
 				fflush(stdin);
 				cout << " Please enter your last name: ";
-				getline(cin, last);
+				cin.clear();
+				fflush(stdin);
+				do
+				{
+					getline(cin, last);
+				} while (last == "");
 
 				system("cls");
 				cout << " Please enter your employee id: ";
@@ -477,13 +487,6 @@ void menu(User **user) //Cady's changes start here
 
 }//Cady's changes end here
 
-void selectItem(User **user) 
-{
-	
-	//needs more database.h member functions
-
-}
-
 void displayItemStats(User **user, Item *item) 
 {
 
@@ -560,7 +563,7 @@ void addItem(User **user) {
 
 void viewLogs()
 {
-	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User (might not work)"};
+	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User"};
 	int numOfOptions = 4;
 	string SearchByType[] = { "View Log Ons and Log Offs" , "View Price Changes" , "View Amount Changes" , "View Item Information Changes"};
 	int numOfSearchByTypeOptions = 4;
@@ -606,14 +609,17 @@ void viewLogs()
 			}
 			break;
 		case 3:
+			vector<User*> usersPointer = gUserDatabase->getUsers(false);
 			string *users;
-			users = new string[gUserDatabase->size()];
-			for (int i = 0; i < gUserDatabase->size(); i++)
+			users = new string[usersPointer.size()];
+			for (int i = 0; i < usersPointer.size(); i++)
 			{
-				users[i] = string(gUserDatabase->pos(i)->firstName) + ' ' + string(gUserDatabase->pos(i)->lastName);
+				users[i] = string(usersPointer[i]->firstName) + ' ' + string(usersPointer[i]->lastName);
 			}
 			subChoice = navigatableMenu(" Please select the user you would like to see the logs for.", users, &headerString, gUserDatabase->size(), C_BLUE, C_WHITE);
-			gLogger->display(&headerString, gUserDatabase->pos(subChoice)->id, 'A');
+			gLogger->display(&headerString, usersPointer[subChoice]->id, 'A');
+
+			delete[] users;
 		}
 	} while (true);
 	
@@ -1282,13 +1288,29 @@ User* createNewUser(User** user)
 	system("cls");
 
 	cout << " Please enter the new user's first name: ";
-	getline(cin, firstName);
+	cin.clear();
+	fflush(stdin);
+	do
+	{
+		getline(cin, firstName);
+	} while (firstName == "");
+	
 
 	cout << " Please enter " << firstName << "'s last name: ";
-	getline(cin, lastName);
+	cin.clear();
+	fflush(stdin);
+	do
+	{
+		getline(cin, lastName);
+	} while (lastName == "");
 
 	cout << " Please enter " << firstName << "'s password: ";
-	getline(cin, password);
+	cin.clear();
+	fflush(stdin);
+	do
+	{
+		getline(cin, password);
+	} while (password == "");
 
 	Permissions perms;
 
@@ -1363,5 +1385,37 @@ void changePermissions(Permissions *perms)
 		}
 
 	} while (selection != 0);
+
+}
+
+long int getUserIndex(bool includeDeleted)
+{
+
+	vector<User*> userPointers = gUserDatabase->getUsers(false);
+
+	int currentPage = 0, int itemsOnPage;
+
+	//(int)(ceil)(amount/items per page) -1
+
+	do
+	{
+		if ((((int)(ceil)((float)userPointers.size() / (gUserDatabase->getItemsPerPage() * currentPage))) - 1) == currentPage)
+		{
+			itemsOnPage = (userPointers.size() - gUserDatabase->getItemsPerPage() * currentPage);
+		}
+		else
+		{
+			itemsOnPage = gUserDatabase->getItemsPerPage();
+		}
+
+		string *usersOnThisPage;
+		usersOnThisPage = new string[itemsOnPage];
+
+		//keep going
+
+
+	} while (true);
+
+
 
 }
