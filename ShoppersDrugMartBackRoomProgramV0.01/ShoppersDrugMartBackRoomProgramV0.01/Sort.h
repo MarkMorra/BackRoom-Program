@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include "Database.h"
+#include "Users.h"
 using namespace std;
 
 void insertionSort(vector<Item*>* data , char type)
@@ -41,7 +42,7 @@ void insertionSort(vector<Item*>* data , char type)
 	}
 }
 
-void selectionSort() 
+void selectionSort(vector<User*>* data, char type)
 {
 	int largest, temp;
 /*

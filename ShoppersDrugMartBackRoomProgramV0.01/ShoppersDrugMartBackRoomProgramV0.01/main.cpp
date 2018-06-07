@@ -1084,7 +1084,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 				int pos = 0;
 				while (options[i][pos] != '\0')
 				{
-					if (options[i][pos] != '\n')
+					if (options[i][pos] == '\n')
 					{
 						cout << "\n    ";
 					}
@@ -1094,6 +1094,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 					}
 					pos++;
 				}
+				changeColour();
 			}
 			else
 			{
@@ -1101,7 +1102,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 				int pos = 0;
 				while (options[i][pos] != '\0')
 				{
-					if (options[i][pos] != '\n')
+					if (options[i][pos] == '\n')
 					{
 						cout << "\n    ";
 					}
