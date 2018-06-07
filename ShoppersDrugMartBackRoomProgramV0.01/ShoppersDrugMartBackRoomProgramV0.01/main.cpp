@@ -576,7 +576,7 @@ void selectedItem(User **user, int index) {
 
 	}*/
 
-	selection = navigatableMenu("", availibleOptions, &header, amount, C_BLUE, C_LGREY);
+	//selection = navigatableMenu("", availibleOptions, &header, amount, C_BLUE, C_LGREY); ***I COMMENTED THIS OUT SO IT WOULD COMPILE
 
 	delete[] availibleOptions;
 
@@ -1414,9 +1414,7 @@ long int getUserIndex(bool includeDeleted)
 
 	vector<User*> userPointers = gUserDatabase->getUsers(false);
 
-	int currentPage = 0, int itemsOnPage;
-
-	//(int)(ceil)(amount/items per page) -1
+	int currentPage = 0, itemsOnPage;
 
 	do
 	{
