@@ -21,14 +21,15 @@ using namespace std;
 #define C_LYELLOW 0xE
 #define C_WHITE 0xF
 
-#define C_DEFAULT (C_BLACK* 0x10 + C_WHITE)
+#define C_DEFAULT_FORE C_WHITE
+#define C_DEFAULT_BACK C_BLACK
 
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 
 void changeColour() //no paramters means it gets reverted to default (grey on black)
 {
 
-	SetConsoleTextAttribute(console, C_DEFAULT); //change thses to change the default colour
+	changeColour(C_DEFAULT_BACK,C_DEFAULT_FORE); //change thses to change the default colour
 
 }
 

@@ -1088,7 +1088,8 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 				{
 					if (options[i][pos] == '\n')
 					{
-						cout << "\n    ";
+						
+						changeColour(C_DEFAULT_BACK,C_DEFAULT_FORE,"\n    ",C_BLUE,C_WHITE);
 					}
 					else
 					{
