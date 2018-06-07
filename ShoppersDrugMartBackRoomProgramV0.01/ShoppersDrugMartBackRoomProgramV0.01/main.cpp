@@ -788,7 +788,7 @@ void itemMenu(User **user)
 
 	const int NON_OTHER_OPTIONS = 2; //how many options in all options are not categorized as "other"
 	const int otherOptions = 3; //how many other options there are
-	int selection, start = 0, currentPage = 0;
+	int selection = (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage())), start = 0, currentPage = 0;
 	string pageOptions[] = { "Next Page", "Previous Page" };
 	string allOptions[] = { "Back to Menu", "Add Item", "Sort by UPC", "Sort by Price", "Sort by Amount" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
@@ -796,13 +796,16 @@ void itemMenu(User **user)
 	int amount; //the amount of options the current user has access too, it starts at 4 beacuse all users have access to back to menu, and the 3 sort options
 	int numItemsPage = 0, amtNavBut = 0, permBased; //saves how many of each kind of option there are
 	int navButtons = 0; //saves which nav buttons appear (0 is none, 1 is next, 2 is prev, 3 is both)
-
+	int *absolutePos = new int[otherOptions + NON_OTHER_OPTIONS + 2 + gItemDatabase->GetItemsPerPage()];
+	int currentAbsPos;
 	//(*user)->permission.permissionsIM[0] = false;
 
 	do {
 
 		amount = 4;
 		permBased = 0;
+		absolutePos[0] = 0;
+		selection = absolutePos[selection];
 
 		//calcs number of items
 		if ((currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) || gItemDatabase->length() == 0) { //if last page or if empty database
@@ -870,42 +873,92 @@ void itemMenu(User **user)
 		avalibleOptions = new string[amount];
 		corrispondingIndex = new int[amount - numItemsPage];
 
-		int j = 0, pos = 0;
+		int j = 0, pos = 0, currentAbsPos = 0;
 
 		for (j; j < numItemsPage; j++) { //add items to navigatable menu
 
 			avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
 
+			if (j == numItemsPage - 1) { avalibleOptions[j] += '\n'; }
+
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
 		}
 
-		avalibleOptions[j] += '\n';
+		if (selection < (gItemDatabase->GetItemsPerPage() - currentAbsPos)) { start = j; }
+		selection -= (gItemDatabase->GetItemsPerPage() - currentAbsPos);
+		currentAbsPos = gItemDatabase->GetItemsPerPage();
 
-		if (navButtons == 1) { //adds nav buttons to menu
+		//adds nav buttons to menu
+		// navButton = 0 means neither show
+
+		if (navButtons == 1) { //next button
 
 			avalibleOptions[j] = pageOptions[0];
 			corrispondingIndex[pos] = 0;
 			pos++;
+
+			absolutePos[j] = currentAbsPos;
+			if (selection < 2) { start = j; }
+			selection -= 2;
+			currentAbsPos+=2;
+
 			j++;
 
 		}
-		else if (navButtons == 2) {
+		else if (navButtons == 2) { //prev button
 
 			avalibleOptions[j] = pageOptions[1];
 			corrispondingIndex[pos] = 1;
 			pos++;
+
+			if (selection < 2) { start = j; }
+			selection -= 2;
+
+			currentAbsPos++;
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
 			j++;
 
 		}
-		else if (navButtons == 3) {
+		else if (navButtons == 3) { //both next and prev buttons
 
 			avalibleOptions[j] = pageOptions[0];
 			corrispondingIndex[pos] = 0;
 			pos++;
+
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
 			j++;
+
 			avalibleOptions[j] = pageOptions[1];
 			corrispondingIndex[pos] = 1;
 			pos++;
+
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
 			j++;
+
+		}
+		else {
+
+			if (selection < 2) { start = j; }
+			selection -= 2;
+
+			currentAbsPos+=2;
 
 		}
 		
@@ -914,6 +967,12 @@ void itemMenu(User **user)
 		avalibleOptions[j] = allOptions[0];
 		corrispondingIndex[pos] = 2;
 		pos++;
+		absolutePos[j] = currentAbsPos;
+		currentAbsPos++;
+
+		if (selection == 0) { start = j; }
+		selection--;
+
 		j++;
 
 		for (int i = 0; i < permBased; i++) //makes the array of string to be passed to the menu function
@@ -924,6 +983,12 @@ void itemMenu(User **user)
 				avalibleOptions[j] = allOptions[i + 1]; //add one to account for back to menu
 				corrispondingIndex[pos] = 3 + i;
 				pos++;
+				absolutePos[j] = currentAbsPos;
+				currentAbsPos++;
+
+				if (selection == 0) { start = j; }
+				selection--;
+
 				j++;
 			}
 
@@ -934,57 +999,59 @@ void itemMenu(User **user)
 			avalibleOptions[j] = allOptions[i + NON_OTHER_OPTIONS]; //add non other options to account for back to menu and add item
 			corrispondingIndex[pos] = 4 + i;
 			pos++;
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
 			j++;
 
 		}
 
-		do
-		{
-			selection = navigatableMenu(string("Item Database") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
+		
+		selection = navigatableMenu(string("Item Database") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
 
-			if (selection < numItemsPage) {
+		if (selection < numItemsPage) {
 
-				errorMsg("Item " + to_string(selection) + " selected successfully!");
+			errorMsg("Item " + to_string(selection) + " selected successfully!");
 
-			}
-			else {
+		}
+		else {
 
-				switch (corrispondingIndex[selection - numItemsPage]) //calls the selected function when they press enter
-				{
-				case 0:
-					currentPage++;
-					break;
-				case 1:
-					currentPage--;
-					break;
-				case 2:
-					break;
-				case 3:
-					addItem(user);
-					break;
-				case 4:
+			switch (corrispondingIndex[selection - numItemsPage]) //calls the selected function when they press enter
+			{
+			case 0:
+				currentPage++;
+				break;
+			case 1:
+				currentPage--;
+				break;
+			case 2:
+				break;
+			case 3:
+				addItem(user);
+				break;
+			case 4:
 
-					break;
-				case 5:
+				break;
+			case 5:
 
-					break;
-				case 6:
+				break;
+			case 6:
 
-					break;
-				}
+				break;
 			}
 
-		} while (corrispondingIndex[selection - numItemsPage] != 0 && corrispondingIndex[selection - numItemsPage] != 1 && corrispondingIndex[selection - numItemsPage] != 2);
+		}
 
 	} while (corrispondingIndex[selection - numItemsPage] != 2);
 	
 		
 
-	/*for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->GetItemsPerPage()) >= gItemDatabase->length()) ? (true) : (true)); i++) {
-
-
-
-	}*/
+	delete[] corrispondingIndex;
+	delete[] avalibleOptions;
+	delete[] absolutePos;
 
 }
 
