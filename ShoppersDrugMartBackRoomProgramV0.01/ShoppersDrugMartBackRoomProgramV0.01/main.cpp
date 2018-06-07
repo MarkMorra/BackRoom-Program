@@ -16,8 +16,6 @@ void testMenu();
 void logon(User **user);
 void menu(User **user);
 void selectItem(User **user);
-
-//Cady's changes start here
 void logout();
 void changePermissions(Permissions *perms);
 void resetItem(Item *item, Logger *log);
@@ -25,6 +23,8 @@ void viewLogs();
 void resetUserDatabase(User **user);
 void deleteItemDatabase(User **user);
 void itemMenu(User **user);
+void addItem(User **user);
+void selectedItem(User **user, int index);
 void help(string whereToReturn);
 void EditGerneralSetting();
 User* createNewUser(User** user);
@@ -32,7 +32,7 @@ int navigatableMenu(string title, string options[], int numberOfOptions, int sta
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
-//Cady's changes end here
+
 
 Logger *gLogger;
 ItemDatabase *gItemDatabase;
@@ -243,7 +243,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					for (int i = 0; i < retItems->size(); i++) {
 
-						(*retItems)[i]->Display();
+						cout << (*retItems)[i]->Display();
 
 						cout << "\n\n";
 
@@ -260,7 +260,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					retItems = gItemDatabase->Find('u', tempupc);
 
-					(*retItems)[0]->Display();
+					cout << (*retItems)[0]->Display();
 
 					break;
 			}
@@ -452,7 +452,7 @@ void menu(User **user) //Cady's changes start here
 	do
 	{
 		
-		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\nThe options you see listed are based on your permission level.\nIf you belive there is a mistake with your permissions, see your manager",avalibleOptions, amount, selection , C_BLUE, C_LGREY);
+		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.\n If you believe there is a mistake with your permissions, see your manager",avalibleOptions, amount, selection , C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
@@ -486,26 +486,6 @@ void menu(User **user) //Cady's changes start here
 	delete[] avalibleOptions;
 
 }//Cady's changes end here
-
-void displayItemStats(User **user, Item *item) 
-{
-
-	system("cls");
-
-
-	
-
-}
-
-void logout()
-{
-
-}
-
-void resetItem(Item *item, Logger *log)
-{
-
-}
 
 void addItem(User **user) {
 
@@ -557,7 +537,48 @@ void addItem(User **user) {
 
 	}
 
+}
 
+void selectedItem(User **user, int index) {
+
+	string header = (gItemDatabase->pos(index))->Display();
+	string *availibleOptions;
+	int selection;
+	int amount = 1; //starts at one because everyone on this page has access to back to menu
+
+	//calcs number of perms
+	for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //counts how many permission the current user has access too
+	{
+
+		if ((*user)->permission.permissionsIM[i] == true)
+		{
+			amount++;
+		}
+
+	}
+
+	/*for (int i = 0; i < 3; i++) //makes the array of string to be passed to the menu function
+	{
+
+		if ((*user)->permission.permissionsIM[i] == true)
+		{
+			avalibleOptions[j] = allOptions[i + 1]; //add one to account for back to menu
+			corrispondingIndex[pos] = 3 + i;
+			pos++;
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
+			j++;
+		}
+
+	}*/
+
+	selection = navigatableMenu("", availibleOptions, &header, amount, C_BLUE, C_LGREY);
+
+	delete[] availibleOptions;
 
 }
 
@@ -1016,7 +1037,7 @@ void itemMenu(User **user)
 		}
 
 		
-		selection = navigatableMenu(string("Item Database") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
+		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
 
@@ -1324,9 +1345,9 @@ User* createNewUser(User** user)
 
 	system("cls");
 
-	cout << "New User added sucessfully\n\n";
+	cout << " New User added successfully\n\n";
 	newUser->display();
-	cout << "\n\nPress enter to continue...";
+	cout << endl << endl << " Press enter to continue...";
 
 	while (_getch() != 13);
 
@@ -1339,7 +1360,7 @@ void changePermissions(Permissions *perms)
 
 	Permissions permsCopy = *perms;
 	
-	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = {"Exit", "Save and Exit"};
+	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = {"Return to Main Menu", "Save and Return to Main Menu"};
 	string permissions;
 	int selection = 0;
 
@@ -1360,7 +1381,7 @@ void changePermissions(Permissions *perms)
 			i++;
 		} while (permissions[pos] != '\0' && i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2);
 
-		selection = navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu("\t _____    _ _ _     _____                   _         _\n\t|  ___|  | (_) |   | ___ \\                 (_)       (_)\n\t| |__  __| |_| |_  | |_/ /__ _ __ _ __ ___  _ ___ ___ _  ___  _ __  ___ \n\t|  __|/ _` | | __| |  __/ _ \\ '__| '_ ` _ \\| / __/ __| |/ _ \\| '_ \\/ __|\n\t| |__| (_| | | |_  | | |  __/ |  | | | | | | \\__ \\__ \\ | (_) | | | \\__ \\\n\t\\____/\\__,_|_|\\__| \\_|  \\___|_|  |_| |_| |_|_|___/___/_|\\___/|_| |_|___/", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
 
 		if (selection == 0)
 		{
