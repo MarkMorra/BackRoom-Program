@@ -878,6 +878,8 @@ void itemMenu(User **user)
 
 		}
 
+		avalibleOptions[j] += '\n';
+
 		if (navButtons == 1) { //adds nav buttons to menu
 
 			avalibleOptions[j] = pageOptions[0];
