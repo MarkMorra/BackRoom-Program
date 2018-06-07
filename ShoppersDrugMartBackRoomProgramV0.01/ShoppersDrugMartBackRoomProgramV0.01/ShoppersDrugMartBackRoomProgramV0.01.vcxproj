@@ -120,6 +120,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Sort.h" />
     <ClInclude Include="stringFunctions.h" />
     <ClInclude Include="Database.h" />
     <ClInclude Include="Encryptor.h" />

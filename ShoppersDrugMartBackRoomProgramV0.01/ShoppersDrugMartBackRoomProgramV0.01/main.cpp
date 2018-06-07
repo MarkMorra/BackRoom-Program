@@ -27,7 +27,7 @@ void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void help(string whereToReturn);
 void EditGerneralSetting();
-long int createNewUser();
+User* createNewUser(User** user);
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -253,12 +253,12 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					break;
 				case '2':
-					int tempupc;
+					long long int tempupc;
 
 					cout << "upc: ";
 					cin >> tempupc;
 
-					retItems = gItemDatabase->Find(tempupc, 'u');
+					retItems = gItemDatabase->Find('u', tempupc);
 
 					(*retItems)[0]->Display();
 
@@ -442,7 +442,7 @@ void menu(User **user) //Cady's changes start here
 	do
 	{
 		
-		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.",avalibleOptions, amount, C_BLUE, C_LGREY);
+		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\nThe options you see listed are based on your permission level.\nIf you belive there is a mistake with your permissions, see your manager",avalibleOptions, amount, selection , C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
@@ -455,7 +455,7 @@ void menu(User **user) //Cady's changes start here
 		case 3:
 			break;
 		case 4:
-			createNewUser();
+			createNewUser(user);
 			break;
 		case 5:
 			EditGerneralSetting();
@@ -504,46 +504,57 @@ void resetItem(Item *item, Logger *log)
 
 }
 
-void addItem(User **user, Logger *log) {
+void addItem(User **user) {
 
-	string msg;
 	long long int upc;
-	int plu;
+	long long int plu;
 	int amount;
 	string name;
 	string desc;
 	float price;
 	float cost;
 	float sale;
-	string *str;
+	
+	system("cls");
 
-	cout << "upc: ";
+	cout << "UPC: ";
 	cin >> upc;
 
-	cout << "plu: ";
-	cin >> plu;
+	if ((gItemDatabase->Find('u', upc))->size() == 0) {
 
-	cout << "amount: ";
-	cin >> amount;
+		cout << "PLU: ";
+		cin >> plu;
 
-	cout << "name";
-	getline(cin, name);
+		cout << "Amount: ";
+		cin >> amount;
 
-	cout << "desc";
-	getline(cin, desc);
+		cout << "Name: ";
+		getline(cin, name);
+		getline(cin, name);
 
-	cout << "price: ";
-	cin >> price;
+		cout << "Description: ";
+		getline(cin, desc);
 
-	cout << "cost: ";
-	cin >> cost;
+		cout << "Price: ";
+		cin >> price;
 
-	cout << "sale price: ";
-	cin >> sale;
+		cout << "Cost: ";
+		cin >> cost;
 
-	gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+		cout << "Sale Price: ";
+		cin >> sale;
 
-	gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+
+		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+	
+	} else {
+
+		cout << "This item already exists.";
+
+	}
+
+
 
 }
 
@@ -681,7 +692,9 @@ void resetUserDatabase(User **user)
 			{
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the UserDatabase");
 				gUserDatabase->clear();
+				long int userID = (*user)->id;
 				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
+				*user = gUserDatabase->findWith(userID);
 				choice = 'N'; //this is to stop the while loop
 			}
 		} while (choice == 'Y');
@@ -773,74 +786,36 @@ void deleteItemDatabase(User **user)
 void itemMenu(User **user)
 {
 
-	const int PAGE_OPTIONS = 2;
-	int selection, start = 0, currentPage = 0;
-	string *itemsToDisplay;
-	string *itemsOnPage;
+	const int NON_OTHER_OPTIONS = 2; //how many options in all options are not categorized as "other"
+	const int otherOptions = 3; //how many other options there are
+	int selection = (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage())), start = 0, currentPage = 0;
 	string pageOptions[] = { "Next Page", "Previous Page" };
 	string allOptions[] = { "Back to Menu", "Add Item", "Sort by UPC", "Sort by Price", "Sort by Amount" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
-	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to back to menu;
-	int numItemsPage = 0, navButtons = 0;
-
+	int amount; //the amount of options the current user has access too, it starts at 4 beacuse all users have access to back to menu, and the 3 sort options
+	int numItemsPage = 0, amtNavBut = 0, permBased; //saves how many of each kind of option there are
+	int navButtons = 0; //saves which nav buttons appear (0 is none, 1 is next, 2 is prev, 3 is both)
+	int *absolutePos = new int[otherOptions + NON_OTHER_OPTIONS + 2 + gItemDatabase->GetItemsPerPage()];
+	int currentAbsPos;
 	//(*user)->permission.permissionsIM[0] = false;
 
-	if (gItemDatabase->length() == 0) {
+	do {
 
-		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
-		{
-
-			if ((*user)->permission.permissionsIM[i] == true)
-			{
-				amount++;
-			}
-
-		}
-
-		avalibleOptions = new string[amount];
-		int pos = 1;
-
-
-		avalibleOptions[0] = allOptions[0];
-
-		for (int j = 1; j < amount; j++) //makes the array of string to be passed to the menu function
-		{
-
-			if ((*user)->permission.permissionsIM[j] == true)
-			{
-				avalibleOptions[pos] = allOptions[j];
-				pos++;
-			}
-
-		}
-
-		do
-		{
-			selection = navigatableMenu("No items to display.", avalibleOptions, amount, start, C_BLUE, C_LGREY);
-
-			switch (selection) //calls the selected function when they press enter
-			{
-			case 1:
-				//add item
-				break;
-			default:
-				break;
-			}
-
-		} while (selection != 0);
-
-	} else {
+		amount = 4;
+		permBased = 0;
+		absolutePos[0] = 0;
+		selection = absolutePos[selection];
 
 		//calcs number of items
-		if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //how many items on the page
+		if ((currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) || gItemDatabase->length() == 0) { //if last page or if empty database
 
-			numItemsPage += (gItemDatabase->length() - ((currentPage == 0) ? (0) : (currentPage - 1)) * gItemDatabase->GetItemsPerPage()); //calculates how many items there are on the last page and adjusts the amount accordingly
+			numItemsPage = (gItemDatabase->length() - (currentPage * gItemDatabase->GetItemsPerPage())); //calculates how many items there are on the last page and adjusts the amount accordingly
 
 		}
 		else {
 
-			numItemsPage += gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
+			numItemsPage = gItemDatabase->GetItemsPerPage(); //if we are on a middle page, the number of items on the page is the max
 
 		}
 
@@ -849,24 +824,35 @@ void itemMenu(User **user)
 		//calcs number of nav buttons
 		if (currentPage == 0) { //if first page, we only want to show next page
 
-			navButtons = 0;
-			amount++;
+			if ((currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) || gItemDatabase->length() == 0) {
+
+				navButtons = 0;
+				amtNavBut = 0;
+
+			}
+			else {
+
+				navButtons = 1;
+				amtNavBut = 1;
+				amount++;
+
+			}
 
 		}
-		else if (currentPage == (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) { //if its the last page, only show previous page option
+		else if (currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) { //if its the last page, only show previous page option
 
-			navButtons = 1;
+			navButtons = 2;
+			amtNavBut = 1;
 			amount++;
 
 		}
 		else { //if its not the first or last, show both next and previous
 
-			navButtons = 2;
+			navButtons = 3;
+			amtNavBut = 2;
 			amount += 2;
 
 		}
-
-		int pos = amount;  //this number is iterated everytime the user has access to a command
 
 		//calcs number of perms
 		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //counts how many permission the current user has access too
@@ -874,94 +860,198 @@ void itemMenu(User **user)
 
 			if ((*user)->permission.permissionsIM[i] == true)
 			{
+				permBased++;
 				amount++;
 			}
 
 		}
 
-		int changingOptions = amount - pos;
+
+		// start adding things to the string array for navigatableMenu
+
 
 		avalibleOptions = new string[amount];
-		corrispondingIndex = new int[amount];
+		corrispondingIndex = new int[amount - numItemsPage];
 
-		int j = 0;
+		int j = 0, pos = 0, currentAbsPos = 0;
 
 		for (j; j < numItemsPage; j++) { //add items to navigatable menu
 
-			corrispondingIndex[j] = j;
 			avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
 
+			if (j == numItemsPage - 1) { avalibleOptions[j] += '\n'; }
+
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
 		}
+
+		if (selection < (gItemDatabase->GetItemsPerPage() - currentAbsPos)) { start = j; }
+		selection -= (gItemDatabase->GetItemsPerPage() - currentAbsPos);
+		currentAbsPos = gItemDatabase->GetItemsPerPage();
+
+		//adds nav buttons to menu
+		// navButton = 0 means neither show
+
+		if (navButtons == 1) { //next button
+
+			avalibleOptions[j] = pageOptions[0];
+			corrispondingIndex[pos] = 0;
+			pos++;
+
+			absolutePos[j] = currentAbsPos;
+			if (selection < 2) { start = j; }
+			selection -= 2;
+			currentAbsPos+=2;
+
+			j++;
+
+		}
+		else if (navButtons == 2) { //prev button
+
+			avalibleOptions[j] = pageOptions[1];
+			corrispondingIndex[pos] = 1;
+			pos++;
+
+			if (selection < 2) { start = j; }
+			selection -= 2;
+
+			currentAbsPos++;
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			j++;
+
+		}
+		else if (navButtons == 3) { //both next and prev buttons
+
+			avalibleOptions[j] = pageOptions[0];
+			corrispondingIndex[pos] = 0;
+			pos++;
+
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
+			j++;
+
+			avalibleOptions[j] = pageOptions[1];
+			corrispondingIndex[pos] = 1;
+			pos++;
+
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
+			j++;
+
+		}
+		else {
+
+			if (selection < 2) { start = j; }
+			selection -= 2;
+
+			currentAbsPos+=2;
+
+		}
+		
+
+		//add back to menu
+		avalibleOptions[j] = allOptions[0];
+		corrispondingIndex[pos] = 2;
+		pos++;
+		absolutePos[j] = currentAbsPos;
+		currentAbsPos++;
+
+		if (selection == 0) { start = j; }
+		selection--;
 
 		j++;
 
-		if (navButtons == 0) {
-
-			avalibleOptions[j] = pageOptions[0];
-			corrispondingIndex[j] = j;
-
-		}
-		else if (navButtons == 1) {
-
-			avalibleOptions[j] = pageOptions[1];
-			corrispondingIndex[j] = j;
-
-		}
-		else if (navButtons == 2) {
-
-			avalibleOptions[j] = pageOptions[0];
-			corrispondingIndex[j] = j;
-			j++;
-			avalibleOptions[j] = pageOptions[1];
-			corrispondingIndex[j] = j;
-
-		}
-
-		for (j; j < amount; j++) //makes the array of string to be passed to the menu function
+		for (int i = 0; i < permBased; i++) //makes the array of string to be passed to the menu function
 		{
 
-			if ((*user)->permission.permissionsIM[abs(j - changingOptions)] == true)
+			if ((*user)->permission.permissionsIM[i] == true)
 			{
-				corrispondingIndex[j] = amount - j;
-				avalibleOptions[pos] = allOptions[j];
+				avalibleOptions[j] = allOptions[i + 1]; //add one to account for back to menu
+				corrispondingIndex[pos] = 3 + i;
 				pos++;
+				absolutePos[j] = currentAbsPos;
+				currentAbsPos++;
+
+				if (selection == 0) { start = j; }
+				selection--;
+
+				j++;
 			}
 
 		}
 
-		do
-		{
-		selection = navigatableMenu("Item Database", avalibleOptions, amount, start, C_BLUE, C_LGREY);
+		for (int i = 0; i < otherOptions; i++) {
 
-		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
-		{
-		case 1:
-			break;
-		case 2:
-			itemMenu(user);
-			break;
-		case 3:
-			viewLogs();
-			break;
-		case 4:
+			avalibleOptions[j] = allOptions[i + NON_OTHER_OPTIONS]; //add non other options to account for back to menu and add item
+			corrispondingIndex[pos] = 4 + i;
+			pos++;
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
 
-			break;
-		case 5:
-			break;
+			if (selection == 0) { start = j; }
+			selection--;
+
+			j++;
+
 		}
 
-		} while (corrispondingIndex[selection] != 0);
-	
-	}
+		
+		selection = navigatableMenu(string("Item Database") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
 
+		if (selection < numItemsPage) {
+
+			errorMsg("Item " + to_string(selection) + " selected successfully!");
+
+		}
+		else {
+
+			switch (corrispondingIndex[selection - numItemsPage]) //calls the selected function when they press enter
+			{
+			case 0:
+				currentPage++;
+				break;
+			case 1:
+				currentPage--;
+				break;
+			case 2:
+				break;
+			case 3:
+				addItem(user);
+				break;
+			case 4:
+
+				break;
+			case 5:
+
+				break;
+			case 6:
+
+				break;
+			}
+
+		}
+
+	} while (corrispondingIndex[selection - numItemsPage] != 2);
 	
 		
 
-	/*for (int i = 0; i < ((((currentPage + 1) * gItemDatabase->GetItemsPerPage()) >= gItemDatabase->length()) ? (true) : (true)); i++) {
-
-
-
-	}*/
+	delete[] corrispondingIndex;
+	delete[] avalibleOptions;
+	delete[] absolutePos;
 
 }
 
@@ -1050,8 +1140,7 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 	{
 		system("cls");
 
-
-		cout << *headerText << endl << endl << endl << title << endl << endl << "" << endl;
+		cout << ((*headerText == "") ? ("") : (*headerText + "\n\n\n")) << ((title == "") ? ("") : (title + "\n\n\n"));
 
 		for (int i = 0; i < numberOfOptions; i++) //dispalys all option based on usres permissions
 		{
@@ -1059,11 +1148,39 @@ int navigatableMenu(string title,string options[], string *headerText, int numbe
 			if (selection == i) //highlights the choice if it is the selected one
 			{
 				cout << "  > ";
-				changeColour(selectedBackground, selectedForeground, options[i]); //sets the colour of the highlighted option based on values passed in
+				changeColour(selectedBackground, selectedForeground); //sets the colour of the highlighted option based on values passed in
+				int pos = 0;
+				while (options[i][pos] != '\0')
+				{
+					if (options[i][pos] == '\n')
+					{
+						
+						changeColour(C_DEFAULT_BACK,C_DEFAULT_FORE,"\n    ",C_BLUE,C_WHITE);
+					}
+					else
+					{
+						cout << options[i][pos];
+					}
+					pos++;
+				}
+				changeColour();
 			}
 			else
 			{
-				cout << "    " << options[i];
+				cout << "    ";
+				int pos = 0;
+				while (options[i][pos] != '\0')
+				{
+					if (options[i][pos] == '\n')
+					{
+						cout << "\n    ";
+					}
+					else
+					{
+						cout << options[i][pos];
+					}
+					pos++;
+				}
 			}
 		}
 
@@ -1157,7 +1274,7 @@ void EditGerneralSetting() {
 	} while (selection != 0);
 }
 
-long int createNewUser()
+User* createNewUser(User** user)
 {
 	string firstName, lastName, password;
 	long int id;
@@ -1177,50 +1294,72 @@ long int createNewUser()
 
 	changePermissions(&perms);
 
-	id = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
+	id = (*user)->id; //saves the id of the current signed in user
 
-	return id;
+	User *newUser = gUserDatabase->Add(User(0, firstName, lastName, password, perms));
+
+	*user = gUserDatabase->findWith(id); //resets the pointer pointing to the logged on in user becasue somtimes when adding a new user to the user to the vector the buffer runs out and the entire vector need to be be realocated, meaning if the pointer the current logged in user is not updated it will no longer point to a valid memory adress
+
+	system("cls");
+
+	cout << "New User added sucessfully\n\n";
+	newUser->display();
+	cout << "\n\nPress enter to continue...";
+
+	while (_getch() != 13);
+
+	return newUser;
 
 }
 
 void changePermissions(Permissions *perms)
 {
 
-	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Change Another Users Settings" , "Add Another User" , "Edit General Settings","Reset Database" , "Reset Users"};
-	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
-	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
+	Permissions permsCopy = *perms;
 	
-	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1] = {"Exit"};
+	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = {"Exit", "Save and Exit"};
+	string permissions;
 	int selection = 0;
 
 	do
 	{
-		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+		permissions = perms->createString();
+		int i = 2;
+		int pos = 0;
+		do
 		{
-			options[i + 1] = baseMMOptions[i] + ((perms->permissionsMM[i]) ? (": True") : (": False"));
-		}
-		for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++)
-		{
-			options[i + 1] = baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + ((perms->permissionsIM[i - NUMBER_OF_MMPERMISSIONS]) ? (": True") : (": False"));
-		}
-		for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++)
-		{
-			options[i + 1] = baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + ((perms->permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS]) ? (": True") : (": False"));
-		}
+			options[i] = "";
+			do
+			{
+				options[i] += permissions[pos];
+				pos++;
+			} while (permissions[pos] != '\n' && permissions[pos] != '\0');
+			if (permissions[pos] != '\0') { pos++; }
+			i++;
+		} while (permissions[pos] != '\0' && i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2);
 
 		selection = navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
 
-		if (selection < NUMBER_OF_MMPERMISSIONS + 1)
+		if (selection == 0)
 		{
-			perms->permissionsMM[selection -1] = !perms->permissionsMM[selection - 1];
+			*perms = permsCopy;
+			return;
 		}
-		else if (selection < NUMBER_OF_IMPERMISSIONS + 1)
+		else if (selection == 1)
 		{
-			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -1] = !perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 1];
+			return;
+		}
+		else if (selection < NUMBER_OF_MMPERMISSIONS + 2)
+		{
+			perms->permissionsMM[selection -2] = !perms->permissionsMM[selection - 2];
+		}
+		else if (selection < NUMBER_OF_IMPERMISSIONS + 2)
+		{
+			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS -2] = !perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 2];
 		}
 		else
 		{
-			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -1] = !perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 1];
+			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS -2] = !perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 2];
 		}
 
 	} while (selection != 0);

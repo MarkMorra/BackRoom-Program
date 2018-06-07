@@ -21,14 +21,15 @@ using namespace std;
 #define C_LYELLOW 0xE
 #define C_WHITE 0xF
 
-#define C_DEFAULT (C_BLACK* 0x10 + C_WHITE)
+#define C_DEFAULT_FORE C_WHITE
+#define C_DEFAULT_BACK C_BLACK
 
 HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 
 void changeColour() //no paramters means it gets reverted to default (grey on black)
 {
 
-	SetConsoleTextAttribute(console, C_DEFAULT); //change thses to change the default colour
+	SetConsoleTextAttribute(console, C_DEFAULT_BACK * 0x10 + C_DEFAULT_FORE); //change thses to change the default colour
 
 }
 
@@ -53,7 +54,7 @@ void changeColour(int backGroundBefore, int foreGroundBefore, string str) //sets
 
 	SetConsoleTextAttribute(console, backGroundBefore * 0x10 + foreGroundBefore);
 	cout << str;
-	SetConsoleTextAttribute(console, C_DEFAULT);
+	SetConsoleTextAttribute(console, C_DEFAULT_BACK * 0x10 + C_DEFAULT_FORE);
 
 }
 
@@ -63,6 +64,16 @@ string uppercase(string str)
 	for (int i = 0; i < str.length(); i++)
 	{
 		str[i] = toupper(str[i]);
+	}
+	return str;
+}
+
+string lowercase(string str)
+{
+
+	for (int i = 0; i < str.length(); i++)
+	{
+		str[i] = tolower(str[i]);
 	}
 	return str;
 }
