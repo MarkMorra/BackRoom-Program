@@ -442,7 +442,7 @@ void menu(User **user) //Cady's changes start here
 	do
 	{
 		
-		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\nThe options you see listed are based on your permission level.\nIf you belive there is a mistake with your permissions, see your manager",avalibleOptions, amount, selection , C_BLUE, C_LGREY);
+		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.\n If you believe there is a mistake with your permissions, see your manager",avalibleOptions, amount, selection , C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
 		{
@@ -1010,7 +1010,7 @@ void itemMenu(User **user)
 		}
 
 		
-		selection = navigatableMenu(string("Item Database") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
+		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
 
@@ -1302,9 +1302,9 @@ User* createNewUser(User** user)
 
 	system("cls");
 
-	cout << "New User added sucessfully\n\n";
+	cout << " New User added successfully\n\n";
 	newUser->display();
-	cout << "\n\nPress enter to continue...";
+	cout << endl << endl << " Press enter to continue...";
 
 	while (_getch() != 13);
 
@@ -1317,7 +1317,7 @@ void changePermissions(Permissions *perms)
 
 	Permissions permsCopy = *perms;
 	
-	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = {"Exit", "Save and Exit"};
+	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = {"Return to Main Menu", "Save and Return to Main Menu"};
 	string permissions;
 	int selection = 0;
 
@@ -1338,7 +1338,7 @@ void changePermissions(Permissions *perms)
 			i++;
 		} while (permissions[pos] != '\0' && i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2);
 
-		selection = navigatableMenu("You are editing the permissions for a user", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu("\t _____    _ _ _     _____                   _         _\n\t|  ___|  | (_) |   | ___ \\                 (_)       (_)\n\t| |__  __| |_| |_  | |_/ /__ _ __ _ __ ___  _ ___ ___ _  ___  _ __  ___ \n\t|  __|/ _` | | __| |  __/ _ \\ '__| '_ ` _ \\| / __/ __| |/ _ \\| '_ \\/ __|\n\t| |__| (_| | | |_  | | |  __/ |  | | | | | | \\__ \\__ \\ | (_) | | | \\__ \\\n\t\\____/\\__,_|_|\\__| \\_|  \\___|_|  |_| |_| |_|_|___/___/_|\\___/|_| |_|___/", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
 
 		if (selection == 0)
 		{
