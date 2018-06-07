@@ -16,8 +16,6 @@ void testMenu();
 void logon(User **user);
 void menu(User **user);
 void selectItem(User **user);
-
-//Cady's changes start here
 void logout();
 void changePermissions(Permissions *perms);
 void resetItem(Item *item, Logger *log);
@@ -25,6 +23,8 @@ void viewLogs();
 void resetUserDatabase(User **user);
 void deleteItemDatabase(User **user);
 void itemMenu(User **user);
+void addItem(User **user);
+void selectedItem(User **user, int index);
 void help(string whereToReturn);
 void EditGerneralSetting();
 User* createNewUser(User** user);
@@ -32,7 +32,7 @@ int navigatableMenu(string title, string options[], int numberOfOptions, int sta
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
-//Cady's changes end here
+
 
 Logger *gLogger;
 ItemDatabase *gItemDatabase;
@@ -243,7 +243,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					for (int i = 0; i < retItems->size(); i++) {
 
-						(*retItems)[i]->Display();
+						cout << (*retItems)[i]->Display();
 
 						cout << "\n\n";
 
@@ -260,7 +260,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 					retItems = gItemDatabase->Find('u', tempupc);
 
-					(*retItems)[0]->Display();
+					cout << (*retItems)[0]->Display();
 
 					break;
 			}
@@ -477,33 +477,6 @@ void menu(User **user) //Cady's changes start here
 
 }//Cady's changes end here
 
-void selectItem(User **user) 
-{
-	
-	//needs more database.h member functions
-
-}
-
-void displayItemStats(User **user, Item *item) 
-{
-
-	system("cls");
-
-
-	
-
-}
-
-void logout()
-{
-
-}
-
-void resetItem(Item *item, Logger *log)
-{
-
-}
-
 void addItem(User **user) {
 
 	long long int upc;
@@ -554,7 +527,48 @@ void addItem(User **user) {
 
 	}
 
+}
 
+void selectedItem(User **user, int index) {
+
+	string header = (gItemDatabase->pos(index))->Display();
+	string *availibleOptions;
+	int selection;
+	int amount = 1; //starts at one because everyone on this page has access to back to menu
+
+	//calcs number of perms
+	for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //counts how many permission the current user has access too
+	{
+
+		if ((*user)->permission.permissionsIM[i] == true)
+		{
+			amount++;
+		}
+
+	}
+
+	/*for (int i = 0; i < 3; i++) //makes the array of string to be passed to the menu function
+	{
+
+		if ((*user)->permission.permissionsIM[i] == true)
+		{
+			avalibleOptions[j] = allOptions[i + 1]; //add one to account for back to menu
+			corrispondingIndex[pos] = 3 + i;
+			pos++;
+			absolutePos[j] = currentAbsPos;
+			currentAbsPos++;
+
+			if (selection == 0) { start = j; }
+			selection--;
+
+			j++;
+		}
+
+	}*/
+
+	selection = navigatableMenu("", availibleOptions, &header, amount, C_BLUE, C_LGREY);
+
+	delete[] availibleOptions;
 
 }
 

@@ -24,7 +24,7 @@ public:
 	float price, cost, sale;
 	
 	Item();
-	void Display();
+	string Display();
 	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
 
 };
@@ -42,15 +42,15 @@ Item::Item() {
 
 }
 
-void Item::Display() {
+string Item::Display() {
 
-	cout << " Name:\t\t" << name
-		<< "\n Desc:\t\t" << desc
-		<< "\n UPC:\t\t" << upc
-		<< "\n PLU:\t\t" << plu
-		<< "\n Price:\t\t"; printf("$%0.2f", price);
-	cout << "\n Sale Price:\t"; printf("$%0.2f", sale);
-	cout << "\n Purchase Cost:\t"; printf("$%0.2f", cost);
+	char pricetemp[50];
+	char saletemp[50];
+	char costtemp[50];
+
+	sprintf(pricetemp, "$%0.2f", price);
+
+	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + to_string(upc) + "\n PLU:\t\t" + to_string(plu) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
 
 }
 
@@ -80,6 +80,7 @@ public:
 	vector<Item*>* Find(char type, long long int num);
 	vector<Item*>* Find(char type, float num);
 	vector<Item*>* Find(char type, string text);
+	Item* pos(int index);
 	int length();
 	int GetItemsPerPage();
 	void GetItemsPerPage(int _items);
@@ -332,6 +333,12 @@ void ItemDatabase::Save()
 string ItemDatabase::buildItem(int index) {
 
 	return (to_string(items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
+
+}
+
+Item* ItemDatabase::pos(int index) {
+
+	return &(items[index]);
 
 }
 
