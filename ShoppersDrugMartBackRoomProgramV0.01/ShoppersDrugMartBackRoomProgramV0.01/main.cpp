@@ -533,42 +533,64 @@ void selectedItem(User **user, int index) {
 
 	string header = (gItemDatabase->pos(index))->Display();
 	string *availibleOptions;
+	string allOptions[] = { "Back to Item Menu", "Modify item", "Delete item" };
 	int selection;
+	int *corrispondingIndex;
 	int amount = 1; //starts at one because everyone on this page has access to back to menu
 
-	//calcs number of perms
-	for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //counts how many permission the current user has access too
-	{
+	do {
 
-		if ((*user)->permission.permissionsIM[i] == true)
+		//calcs number of perms
+		for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //counts how many permission the current user has access too
 		{
-			amount++;
+
+			if ((*user)->permission.permissionsIM[i] == true)
+			{
+				amount++;
+			}
+
 		}
 
-	}
+		availibleOptions = new string[amount];
+		corrispondingIndex = new int[amount];
 
-	/*for (int i = 0; i < 3; i++) //makes the array of string to be passed to the menu function
-	{
+		int j = 0;
 
-		if ((*user)->permission.permissionsIM[i] == true)
+		availibleOptions[0] = allOptions[j];
+		corrispondingIndex[0] = j;
+
+		j++;
+
+		for (int i = 0; i < amount - 1; i++) //makes the array of string to be passed to the menu function
 		{
-			avalibleOptions[j] = allOptions[i + 1]; //add one to account for back to menu
-			corrispondingIndex[pos] = 3 + i;
-			pos++;
-			absolutePos[j] = currentAbsPos;
-			currentAbsPos++;
 
-			if (selection == 0) { start = j; }
-			selection--;
+			if ((*user)->permission.permissionsI[i] == true)
+			{
+				availibleOptions[j] = allOptions[i + 1]; //add one to account for back to menu
+				corrispondingIndex[j] = i + 1;
 
-			j++;
+				j++;
+			}
+
 		}
 
-	}*/
+		selection = navigatableMenu("", availibleOptions, &header, amount, C_BLUE, C_LGREY);
 
-	selection = navigatableMenu("", availibleOptions, &header, amount, C_BLUE, C_LGREY);
+		switch (selection) {
+		case 1:
+			errorMsg("modify item");
+			//modify the item
+			break;
+		case 2:
+			errorMsg("remove item");
+			//remove the item
+			break;
+		}
+
+	} while (corrispondingIndex[selection] != 0);
 
 	delete[] availibleOptions;
+	delete[] corrispondingIndex;
 
 }
 
