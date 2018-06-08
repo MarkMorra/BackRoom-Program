@@ -1378,91 +1378,115 @@ void editExistingUsers(User** user) {
 
 	User* userToEdit;
 	User copy;
-	int const NUM_OF_OPTIONS = 9;
-	string options[NUM_OF_OPTIONS] = { "Exit", "Save and Exit" ,"Delete this User\n","Edit thier permissions" };
+	int const NUM_OF_OPTIONS = 7;
+	string options[NUM_OF_OPTIONS] = { "Exit", "Save and Exit" ,"Delete this User","Edit thier permissions\n" };
 	string output;
 	int selection = 0;
+	char choice;
 
 	do
 	{
 
 		userToEdit = getUserWithMenu(false, "which user would you like to edit?");
 
-		if (userToEdit == NULL)
-		{
-			return;
-		}
-		output = userToEdit->display(true, false);
-
-		int i = 4;
-		int pos = 0;
 		do
 		{
-			while (output[pos] != '\n' && output[pos] != '\0')
+			if (userToEdit == NULL)
 			{
-				options[i] += output[pos];
-				pos++;
+				return;
 			}
-			while (output[pos] == '\n')
+			output = userToEdit->display(true, false);
+
+			int i = 4;
+			int pos = 0;
+			do
 			{
-				pos++;
+				options[i] = "";
+				while (output[pos] != '\n' && output[pos] != '\0')
+				{
+					options[i] += output[pos];
+					pos++;
+				}
+				while (output[pos] == '\n')
+				{
+					pos++;
+				}
+				i++;
+			} while (output[pos] != '\0' && i < NUM_OF_OPTIONS);
+
+
+			selection = navigatableMenu("Which asspect of the user would you like to edit?", options, NUM_OF_OPTIONS, selection, C_BLUE, C_WHITE);
+
+			string temp;
+			switch (selection)
+			{
+			case 0:
+				*userToEdit = copy;
+				return;
+			case 1:
+				return;
+			case 2:
+				system("cls");
+				if ((*user)->id == userToEdit->id)
+				{
+					errorMsg("You can't delete your own account");
+					break;
+				}
+				cout << "Are you sure you want to delete " << userToEdit->firstName << "'s account? (Y/N): ";
+				while ((choice = _getch()) != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
+
+				if (choice == 'N' || choice == 'n')
+				{
+					break;
+				}
+				userToEdit->remove(true);
+				gUserDatabase->save();
+
+				system("cls");
+				cout << "You have successfully deleted thier account\nPress enter to continue...";
+				while (_getch() != 13);
+
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
+				break;
+			case 3:
+				changePermissions(&(userToEdit->permission));
+				break;
+			case 4:
+				system("cls");
+				cout << "Please enter the new first name: ";
+				fflush(stdin);
+				cin.clear();
+				getline(cin, temp);
+				strcpy(userToEdit->firstName, uppercase(temp).c_str());
+
+				system("cls");
+				cout << "Please enter the new last name: ";
+				fflush(stdin);
+				cin.clear();
+				getline(cin, temp);
+				strcpy(userToEdit->lastName, uppercase(temp).c_str());
+				break;
+			case 5:
+				system("cls");
+				cout << "The user ID is not a modifyable value\npress enter to continue...";
+				while (_getch() != 13);
+				break;
+			case 6:
+				system("cls");
+				cout << "Please enter the new password for the user: ";
+				fflush(stdin);
+				cin.clear();
+				getline(cin, temp);
+				strcpy(userToEdit->password, temp.c_str());
+				break;
 			}
-			i++;
-		} while (output[pos] != '\0' && i < NUM_OF_OPTIONS);
+			gUserDatabase->save();
+		} while (selection > 2);
 
 
-		selection = navigatableMenu("Which asspect of the user would you like to edit?", options, NUM_OF_OPTIONS, selection, C_BLUE, C_WHITE);
-
-		string temp;
-		switch (selection)
-		{
-		case 0:
-			*userToEdit = copy;
-			return;
-		case 1:
-			return;
-		case 2:
-			userToEdit->remove();
-			gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
-			return;
-		case 4:
-			system("cls");
-			cout << "Please enter the new first name: ";
-			fflush(stdin);
-			cin.clear();
-			getline(cin, temp);
-			strcpy(userToEdit->firstName, temp.c_str());
-
-			system("cls");
-			cout << "Please enter the new last name: ";
-			fflush(stdin);
-			cin.clear();
-			getline(cin, temp);
-			strcpy(userToEdit->lastName, temp.c_str());
-		case 5:
-			system("cls");
-			cout << "The user ID is not a modifyable value\npress enter to continue...";
-			while (_getch() != 13);
-			break;
-		case 6:
-			system("cls");
-			cout << "Please enter the new password for the user: ";
-			fflush(stdin);
-			cin.clear();
-			getline(cin, temp);
-			strcpy(userToEdit->password, temp.c_str());
-		case 7:
-			changePermissions(&(userToEdit->permission));
-		}
-	} while (selection > 3);
+	} while (true);
 }
 
-void modifyUser(User *user)
-{
-
-
-
-}
 
 User* createNewUser(User** user)
 {

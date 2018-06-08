@@ -102,7 +102,7 @@ public:
 	char lastName[LENGTH_OF_USER_STRINGS]; //saves their lastname
 	char password[LENGTH_OF_USER_STRINGS]; //saves their password
 	long int id; //saves thier user ID
-	void remove(); //deletes this user (for logging reasons a user is never actaully deleted, the deleted bool is just set to true)
+	void remove(bool _deleted); //deletes this user (for logging reasons a user is never actaully deleted, the deleted bool is just set to true)
 	string display(bool showPasswordFeild, bool withPerms); //displays all the user information on the screen
 	bool isDeleted();
 	
@@ -118,9 +118,9 @@ User::User() //default constructor just sets all value to zero
 	deleted = false;
 }
 
-void User::remove()
+void User::remove(bool _deleted)
 {
-	deleted = false;
+	deleted = _deleted;
 }
 
 string User::display(bool showPasswordFeild, bool withPerms) //displays a users name ass well as their permissions
@@ -157,8 +157,8 @@ public:
 	void checkCredentials(User **user, string _firstName, string _lastName, string _password, long int id);
 	void clear();
 	int size();
-	void remove(vector<User>::iterator pos);
-	void remove(long int index); //removes the user at that index
+	void remove(vector<User>::iterator pos, bool _delete);
+	void remove(long int index, bool _delete); //removes the user at that index
 	User* pos(long int index); //returns a pointer to the user with that index
 	vector<User*> getUsers(bool includeDeleted); //returns a vector of pointers to the users
 	vector<User*> getUsers(bool includeDeleted, bool includeNotDeleted);
@@ -166,6 +166,7 @@ public:
 	User* Add(User user);
 	int getItemsPerPage();
 	void getItemsPerPage(int items);
+	void save();
 
 private:
 	vector<User> users; //returns a pointer to a user at a givin index in the vector
@@ -174,7 +175,6 @@ private:
 	int itemsPerPage; //saves how many users should be diaplyed on the screen when choosing from a list of them
 
 	void reload();
-	void save();
 
 	long long int authCode;
 };
@@ -210,14 +210,14 @@ int UserDatabase::size() //returns the number od users in the users vector
 	return users.size();
 }
 
-void UserDatabase::remove(vector<User>::iterator pos)  //removes a users pointed to by the passed iterator
+void UserDatabase::remove(vector<User>::iterator pos, bool _delete)  //removes a users pointed to by the passed iterator
 {
-	(*pos).remove();
+	(*pos).remove(_delete);
 }
 
-void UserDatabase::remove(long int index)  //removes a users with the corisponding index
+void UserDatabase::remove(long int index, bool _delete)  //removes a users with the corisponding index
 {
-	users[index].remove();
+	users[index].remove(_delete);
 }
 
 User* UserDatabase::pos(long int index) //returns a pointer to a user at a givin index in the vector

@@ -144,7 +144,7 @@ void Logger::reload() {
 	Log temp;
 	long long int temp_authCode;
 
-	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
+	/*(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
 	if (authCode == 0)
 	{
@@ -154,14 +154,14 @@ void Logger::reload() {
 	{
 		errorMsg(" Error; authCode mismatch in Logger.log. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the log file will be deleted unless return to its original state.");
 		return;
-	}
+	}*/
 
-	fread(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
+	//fread(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
 
-	while (fread(&temp,sizeof(temp),1,file)) //keeps  read untill eof is reached
+	while (fread(&temp, sizeof(temp), 1, file)) //keeps  read untill eof is reached
 	{
-		decrypt(temp.message, CHAR_IN_LOG_MSG); //decrypts the msg saved in file
-		decrypt(&(temp.type), 1); //decrypts char saved in file
+		//decrypt(temp.message, CHAR_IN_LOG_MSG); //decrypts the msg saved in file
+		//decrypt(&(temp.type), 1); //decrypts char saved in file
 		if ((difftime(time(NULL),temp.timeLogged)) <= secondsBeforeMsgDelete) //if the message is older then the specified time it dose not get written into memory and thus when the file is rewiritten too this log msg is not included
 		{
 			log.push_back(temp); //add it to the list
@@ -186,21 +186,20 @@ void Logger::save()
 		return;
 	}
 
-	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
-	fwrite(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
+	//fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
+	//fwrite(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
+
 	it = log.begin();
 	while (it != log.end()) //keeps looping untill it reaches the end of the list
 	{
 		temp = *it; //creates a clone of the log so it can be encrypted
-		encrypt(temp.message, CHAR_IN_LOG_MSG); //encrypts the msg
-		encrypt(&(temp.type), 1); //encrypts the cahr
+		//encrypt(temp.message, CHAR_IN_LOG_MSG); //encrypts the msg
+		//encrypt(&(temp.type), 1); //encrypts the cahr
 		fwrite(&temp, sizeof(temp), 1, file); //writes to the file
 		it++;
 
 	}
-
 	fclose(file);
-
 }
 
 void Logger::addItem(long long int UPCCode, long long int PLUCode, long int Userid, char type, string message)
