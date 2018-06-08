@@ -1054,7 +1054,7 @@ void itemMenu(User **user)
 
 		if (selection < numItemsPage) {
 
-			errorMsg("Item " + to_string(selection) + " selected successfully!");
+			selectedItem(user, (currentPage*gItemDatabase->GetItemsPerPage() + selection));
 
 		}
 		else {

@@ -49,6 +49,8 @@ string Item::Display() {
 	char costtemp[50];
 
 	sprintf(pricetemp, "$%0.2f", price);
+	sprintf(saletemp, "$%0.2f", sale);
+	sprintf(costtemp, "$%0.2f", cost);
 
 	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + to_string(upc) + "\n PLU:\t\t" + to_string(plu) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
 
