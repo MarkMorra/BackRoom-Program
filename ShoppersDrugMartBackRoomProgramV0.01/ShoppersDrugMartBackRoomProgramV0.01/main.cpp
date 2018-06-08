@@ -306,12 +306,13 @@ void logon(User **user) {
 
 	do
 	{
+		//Displays Welcome message for users on log on screen
 		selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)", choiceName, 3, selection, C_BLUE, C_WHITE);
 
 		switch (selection)
 		{
 		case 0:
-			help("Logon Screen");
+			help("Log On Screen");
 			break;
 		case 1: //user wants to logon
 			do
@@ -340,7 +341,7 @@ void logon(User **user) {
 
 					for (int i = 0; i < password.length(); i++)
 					{
-						cout << '*';
+						cout << '*';//Displays an asterisk when each character of the password is typed in
 					}
 
 					fflush(stdin);
@@ -365,12 +366,13 @@ void logon(User **user) {
 
 
 				} while (passChar != 13);
-
+				//Log in database checks input log in information with user database
 				gUserDatabase->checkCredentials(user, first, last, password, id);
 
 				if (*user == NULL)
 				{
-					system("cls");
+					system("cls"); //Clears the screen
+					//Error message is displayed if log in information does not match any accounts in the user database
 					cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
 
 					do
@@ -380,16 +382,16 @@ void logon(User **user) {
 						{
 							choice = _getch();
 						} while (choice == '\0');
-						choice = toupper(choice);
+						choice = toupper(choice); //Changes all input characters to capital
 
-					} while (choice != 'Y' && choice != 'N');
+					} while (choice != 'Y' && choice != 'N'); //Error trapping, only yes or no can be input
 				}
 				else
-				{
+				{//Adds to log database that the user has logged in
 					gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
 				}
 
-			} while (choice == 'Y' && *user == NULL);
+			} while (choice == 'Y' && *user == NULL); //Repeats log in if user picks yes, exits if user picks no
 			return;
 		case 2:
 			*user = NULL;
@@ -441,7 +443,7 @@ void menu(User **user) //Cady's changes start here
 
 	do
 	{
-		
+		//Displays menu title
 		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.\n If you believe there is a mistake with your permissions, see your manager",avalibleOptions, amount, selection , C_BLUE, C_LGREY);
 
 		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
@@ -470,6 +472,7 @@ void menu(User **user) //Cady's changes start here
 
 	} while (corrispondingIndex[selection] != 0);
 
+	//Adds to the log database a message signalling that the current user had logged out of the program
 	gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged off");
 
 	delete[] corrispondingIndex;
@@ -487,7 +490,7 @@ void selectItem(User **user)
 void displayItemStats(User **user, Item *item) 
 {
 
-	system("cls");
+	system("cls");//Clears the screen
 
 
 	
@@ -515,7 +518,7 @@ void addItem(User **user) {
 	float cost;
 	float sale;
 	
-	system("cls");
+	system("cls");//Clears the screen
 
 	cout << "UPC: ";
 	cin >> upc;
@@ -544,12 +547,14 @@ void addItem(User **user) {
 		cout << "Sale Price: ";
 		cin >> sale;
 
+		//Adds the item to the item database
 		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
 
+		//Adds to the log database that a user added an item to the item database
 		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
 	
 	} else {
-
+		//If adding a repeat item to the item database, an error message will occur to prevent duplicates
 		cout << "This item already exists.";
 
 	}
@@ -577,7 +582,7 @@ void viewLogs()
 		{
 			headerString = " There were no Logs that mactched your search requirements";
 		}
-
+		//Displays title for view logs function
 		choice = navigatableMenu("   _   _ _                 _\n  | | | (_)               | |\n  | | | |_  _____      __ | |     ___   __ _ ___\n  | | | | |/ _ \\ \\ /\\ / / | |    / _ \\ / _` / __|\n  \\ \\_/ / |  __/\\ V  V /  | |___| (_) | (_| \\__ \\\n   \\___/|_|\\___| \\_/\\_/   \\_____/\\___/ \\__, |___/\n                                        __/ |\n                                       |___/", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
 		switch (choice)
@@ -642,7 +647,7 @@ void resetUserDatabase(User **user)
 			password = "";
 			do
 			{
-				system("cls");
+				system("cls");//Clears the screen
 				cout << " Please enter your password to confirm deletion: ";
 
 				for (int i = 0; i < password.length(); i++) //displays * according to how many chars enterd
@@ -670,11 +675,12 @@ void resetUserDatabase(User **user)
 				}
 			} while (passChar != 13); //continues if they press enter
 
-			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the 
+			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the password matches the account in the user database
 
 			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
 			{
-				system("cls");
+				system("cls");//Clears the screen
+				//If the password does not match the user's in the user database, an error message is displayed
 				cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
 
 				do
@@ -684,9 +690,9 @@ void resetUserDatabase(User **user)
 					{
 						choice = _getch();
 					} while (choice == '\0');
-					choice = toupper(choice);
+					choice = toupper(choice);//Changes input character for error meesage to capital letter
 
-				} while (choice != 'Y' && choice != 'N');
+				} while (choice != 'Y' && choice != 'N'); //Only accepts yes or no answer
 			}
 			else
 			{
@@ -697,7 +703,7 @@ void resetUserDatabase(User **user)
 				*user = gUserDatabase->findWith(userID);
 				choice = 'N'; //this is to stop the while loop
 			}
-		} while (choice == 'Y');
+		} while (choice == 'Y');//Repeats if the answer to error message is yes
 	} 
 
 	delete returnedUser;
