@@ -18,13 +18,12 @@ using namespace std;
 //used to acces a specific command in the permsissions bool array inside of permisssions class
 #define MM_ITEMS 0 //MM means main menu
 #define MM_VIEWLOGS 1
-#define MM_CHANGEUSERPERMISSIONS 2
-#define MM_ADDANDEDITUSER 3
-#define MM_GENERALSETTINGS 4
-#define MM_RESETITEM 5
-#define MM_RESETUSERS 6
+#define MM_VIEWUSERS 2
+#define MM_GENERALSETTINGS 3
+#define MM_RESETITEM 4
+#define MM_RESETUSERS 5
 
-#define NUMBER_OF_MMPERMISSIONS 7 //number of bools in  main menu permissions bool array
+#define NUMBER_OF_MMPERMISSIONS 6 //number of bools in  main menu permissions bool array
 
 #define IM_ADD_ITEM 0//IM means item menu
 
@@ -72,7 +71,7 @@ string Permissions::createString() //converts a users permissions into a string 
 {
 	string str; //the string to be returned
 
-	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Change Another Users Settings" , "Add Another User" , "Edit General Settings", "Reset Database" , "Reset Users" }; //the names of all the commands
+	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Edit User Settings" , "Edit General Settings", "Reset Database" , "Reset Users" }; //the names of all the commands
 	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
 	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
 
@@ -162,6 +161,7 @@ public:
 	void remove(long int index); //removes the user at that index
 	User* pos(long int index); //returns a pointer to the user with that index
 	vector<User*> getUsers(bool includeDeleted); //returns a vector of pointers to the users
+	vector<User*> UserDatabase::getUsers(bool includeDeleted, bool includeNotDeleted);
 	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
 	User* Add(User user);
 	int getItemsPerPage();
@@ -227,11 +227,18 @@ User* UserDatabase::pos(long int index) //returns a pointer to a user at a givin
 
 vector<User*> UserDatabase::getUsers(bool includeDeleted)
 {
+
+	return getUsers(includeDeleted, true);
+
+}
+
+vector<User*> UserDatabase::getUsers(bool includeDeleted, bool includeNotDeleted)
+{
 	vector<User*> usersPointers;
 
 	for (int i = 0; i < size(); i++)
 	{
-		if (users[i].isDeleted() && includeDeleted || !users[i].isDeleted()) { usersPointers.push_back(&(users[i])); }
+		if (users[i].isDeleted() && includeDeleted || !users[i].isDeleted() && includeNotDeleted) { usersPointers.push_back(&(users[i])); }
 	}
 
 	return usersPointers;
@@ -336,6 +343,7 @@ void UserDatabase::getItemsPerPage(int items)
 {
 
 	itemsPerPage = items;
+	save();
 
 }
 
@@ -363,6 +371,8 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 {
 
 	filePath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
+
+	itemsPerPage = 10;
 
 	authCode = *_authCode;
 
@@ -469,6 +479,7 @@ void UserDatabase::reload()
 		return;
 	}
 
+	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
 		decrypt(temp.password, LENGTH_OF_USER_STRINGS);
@@ -501,6 +512,7 @@ void UserDatabase::save()
 	}
 
 	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
+	fwrite(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 	it = users.begin();
 	while (it != users.end())
 	{
