@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define VERSION "0.01"
+#define VERSION "0.83"
 #define FOLDER_NAME "data"
 
 void onStart();
@@ -25,8 +25,10 @@ void addItem(User **user);
 void selectedItem(User **user, int index);
 void help(string whereToReturn);
 void EditGerneralSetting();
+void editUsers(User** user);
 User* createNewUser(User** user);
 User* getUserWithMenu(bool includeDeleted, string title);
+void editExistingUsers(User** user);
 User* getUserWithMenu(bool includeDeleted, string *headerText, string title);
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -53,6 +55,7 @@ int main() {
 		menu(user);
 	}
 
+	delete *user;
 	delete user;
 	delete gLogger;
 	delete gItemDatabase;
@@ -70,6 +73,7 @@ void onStart() {
 
 	changeColour(); //sets the colour to the defult set in Colours.h
 	system("cls"); //forces the screen to update to the new colours
+	SetConsoleTitle("Shoppers Inventory Managment, By: Mark, Ben and Cady");
 
 	CreateDirectory(FOLDER_NAME, NULL); //creates the data folder
 
@@ -464,6 +468,7 @@ void menu(User **user) //Cady's changes start here
 			viewLogs();
 			break;
 		case 3:
+			editUsers(user);
 			break;
 		case 4:
 			EditGerneralSetting();
@@ -483,7 +488,7 @@ void menu(User **user) //Cady's changes start here
 	delete[] corrispondingIndex;
 	delete[] avalibleOptions;
 
-}//Cady's changes end here
+}
 
 void addItem(User **user) {
 
@@ -1340,9 +1345,10 @@ void EditGerneralSetting() {
 void editUsers(User** user)
 {
 	int const sizeOfAllOptions = 4;
-	string alloptions[] = {"Return to main menu" , "Add a new User" , "View exisitng users" , "View deleted users"};
+	string alloptions[] = { "Return to main menu" , "Add a new User" , "View exisitng users" , "View deleted users" };
 	int selection = 0;
-	
+	User *userToEdit;
+
 	do
 	{
 		selection = navigatableMenu("title", alloptions, sizeOfAllOptions, selection, C_BLUE, C_WHITE);
@@ -1352,12 +1358,107 @@ void editUsers(User** user)
 		case 1:
 			createNewUser(user);
 			break;
+		case 2:
+			editExistingUsers(user);
+			break;
+		case 3:
+			break;
 		}
 
 		//keep going
 	} while (selection != 0);
-	
 
+
+
+
+
+}
+
+void editExistingUsers(User** user) {
+
+	User* userToEdit;
+	User copy;
+	int const NUM_OF_OPTIONS = 9;
+	string options[NUM_OF_OPTIONS] = { "Exit", "Save and Exit" ,"Delete this User\n","Edit thier permissions" };
+	string output;
+	int selection = 0;
+
+	do
+	{
+
+		userToEdit = getUserWithMenu(false, "which user would you like to edit?");
+
+		if (userToEdit == NULL)
+		{
+			return;
+		}
+		output = userToEdit->display(true, false);
+
+		int i = 4;
+		int pos = 0;
+		do
+		{
+			while (output[pos] != '\n' && output[pos] != '\0')
+			{
+				options[i] += output[pos];
+				pos++;
+			}
+			while (output[pos] == '\n')
+			{
+				pos++;
+			}
+			i++;
+		} while (output[pos] != '\0' && i < NUM_OF_OPTIONS);
+
+
+		selection = navigatableMenu("Which asspect of the user would you like to edit?", options, NUM_OF_OPTIONS, selection, C_BLUE, C_WHITE);
+
+		string temp;
+		switch (selection)
+		{
+		case 0:
+			*userToEdit = copy;
+			return;
+		case 1:
+			return;
+		case 2:
+			userToEdit->remove();
+			gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
+			return;
+		case 4:
+			system("cls");
+			cout << "Please enter the new first name: ";
+			fflush(stdin);
+			cin.clear();
+			getline(cin, temp);
+			strcpy(userToEdit->firstName, temp.c_str());
+
+			system("cls");
+			cout << "Please enter the new last name: ";
+			fflush(stdin);
+			cin.clear();
+			getline(cin, temp);
+			strcpy(userToEdit->lastName, temp.c_str());
+		case 5:
+			system("cls");
+			cout << "The user ID is not a modifyable value\npress enter to continue...";
+			while (_getch() != 13);
+			break;
+		case 6:
+			system("cls");
+			cout << "Please enter the new password for the user: ";
+			fflush(stdin);
+			cin.clear();
+			getline(cin, temp);
+			strcpy(userToEdit->password, temp.c_str());
+		case 7:
+			changePermissions(&(userToEdit->permission));
+		}
+	} while (selection > 3);
+}
+
+void modifyUser(User *user)
+{
 
 
 
@@ -1408,7 +1509,7 @@ User* createNewUser(User** user)
 	system("cls");
 
 	cout << " New User added successfully\n\n";
-	newUser->display();
+	newUser->display(false, true);
 	cout << endl << endl << " Press enter to continue...";
 
 	while (_getch() != 13);
@@ -1424,7 +1525,7 @@ void changePermissions(Permissions *perms)
 
 	Permissions permsCopy = *perms;
 
-	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = { "Exit", "Save and Exit" };
+	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = { "Exit", "Save and Exit\n" };
 	string permissions;
 	int selection = 0;
 
@@ -1552,7 +1653,7 @@ User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
 			j++;
 		}
 
-		selection = navigatableMenu(title, options, headerText, "Page " + to_string(currentPage+1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu(title, options, headerText, "Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
 
 		switch (corispondingIndex[selection])
 		{

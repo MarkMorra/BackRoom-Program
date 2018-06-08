@@ -103,7 +103,7 @@ public:
 	char password[LENGTH_OF_USER_STRINGS]; //saves their password
 	long int id; //saves thier user ID
 	void remove(); //deletes this user (for logging reasons a user is never actaully deleted, the deleted bool is just set to true)
-	void display(); //displays all the user information on the screen
+	string display(bool showPasswordFeild, bool withPerms); //displays all the user information on the screen
 	bool isDeleted();
 	
 private:
@@ -123,12 +123,12 @@ void User::remove()
 	deleted = false;
 }
 
-void User::display() //displays a users name ass well as their permissions
+string User::display(bool showPasswordFeild, bool withPerms) //displays a users name ass well as their permissions
 {
-	cout << firstName << ", " << lastName << endl //shows name
-		<< "ID: " << id << endl //thier id
-		<< endl
-		<< permission.createString(); //shows permissions
+	return  firstName + string(", ") + lastName + "\n" //shows name
+		+ "ID: " + to_string(id) + "\n" //thier id
+		+ ((showPasswordFeild) ? ("Password: ******") : ("")) + "\n\n"
+		+ ((withPerms)?(permission.createString()):("")); //shows permissions
 }
 
 bool User::isDeleted()
