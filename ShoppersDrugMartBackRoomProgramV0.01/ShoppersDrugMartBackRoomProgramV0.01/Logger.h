@@ -26,7 +26,7 @@ public:
 	long long int PLUCode; //-1 if not applicable
 	long int Userid; //id of the user who made the change -1 if not applicable
 	char type; //the type of log
-	//g = generic, p = price change, a = amount change, n = new item, l = login/logout, i = item information changes (eg the description was changed)
+	//g = generic, p = price change, a = amount change, n = new item, l = login/logout, i = item information changes (eg the description was changed), u = user information change, m = new user added
 	char message[CHAR_IN_LOG_MSG];
 };
 
@@ -230,7 +230,7 @@ void Logger::display(string *str,int seachNumber, char type) //allows to only di
 			if (it->Userid == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
-				*str += to_string(i) + ") ";
+				*str += (i<10 ? string(" ") : string("")) + (i<100 ? " " : "") + (i<1000 ? " " : "") + (i<10000 ? " " : "") + to_string(i) + " ) ";
 				*str += it->display();
 				*str += "\n";
 			}
@@ -245,7 +245,7 @@ void Logger::display(string *str,int seachNumber, char type) //allows to only di
 			if (it->PLUCode == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
-				*str += to_string(i) + ") ";
+				*str += (i<10 ? string(" ") : string("")) + (i<100 ? " " : "") + (i<1000 ? " " : "") + (i<10000 ? " " : "") + to_string(i) + " ) ";
 				*str += it->display();
 				*str += "\n";
 			}
@@ -260,7 +260,7 @@ void Logger::display(string *str,int seachNumber, char type) //allows to only di
 			if (it->UPCCode == seachNumber) //if the msg mattches what the user selected it gets displayed
 			{
 				i++;
-				*str += to_string(i) + ") ";
+				*str += (i<10 ? string(" ") : string("")) + (i<100 ? " " : "") + (i<1000 ? " " : "") + (i<10000 ? " " : "") + to_string(i) + " ) ";
 				*str += it->display();
 				*str += "\n";
 			}
@@ -285,7 +285,7 @@ void Logger::display(string *str, char _type) //allows messages of a certin type
 		if (it->type == _type) //if the log message matches the type the user selected it gets displayed
 		{
 			i++;
-			*str += to_string(i) + ") "; 
+			*str += (i<10 ? string(" ") : string("")) + (i<100 ? " " : "") + (i<1000 ? " " : "") + (i<10000 ? " " : "") + to_string(i) + " ) ";
 			*str += it->display();
 			*str += "\n";
 		}
