@@ -316,7 +316,7 @@ void logon(User **user) {
 		switch (selection)
 		{
 		case 0:
-			help("Logon Screen");
+			help("Log On Screen");
 			break;
 		case 1: //user wants to logon
 			do
@@ -325,7 +325,7 @@ void logon(User **user) {
 				password = "";
 
 				system("cls"); //Clears the screen
-				cout << " Please enter you first name: ";
+				cout << " Please enter your first name: ";
 				cin.clear();
 				fflush(stdin);
 				do
@@ -835,7 +835,7 @@ void itemMenu(User **user)
 	const int otherOptions = 3; //how many other options there are
 	int selection = (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage())), start = 0, currentPage = 0;
 	string pageOptions[] = { "Next Page", "Previous Page" };
-	string allOptions[] = { "Back to Menu", "Add Item", "Sort by UPC", "Sort by Price", "Sort by Amount" }; //all of the strings corrispinging to all the possible menu options
+	string allOptions[] = { "Return to Main Menu", "Add Item", "Sort by UPC", "Sort by Price", "Sort by Amount" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
 	int amount; //the amount of options the current user has access too, it starts at 4 beacuse all users have access to back to menu, and the 3 sort options
@@ -1054,7 +1054,7 @@ void itemMenu(User **user)
 
 		}
 
-
+		//Displays Item Database title
 		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
@@ -1126,17 +1126,17 @@ void help(string whereToReturn)//Help screen displays instructions on how to use
 
 	//Explains to the user how user permissions work and answers why they may have less or more options than other users
 	//Also explains admin roles in terms of user settings
-	cout << endl << endl << " If some option are not showing for you, it is because the admin as not given you permissions";
-	cout << endl << " to access the function you seek. Speak to an admin user and have them log in. Select settings and have";
+	cout << endl << endl << " If some options are not showing for you, it is because the admin has not given you permission";
+	cout << endl << " to access the functions you seek. Speak to an admin user and have them log in. Select edit user permissions";
 	cout << endl << " and have the admin add permissions to your account.";
 
 	//Explains to the user what happens the first time the program is set up and how admins and regular user accounts can be created
 	cout << endl << endl << " The first person to log in to this program is automatically the admin. After that, the admin may";
-	cout << endl << " add new users or admins and manage their permission levels in settings.";
+	cout << endl << " add new users or admins and manage their permission levels in edit user permissions.";
 
 	//Explains to the user how the option Reset User Database works and warns about the consequences of selecting this option
 	//Also explains how the program will run directly after resetting the user database
-	cout << endl << endl << " Warning: It is possible to reset the user database. This means that every user account including";
+	cout << endl << endl << " Warning: It is possible to reset the user database. This means that every user account";
 	cout << endl << " including the current admins will be deleted and the program will return to default. Therefore, every";
 	cout << endl << " user and admin must be added again to the program. Similar to the point above, the first log in after";
 	cout << endl << " resetting the user database will automatically become the admin.";
@@ -1350,8 +1350,8 @@ void editUsers(User** user)
 	User *userToEdit;
 
 	do
-	{
-		selection = navigatableMenu("title", alloptions, sizeOfAllOptions, selection, C_BLUE, C_WHITE);
+	{//Displays title for edit user screen
+		selection = navigatableMenu("\t _____    _ _ _     _   _\n\t|  ___|  | (_) |   | | | |\n\t| |__  __| |_| |_  | | | |___  ___ _ __ ___\n\t|  __|/ _` | | __| | | | / __|/ _ \\ '__/ __|\n\t| |__| (_| | | |_  | |_| \\__ \\  __/ |  \\__ \\\n\t\\____/\\__,_|_|\\__|  \\___/|___/\\___|_|  |___/", alloptions, sizeOfAllOptions, selection, C_BLUE, C_WHITE);
 
 		switch (selection)
 		{
@@ -1590,16 +1590,16 @@ User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
 	int availableExtraButtons = 0; //saves how many of the values in extra buttons are true
 	int const NUM_OF_EXTRA_BUTTONS = 6;
 	bool extraButtons[NUM_OF_EXTRA_BUTTONS]; //0 = Exit, 1 = nextpage 2 = previous page
-	string extraButtonNames[NUM_OF_EXTRA_BUTTONS] = { "Exit" , "Next Page" , "Previous Page" , "Sort by ID" , "Sort by firstname" , "Sort by lastname\n" };
+	string extraButtonNames[NUM_OF_EXTRA_BUTTONS] = { "Return to Main Menu" , "Next Page" , "Previous Page" , "Sort by ID" , "Sort by firstname" , "Sort by lastname\n" };
 
 	int currentPage = 0, itemsOnPage;
 
 	do
 	{
-		extraButtons[0] = true; //everyone has acces to exit;
-		extraButtons[3] = true; //everyone has acces to sort by ID;
-		extraButtons[4] = true; //everyone has acces to sort by firstname;
-		extraButtons[5] = true; //everyone has acces to sort by lastname;
+		extraButtons[0] = true; //everyone has access to exit;
+		extraButtons[3] = true; //everyone has access to sort by ID;
+		extraButtons[4] = true; //everyone has access to sort by firstname;
+		extraButtons[5] = true; //everyone has access to sort by lastname;
 
 		if ((((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))) - 1) == currentPage)
 		{
