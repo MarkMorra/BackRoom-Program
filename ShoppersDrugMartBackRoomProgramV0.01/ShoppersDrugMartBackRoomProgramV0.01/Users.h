@@ -7,34 +7,33 @@
 #include "stringFunctions.h"
 using namespace std;
 
-#define ENABLE_NO_PASSWORD_CHECK true
+#define ENABLE_NO_PASSWORD_CHECK true //when true password checks are bipassed
 
 #define MAX_USER_ID 9999999
 #define MIN_USER_ID 1000000
 
-#define FILE_PREFIX ""
+#define FILE_PREFIX "" //file path for data folder
 #define FILE_SUFFIX "/users.dat"
 
 //used to acces a specific command in the permsissions bool array inside of permisssions class
 #define MM_ITEMS 0 //MM means main menu
 #define MM_VIEWLOGS 1
-#define MM_CHANGEUSERPERMISSIONS 2
-#define MM_ADDANDEDITUSER 3
-#define MM_GENERALSETTINGS 4
-#define MM_RESETITEM 5
-#define MM_RESETUSERS 6
+#define MM_VIEWUSERS 2
+#define MM_GENERALSETTINGS 3
+#define MM_RESETITEM 4
+#define MM_RESETUSERS 5
 
-#define NUMBER_OF_MMPERMISSIONS 7 //number of bools in permissions bool array
+#define NUMBER_OF_MMPERMISSIONS 6 //number of bools in  main menu permissions bool array
 
 #define IM_ADD_ITEM 0//IM means item menu
 
-#define NUMBER_OF_IMPERMISSIONS 1
+#define NUMBER_OF_IMPERMISSIONS 1 //number of bools in  item menu permissions bool array
 
 
 #define I_MODIFY_ITEM 0 //I means items
 #define I_REMOVE_ITEM 1
 
-#define NUMBER_OF_IPERMISSIONS 2
+#define NUMBER_OF_IPERMISSIONS 2 //number of bools in item permissions bool array
 
 
 #define LENGTH_OF_USER_STRINGS 50
@@ -42,14 +41,14 @@ using namespace std;
 class Permissions //Contains permissions for the specific username or password, accessed through Database class
 {
 public:
-	Permissions();
-	bool permissionsMM[NUMBER_OF_MMPERMISSIONS];
+	Permissions(); //sets everything to false
+	bool permissionsMM[NUMBER_OF_MMPERMISSIONS]; //bool arrays to store a users permissions (User class containes a permissions class)
 	bool permissionsIM[NUMBER_OF_IMPERMISSIONS];
 	bool permissionsI[NUMBER_OF_IPERMISSIONS];
-	string createString();
+	string createString(); //converts a users permissions into a string that can be printed
 };
 
-Permissions::Permissions() 
+Permissions::Permissions()  //sets all permissions to false
 {	
 	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
 	{
@@ -68,23 +67,23 @@ Permissions::Permissions()
 
 }
 
-string Permissions::createString()
+string Permissions::createString() //converts a users permissions into a string that can be printed
 {
-	string str;
+	string str; //the string to be returned
 
-	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Change Another Users Settings" , "Add Another User" , "Edit General Settings","Reset Database" , "Reset Users" };
+	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Edit User Settings" , "Edit General Settings", "Reset Database" , "Reset Users" }; //the names of all the commands
 	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
 	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
 
-	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //cycles trough all main menu permissions and appends true or false based on weather the user has acces to the command
 	{
 		str += baseMMOptions[i] + (permissionsMM[i] ? (": True") : (": False")) + '\n';
 	}
-	for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++)
+	for (int i = NUMBER_OF_MMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i++) //cycles trough all item menu permissions and appends true or false based on weather the user has acces to the command
 	{
 		str += baseIMOptions[i - NUMBER_OF_MMPERMISSIONS] + (permissionsIM[i - NUMBER_OF_MMPERMISSIONS] ? (": True") : (": False")) + '\n';
 	}
-	for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++)
+	for (int i = NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS; i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS; i++) //cycles trough all item permissions and appends true or false based on weather the user has acces to the command
 	{
 		str += baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + (permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] ? (": True") : (": False")) + '\n';
 	}
@@ -95,20 +94,20 @@ string Permissions::createString()
 class User //Contains usernames and passwords of each user, accessed through UserDatabase class
 {
 public:
-	User(long int ID,string _firstName,string _lastName, string _password, Permissions _permissions);
-	User();
+	User(long int ID,string _firstName,string _lastName, string _password, Permissions _permissions); //constructor allows easy creating of a user if all the data is already known
+	User(); //initializes everything to blank and zero
 	
-	Permissions permission;
-	char firstName[LENGTH_OF_USER_STRINGS];
-	char lastName[LENGTH_OF_USER_STRINGS];
-	char password[LENGTH_OF_USER_STRINGS];
-	long int id;
-	void remove();
-	void display();
+	Permissions permission; //saves the users permissions
+	char firstName[LENGTH_OF_USER_STRINGS]; //saves their firstname
+	char lastName[LENGTH_OF_USER_STRINGS]; //saves their lastname
+	char password[LENGTH_OF_USER_STRINGS]; //saves their password
+	long int id; //saves thier user ID
+	void remove(); //deletes this user (for logging reasons a user is never actaully deleted, the deleted bool is just set to true)
+	void display(); //displays all the user information on the screen
+	bool isDeleted();
 	
 private:
 	bool deleted; //saves if this user has been deleted, if it has been deleted it is not actaully removed for logging purposes
-
 };
 
 User::User() //default constructor just sets all value to zero
@@ -130,6 +129,11 @@ void User::display() //displays a users name ass well as their permissions
 		<< "ID: " << id << endl //thier id
 		<< endl
 		<< permission.createString(); //shows permissions
+}
+
+bool User::isDeleted()
+{
+	return deleted;
 }
 
 User::User(long int _ID, string _firstName, string _lastName, string _password, Permissions _permissions) //a constructor that sets the value based on the values passes
@@ -154,15 +158,21 @@ public:
 	void clear();
 	int size();
 	void remove(vector<User>::iterator pos);
-	void remove(long int index);
-	User* pos(long int index);
+	void remove(long int index); //removes the user at that index
+	User* pos(long int index); //returns a pointer to the user with that index
+	vector<User*> getUsers(bool includeDeleted); //returns a vector of pointers to the users
+	vector<User*> UserDatabase::getUsers(bool includeDeleted, bool includeNotDeleted);
 	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
 	User* Add(User user);
+	int getItemsPerPage();
+	void getItemsPerPage(int items);
 
 private:
 	vector<User> users; //returns a pointer to a user at a givin index in the vector
 	string filePath;
 	
+	int itemsPerPage; //saves how many users should be diaplyed on the screen when choosing from a list of them
+
 	void reload();
 	void save();
 
@@ -177,7 +187,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastn
 
 	while (it != users.end())//keeps going untill the last element is found
 	{
-		if (string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || (ENABLE_NO_PASSWORD_CHECK && string(it->firstName) == uppercase(_firstName))) //checks if the current element is eqaul to the string passed
+		if ((string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || (ENABLE_NO_PASSWORD_CHECK && string(it->firstName) == uppercase(_firstName))) && !it->isDeleted()) //checks if the current element is eqaul to the string passed
 		{
 			*user = &(*it); //sets points to the user that matched the passed strings
 			return;
@@ -213,6 +223,25 @@ void UserDatabase::remove(long int index)  //removes a users with the corispondi
 User* UserDatabase::pos(long int index) //returns a pointer to a user at a givin index in the vector
 {
 	return &(users[index]);
+}
+
+vector<User*> UserDatabase::getUsers(bool includeDeleted)
+{
+
+	return getUsers(includeDeleted, true);
+
+}
+
+vector<User*> UserDatabase::getUsers(bool includeDeleted, bool includeNotDeleted)
+{
+	vector<User*> usersPointers;
+
+	for (int i = 0; i < size(); i++)
+	{
+		if (users[i].isDeleted() && includeDeleted || !users[i].isDeleted() && includeNotDeleted) { usersPointers.push_back(&(users[i])); }
+	}
+
+	return usersPointers;
 }
 
 vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator pointing to the position in which the new users should be inserted
@@ -305,6 +334,19 @@ User* UserDatabase::Add(User user)
 	return (findWith(user.id));
 }
 
+int UserDatabase::getItemsPerPage()
+{
+	return itemsPerPage;
+}
+
+void UserDatabase::getItemsPerPage(int items)
+{
+
+	itemsPerPage = items;
+	save();
+
+}
+
 User* UserDatabase::findWith(long int ID)
 {
 	for (int i = 0; i < int(users.size()); i++)
@@ -329,6 +371,8 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 {
 
 	filePath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
+
+	itemsPerPage = 10;
 
 	authCode = *_authCode;
 
@@ -435,6 +479,7 @@ void UserDatabase::reload()
 		return;
 	}
 
+	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
 		decrypt(temp.password, LENGTH_OF_USER_STRINGS);
@@ -467,6 +512,7 @@ void UserDatabase::save()
 	}
 
 	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
+	fwrite(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 	it = users.begin();
 	while (it != users.end())
 	{

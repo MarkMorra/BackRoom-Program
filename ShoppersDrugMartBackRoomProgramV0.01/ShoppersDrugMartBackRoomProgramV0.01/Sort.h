@@ -42,27 +42,69 @@ void insertionSort(vector<Item*>* data , char type)
 	}
 }
 
+
 void selectionSort(vector<User*>* data, char type)
 {
-	int largest, temp;
-/*
-	for (int i = 0; i < SIZE; i++)
-	{
-		sorted[i] = unsorted[i];
-	}
+	int smallest;
+	User* temp;
 
-	for (int i = 0; i < SIZE; i++)
+	type = toupper(type);
+
+	switch (type)
 	{
-		*largest = i;
-		for (int j = i + 1; j < SIZE; j++)
+	case 'F':
+
+		for (int i = 0; i < data->size(); i++)
 		{
-			if (sorted[j] > sorted[*largest])
+			smallest = i;
+			for (int j = i + 1; j < data->size(); j++)
 			{
-				*largest = j;
+				if (string((*data)[j]->firstName) < string((*data)[smallest]->firstName))
+				{
+					smallest = j;
+				}
 			}
+			temp = (*data)[smallest];
+			(*data)[smallest] = (*data)[i];
+			(*data)[i] = temp;
 		}
-		*temp = sorted[*largest];
-		sorted[*largest] = sorted[i];
-		sorted[i] = *temp;
-	}*/
+
+		break;
+	case 'L':
+
+		for (int i = 0; i < data->size(); i++)
+		{
+			smallest = i;
+			for (int j = i + 1; j < data->size(); j++)
+			{
+				if (string((*data)[j]->lastName) < string((*data)[smallest]->lastName))
+				{
+					smallest = j;
+				}
+			}
+			temp = (*data)[smallest];
+			(*data)[smallest] = (*data)[i];
+			(*data)[i] = temp;
+		}
+
+		break;
+	case 'I':
+
+		for (int i = 0; i < data->size(); i++)
+		{
+			smallest = i;
+			for (int j = i + 1; j < data->size(); j++)
+			{
+				if ((*data)[j]->id < (*data)[smallest]->id)
+				{
+					smallest = j;
+				}
+			}
+			temp = (*data)[smallest];
+			(*data)[smallest] = (*data)[i];
+			(*data)[i] = temp;
+		}
+
+		break;
+	}
 }
