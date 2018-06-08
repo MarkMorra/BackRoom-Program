@@ -161,7 +161,7 @@ public:
 	void remove(long int index); //removes the user at that index
 	User* pos(long int index); //returns a pointer to the user with that index
 	vector<User*> getUsers(bool includeDeleted); //returns a vector of pointers to the users
-	vector<User*> UserDatabase::getUsers(bool includeDeleted, bool includeNotDeleted);
+	vector<User*> getUsers(bool includeDeleted, bool includeNotDeleted);
 	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
 	User* Add(User user);
 	int getItemsPerPage();
