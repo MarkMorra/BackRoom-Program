@@ -691,11 +691,15 @@ void resetUserDatabase(User **user)
 			else
 			{
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the UserDatabase");
+				User currentUser = **user;
 				gUserDatabase->clear();
-				long int userID = (*user)->id;
-				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
-				*user = gUserDatabase->findWith(userID);
+				*user = gUserDatabase->Add(currentUser); //adds the current user back to the database (deleteing the database does not delete your own account)
 				choice = 'N'; //this is to stop the while loop
+
+				system("cls");
+				cout << "User database cleared sucessfully\nYour new user id is: " << (*user)->id << "\n\nPress enter to continue...";
+
+				while (_getch() != 13);
 			}
 		} while (choice == 'Y');
 	}
@@ -753,7 +757,7 @@ void deleteItemDatabase(User **user)
 				}
 			} while (passChar != 13); //continues if they press enter
 
-			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the 
+			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the password entered is valid
 
 			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
 			{
@@ -776,6 +780,11 @@ void deleteItemDatabase(User **user)
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the ItemDatabase");
 				gItemDatabase->Clear();
 				choice = 'N'; //this is to stop the while loop
+
+				system("cls");
+				cout << "Item database cleared sucessfully\n\nPress enter to continue...";
+
+				while (_getch() != 13);
 			}
 		} while (choice == 'Y');
 	}
@@ -1348,6 +1357,7 @@ void editExistingUsers(User** user) {
 	{
 
 		userToEdit = getUserWithMenu(false, "which user would you like to edit?");
+		
 
 		do
 		{
@@ -1355,6 +1365,7 @@ void editExistingUsers(User** user) {
 			{
 				return;
 			}
+			copy = *userToEdit;
 			output = userToEdit->display(true, false);
 
 			int i = 4;
@@ -1382,9 +1393,9 @@ void editExistingUsers(User** user) {
 			{
 			case 0:
 				*userToEdit = copy;
-				return;
+				break;
 			case 1:
-				return;
+				break;
 			case 2:
 				system("cls");
 				if ((*user)->id == userToEdit->id)
@@ -1469,7 +1480,7 @@ void editDeletedUsers(User** user)
 		{
 		case 1:
 			userToEdit->remove(false);
-			gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + ' ' + (*user)->lastName + "restored user account " + userToEdit->firstName + ' ' + userToEdit->lastName + " with ID: " + to_string(userToEdit->id));
+			gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + ' ' + (*user)->lastName + " restored user account " + userToEdit->firstName + ' ' + userToEdit->lastName + " with ID: " + to_string(userToEdit->id));
 			break;
 		}
 
