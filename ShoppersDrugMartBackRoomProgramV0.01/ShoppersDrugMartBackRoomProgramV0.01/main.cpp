@@ -514,7 +514,7 @@ void addItem(User **user) {
 	cout << "UPC: ";
 	cin >> upc;
 
-	if ((gItemDatabase->Find('u', upc))->size() == 0) {
+	if ((gItemDatabase->Find('u', upc)).size() == 0) {
 
 		cout << "PLU: ";
 		cin >> plu;
@@ -550,7 +550,6 @@ void addItem(User **user) {
 	}
 
 }
-
 
 void selectedItem(User **user, int index) {
 
@@ -1080,7 +1079,7 @@ void itemMenu(User **user)
 
 		if (selection < numItemsPage) {
 
-			selectedItem(user, (currentPage*gItemDatabase->GetItemsPerPage() + selection));
+			//selectedItem(user, localItemDatabase[currentPage*gItemDatabase->GetItemsPerPage() + selection]);
 
 		}
 		else {

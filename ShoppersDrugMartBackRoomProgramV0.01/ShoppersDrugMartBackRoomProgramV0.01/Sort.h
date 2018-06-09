@@ -17,7 +17,7 @@ void insertionSort(vector<Item*>* data , char type)
 		for (int i = 1; i < data->size(); i++)
 		{
 			j = i;
-			while (j > 0 && ((*data)[j - 1])->amount < ((*data)[j])->amount)
+			while (j > 0 && ((*data)[j - 1])->amount > ((*data)[j])->amount)
 			{
 				temp = (*data)[j - 1];
 				(*data)[j - 1] = (*data)[j];
