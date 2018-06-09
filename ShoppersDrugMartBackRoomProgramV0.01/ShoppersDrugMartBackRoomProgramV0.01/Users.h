@@ -73,7 +73,7 @@ string Permissions::createString() //converts a users permissions into a string 
 
 	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Edit User Settings" , "Edit General Settings", "Reset Database" , "Reset Users" }; //the names of all the commands
 	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
-	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
+	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item" , "Delete Item" };
 
 	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //cycles trough all main menu permissions and appends true or false based on weather the user has acces to the command
 	{
