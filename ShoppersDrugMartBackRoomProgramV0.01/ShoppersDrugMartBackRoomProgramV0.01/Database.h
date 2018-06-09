@@ -78,10 +78,11 @@ public:
 	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);
 	vector<Item>::iterator Search(long long int upc);
 	string buildItem(int index);
-	vector<Item*>* Find();
-	vector<Item*>* Find(char type, long long int num);
-	vector<Item*>* Find(char type, float num);
-	vector<Item*>* Find(char type, string text);
+	string buildItem(Item* item);
+	vector<Item*> Find();
+	vector<Item*> Find(char type, long long int num);
+	vector<Item*> Find(char type, float num);
+	vector<Item*> Find(char type, string text);
 	Item* pos(int index);
 	int length();
 	int GetItemsPerPage();
@@ -338,21 +339,25 @@ string ItemDatabase::buildItem(int index) {
 
 }
 
+string ItemDatabase::buildItem(Item* item) {
+
+	return (to_string(item->upc) + "\t\t" + item->name + "\t\t\t" + to_string(item->amount));
+
+}
+
 Item* ItemDatabase::pos(int index) {
 
 	return &(items[index]);
 
 }
 
-vector<Item*>* ItemDatabase::Find() {
+vector<Item*> ItemDatabase::Find() {
 
-	vector<Item*>* found;
-
-	found = new vector<Item*>;
+	vector<Item*> found;
 
 	for (int i = 0; i < items.size(); i++) {
 
-		found->push_back(&items[i]);
+		found.push_back(&items[i]);
 
 	}
 
@@ -360,11 +365,9 @@ vector<Item*>* ItemDatabase::Find() {
 
 }
 
-vector<Item*>* ItemDatabase::Find(char type, long long int num) {
+vector<Item*> ItemDatabase::Find(char type, long long int num) {
 
-	vector<Item*>* found;
-
-	found = new vector<Item*>;
+	vector<Item*> found;
 
 	if (type == 'u') {		// binary search for upc when type is u
 
@@ -379,7 +382,7 @@ vector<Item*>* ItemDatabase::Find(char type, long long int num) {
 
 			if (num == items[middle].upc) {
 
-				found->push_back(&items[middle]);
+				found.push_back(&items[middle]);
 
 				return found;
 
@@ -406,7 +409,7 @@ vector<Item*>* ItemDatabase::Find(char type, long long int num) {
 
 			if (num == items[i].plu) {
 
-				found->push_back(&items[i]);
+				found.push_back(&items[i]);
 
 			}
 
@@ -421,7 +424,7 @@ vector<Item*>* ItemDatabase::Find(char type, long long int num) {
 
 			if (num == items[i].amount) {
 
-				found->push_back(&items[i]);
+				found.push_back(&items[i]);
 
 			}
 
@@ -435,11 +438,9 @@ vector<Item*>* ItemDatabase::Find(char type, long long int num) {
 
 }
 
-vector<Item*>* ItemDatabase::Find(char type, float num) {
+vector<Item*> ItemDatabase::Find(char type, float num) {
 
-	vector<Item*>* found;
-
-	found = new vector<Item*>;
+	vector<Item*> found;
 
 	if (type == 'p') {		// seq search for price when type is p
 
@@ -447,7 +448,7 @@ vector<Item*>* ItemDatabase::Find(char type, float num) {
 
 			if (num == items[i].price) {
 
-				found->push_back(&items[i]);
+				found.push_back(&items[i]);
 
 			}
 
@@ -461,7 +462,7 @@ vector<Item*>* ItemDatabase::Find(char type, float num) {
 
 			if (num == items[i].cost) {
 
-				found->push_back(&items[i]);
+				found.push_back(&items[i]);
 
 			}
 
@@ -475,7 +476,7 @@ vector<Item*>* ItemDatabase::Find(char type, float num) {
 
 			if (num == items[i].sale) {
 
-				found->push_back(&items[i]);
+				found.push_back(&items[i]);
 
 			}
 
@@ -489,11 +490,9 @@ vector<Item*>* ItemDatabase::Find(char type, float num) {
 
 }
 
-vector<Item*>* ItemDatabase::Find(char type, string text) {
+vector<Item*> ItemDatabase::Find(char type, string text) {
 
-	vector<Item*>* found;
-
-	found = new vector<Item*>;
+	vector<Item*> found;
 
 	if (type == 'n') {				// seq search for name when type is n
 
@@ -501,7 +500,7 @@ vector<Item*>* ItemDatabase::Find(char type, string text) {
 
 			if (string::npos != string(items[i].name).find(text)) {
 
-				found->push_back(&items[i]);
+				found.push_back(&items[i]);
 
 			}
 
@@ -515,7 +514,7 @@ vector<Item*>* ItemDatabase::Find(char type, string text) {
 
 			if (string::npos != string(items[i].desc).find(text)) {
 
-				found->push_back(&items[i]);
+				found.push_back(&items[i]);
 
 			}
 
@@ -525,6 +524,6 @@ vector<Item*>* ItemDatabase::Find(char type, string text) {
 
 	}
 
-	return NULL;
+	return found;
 
 }

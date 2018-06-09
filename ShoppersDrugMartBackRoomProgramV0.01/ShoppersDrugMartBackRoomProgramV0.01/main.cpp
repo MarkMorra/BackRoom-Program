@@ -13,7 +13,7 @@ using namespace std;
 
 void onStart();
 void welcome();
-void testMenu();
+//void testMenu();
 void logon(User **user);
 void menu(User **user);
 void changePermissions(Permissions *perms);
@@ -36,6 +36,7 @@ int navigatableMenu(string title, string options[], int numberOfOptions, int sta
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 
 
@@ -119,10 +120,14 @@ void welcome() { //Welcome function to display opening message when program firs
 
 	if (choice == 73)
 	{
-		testMenu();
+		//testMenu();
 	}
 
 }
+
+/* 
+
+TEST MENU, NO LONGER NEEDED
 
 void testMenu() //this function is only for testing and can be accssed by pressing page up on the welcome screen
 {
@@ -234,7 +239,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			break;
 		case '5':
 
-			vector<Item*> *retItems; //returned items
+			vector<Item*> retItems; //returned items
 
 			cout << "1. display all items\n2. search by upc";
 			do {
@@ -248,7 +253,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 				system("cls");
 
-				for (int i = 0; i < retItems->size(); i++) {
+				for (int i = 0; i < retItems.size(); i++) {
 
 					cout << (*retItems)[i]->Display();
 
@@ -267,7 +272,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 				retItems = gItemDatabase->Find('u', tempupc);
 
-				cout << (*retItems)[0]->Display();
+				cout << (retItems)[0]->Display();
 
 				break;
 			}
@@ -300,6 +305,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	}
 
 }
+*/
 
 void logon(User **user) {
 
@@ -492,59 +498,6 @@ void menu(User **user) //Cady's changes start here
 
 }
 
-void addItem(User **user) {
-
-	long long int upc;
-	long long int plu;
-	int amount;
-	string name;
-	string desc;
-	float price;
-	float cost;
-	float sale;
-
-	system("cls");
-
-	cout << "UPC: ";
-	cin >> upc;
-
-	if ((gItemDatabase->Find('u', upc))->size() == 0) {
-
-		cout << "PLU: ";
-		cin >> plu;
-
-		cout << "Amount: ";
-		cin >> amount;
-
-		cout << "Name: ";
-		getline(cin, name);
-		getline(cin, name);
-
-		cout << "Description: ";
-		getline(cin, desc);
-
-		cout << "Price: ";
-		cin >> price;
-
-		cout << "Cost: ";
-		cin >> cost;
-
-		cout << "Sale Price: ";
-		cin >> sale;
-
-		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
-
-		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
-
-	}
-	else {
-
-		cout << "This item already exists.";
-
-	}
-
-}
-
 void selectedItem(User **user, int index) {
 
 	string header = (gItemDatabase->pos(index))->Display();
@@ -560,7 +513,7 @@ void selectedItem(User **user, int index) {
 		for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //counts how many permission the current user has access too
 		{
 
-			if ((*user)->permission.permissionsIM[i] == true)
+			if ((*user)->permission.permissionsI[i] == true)
 			{
 				amount++;
 			}
@@ -833,9 +786,11 @@ void deleteItemDatabase(User **user)
 void itemMenu(User **user)
 {
 
+	vector<Item*> localItemDatabase = gItemDatabase->Find();
+
 	const int NON_OTHER_OPTIONS = 2; //how many options in all options are not categorized as "other"
 	const int otherOptions = 3; //how many other options there are
-	int selection = (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage())), start = 0, currentPage = 0;
+	int selection = (int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage())), start = 0, currentPage = 0;
 	string pageOptions[] = { "Next Page", "Previous Page" };
 	string allOptions[] = { "Return to Main Menu", "Add Item", "Sort by UPC", "Sort by Price", "Sort by Amount" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
@@ -854,10 +809,11 @@ void itemMenu(User **user)
 		absolutePos[0] = 0;
 		selection = absolutePos[selection];
 
-		//calcs number of items
-		if ((currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) || gItemDatabase->length() == 0) { //if last page or if empty database
 
-			numItemsPage = (gItemDatabase->length() - (currentPage * gItemDatabase->GetItemsPerPage())); //calculates how many items there are on the last page and adjusts the amount accordingly
+		//calcs number of items
+		if ((currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) || localItemDatabase.size() == 0) { //if last page or if empty database
+
+			numItemsPage = (localItemDatabase.size() - (currentPage * gItemDatabase->GetItemsPerPage())); //calculates how many items there are on the last page and adjusts the amount accordingly
 
 		}
 		else {
@@ -871,7 +827,7 @@ void itemMenu(User **user)
 		//calcs number of nav buttons
 		if (currentPage == 0) { //if first page, we only want to show next page
 
-			if ((currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) || gItemDatabase->length() == 0) {
+			if ((currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) || localItemDatabase.size() == 0) {
 
 				navButtons = 0;
 				amtNavBut = 0;
@@ -886,7 +842,7 @@ void itemMenu(User **user)
 			}
 
 		}
-		else if (currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) { //if its the last page, only show previous page option
+		else if (currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) { //if its the last page, only show previous page option
 
 			navButtons = 2;
 			amtNavBut = 1;
@@ -924,7 +880,7 @@ void itemMenu(User **user)
 
 		for (j; j < numItemsPage; j++) { //add items to navigatable menu
 
-			avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
+			avalibleOptions[j] = gItemDatabase->buildItem(localItemDatabase[(currentPage * gItemDatabase->GetItemsPerPage()) + j]);
 
 			if (j == numItemsPage - 1) { avalibleOptions[j] += '\n'; }
 
@@ -1057,7 +1013,7 @@ void itemMenu(User **user)
 		}
 
 		//Displays Item Database title
-		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
+		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, string("Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage())))), amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
 
@@ -1077,16 +1033,17 @@ void itemMenu(User **user)
 			case 2:
 				break;
 			case 3:
-				addItem(user);
+				addItem(user); //run the function to create a new item
+				localItemDatabase = gItemDatabase->Find(); //update the local vector of items to include this new item
 				break;
 			case 4:
-
+				localItemDatabase = gItemDatabase->Find(); //sets the local vector of items to the global item database, which is sorted by upc
 				break;
 			case 5:
-
+				insertionSort(&localItemDatabase, 'P'); //sort the local vector of items by their price
 				break;
 			case 6:
-
+				insertionSort(&localItemDatabase, 'A'); //sort the local vector of items by the amount
 				break;
 			}
 
@@ -1173,6 +1130,13 @@ int navigatableMenu(string title, string options[], string *headerText, int numb
 {
 	string blank = "";
 	return navigatableMenu(title, options, headerText, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+}
+
+int navigatableMenu(string title, string options[],string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
+{
+	string blank = "";
+	return navigatableMenu(title, options, &blank, footerText, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+
 }
 
 int navigatableMenu(string title, string options[], string *headerText, string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
