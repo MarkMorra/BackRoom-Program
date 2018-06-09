@@ -55,7 +55,7 @@ Log::~Log()
 string Log::display() {
 	char *timeAsString = asctime(localtime(&timeLogged));
 	timeAsString[strlen(timeAsString) - 1] = '\0'; //removes the \n character created in asctime
-	return string(timeAsString) + " : " + message; //returns the time and the log message on screen
+	return string(timeAsString) + " : " +  message; //returns the time and the log message on screen
 }
 
 
@@ -127,7 +127,8 @@ Logger::~Logger()
 	save(); //when the class gets destroyed it saves the data in it
 }
 
-void Logger::reload() {
+void Logger::reload() 
+{
 
 	FILE *file;
 
@@ -144,7 +145,7 @@ void Logger::reload() {
 	Log temp;
 	long long int temp_authCode;
 
-	/*(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
+	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
 	if (authCode == 0)
 	{
@@ -154,19 +155,26 @@ void Logger::reload() {
 	{
 		errorMsg(" Error; authCode mismatch in Logger.log. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the log file will be deleted unless return to its original state.");
 		return;
-	}*/
+	}
 
-	//fread(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
+	fread(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
 
-	while (fread(&temp, sizeof(temp), 1, file)) //keeps  read untill eof is reached
+	while (fread(&temp, sizeof(Log), 1, file)) //keeps  read untill eof is reached
 	{
-		//decrypt(temp.message, CHAR_IN_LOG_MSG); //decrypts the msg saved in file
-		//decrypt(&(temp.type), 1); //decrypts char saved in file
+		decrypt(temp.message, CHAR_IN_LOG_MSG); //decrypts the msg saved in file
+		decrypt(&(temp.type), 1); //decrypts char saved in file
+		temp.timeLogged -= 1000000; //the value needs to be decreased beacuse it is increased
 		if ((difftime(time(NULL),temp.timeLogged)) <= secondsBeforeMsgDelete) //if the message is older then the specified time it dose not get written into memory and thus when the file is rewiritten too this log msg is not included
 		{
 			log.push_back(temp); //add it to the list
 		}
 	}
+
+	/*int numbers[10], i = 0;
+	while (fread(&(numbers[i]), sizeof(int), 1, file)) //keeps  read untill eof is reached
+	{
+		i++;
+	}*/
 
 	fclose(file);
 }
@@ -186,19 +194,26 @@ void Logger::save()
 		return;
 	}
 
-	//fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
-	//fwrite(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
+	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
+	fwrite(&secondsBeforeMsgDelete, sizeof(secondsBeforeMsgDelete), 1, file);
 
 	it = log.begin();
 	while (it != log.end()) //keeps looping untill it reaches the end of the list
 	{
 		temp = *it; //creates a clone of the log so it can be encrypted
-		//encrypt(temp.message, CHAR_IN_LOG_MSG); //encrypts the msg
-		//encrypt(&(temp.type), 1); //encrypts the cahr
-		fwrite(&temp, sizeof(temp), 1, file); //writes to the file
+		encrypt(temp.message, CHAR_IN_LOG_MSG); //encrypts the msg
+		encrypt(&(temp.type), 1); //encrypts the cahr
+		temp.timeLogged += 1000000; //if the value isnt increased it dosent store properly
+		fwrite(&temp, sizeof(Log), 1, file); //writes to the file
 		it++;
 
 	}
+
+	/*int numbers[10] = {0,1,2,3,4,5,6,7,8,9};
+	for (int i = 0; i < 10; i++)
+	{
+		fwrite(&(numbers[i]), sizeof(int), 1, file);
+	}*/
 	fclose(file);
 }
 

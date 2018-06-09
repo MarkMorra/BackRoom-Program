@@ -28,8 +28,10 @@ void EditGerneralSetting();
 void editUsers(User** user);
 User* createNewUser(User** user);
 User* getUserWithMenu(bool includeDeleted, string title);
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string title);
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *headerText, string title);
 void editExistingUsers(User** user);
-User* getUserWithMenu(bool includeDeleted, string *headerText, string title);
+void editDeletedUsers(User** user);
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
@@ -1362,16 +1364,10 @@ void editUsers(User** user)
 			editExistingUsers(user);
 			break;
 		case 3:
+			editDeletedUsers(user);
 			break;
 		}
-
-		//keep going
 	} while (selection != 0);
-
-
-
-
-
 }
 
 void editExistingUsers(User** user) {
@@ -1487,6 +1483,34 @@ void editExistingUsers(User** user) {
 	} while (true);
 }
 
+void editDeletedUsers(User** user)
+{
+	User* userToEdit;
+	int selection = 0;
+	string userDesc;
+	string option[] = { "No, I do not want to restore them", "Yes, I do want to restore them" };
+
+	do
+	{
+
+		userToEdit = getUserWithMenu(true, false, "which user would you like to restore?");
+
+		if (userToEdit == NULL) { return; }
+
+		userDesc = userToEdit->display(false, true);
+
+		selection = navigatableMenu("Are you sure you want to restore this user?", option, &userDesc, 2, C_BLUE, C_WHITE);
+
+		switch (selection)
+		{
+		case 1:
+			userToEdit->remove(false);
+			gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + ' ' + (*user)->lastName + "restored user account " + userToEdit->firstName + ' ' + userToEdit->lastName + " with ID: " + to_string(userToEdit->id));
+			break;
+		}
+
+	} while (true);
+}
 
 User* createNewUser(User** user)
 {
@@ -1533,7 +1557,7 @@ User* createNewUser(User** user)
 	system("cls");
 
 	cout << " New User added successfully\n\n";
-	newUser->display(false, true);
+	cout << newUser->display(false, true);
 	cout << endl << endl << " Press enter to continue...";
 
 	while (_getch() != 13);
@@ -1602,19 +1626,25 @@ User* getUserWithMenu(bool includeDeleted, string title)
 {
 	string header = "";
 
-	return getUserWithMenu(includeDeleted, &header, title);
+	return getUserWithMenu(includeDeleted, true, &header, title);
 
 }
 
-User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string title)
+{
+	string header = "";
+	return getUserWithMenu(includeDeleted, includeNotDeleted, &header, title);
+}
+
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *headerText, string title)
 {
 
-	vector<User*> userPointers = gUserDatabase->getUsers(false);
+	vector<User*> userPointers = gUserDatabase->getUsers(includeDeleted, includeNotDeleted);
 	int selection = 0;
 	int availableExtraButtons = 0; //saves how many of the values in extra buttons are true
 	int const NUM_OF_EXTRA_BUTTONS = 6;
 	bool extraButtons[NUM_OF_EXTRA_BUTTONS]; //0 = Exit, 1 = nextpage 2 = previous page
-	string extraButtonNames[NUM_OF_EXTRA_BUTTONS] = { "Return to Main Menu" , "Next Page" , "Previous Page" , "Sort by ID" , "Sort by firstname" , "Sort by lastname\n" };
+	string extraButtonNames[NUM_OF_EXTRA_BUTTONS] = { "Exit" , "Next Page" , "Previous Page" , "Sort by ID" , "Sort by firstname" , "Sort by lastname\n" };
 
 	int currentPage = 0, itemsOnPage;
 
@@ -1625,7 +1655,7 @@ User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
 		extraButtons[4] = true; //everyone has access to sort by firstname;
 		extraButtons[5] = true; //everyone has access to sort by lastname;
 
-		if ((((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))) - 1) == currentPage)
+		if ((((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))) - 1) == currentPage || userPointers.size() == 0)
 		{
 			itemsOnPage = (userPointers.size() - gUserDatabase->getItemsPerPage() * currentPage);
 			extraButtons[1] = false;
@@ -1677,7 +1707,7 @@ User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
 			j++;
 		}
 
-		selection = navigatableMenu(title, options, headerText, "Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? ("There are no users that meet your search") : ("Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
 
 		switch (corispondingIndex[selection])
 		{

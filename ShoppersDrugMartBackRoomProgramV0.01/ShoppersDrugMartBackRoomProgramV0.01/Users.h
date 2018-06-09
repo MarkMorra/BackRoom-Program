@@ -187,7 +187,7 @@ void UserDatabase::checkCredentials(User **user,string _firstName, string _lastn
 
 	while (it != users.end())//keeps going untill the last element is found
 	{
-		if ((string(it->firstName) == uppercase(_firstName) && it->id == id && string(it->password) == _password && (it->id) == id || (ENABLE_NO_PASSWORD_CHECK && string(it->firstName) == uppercase(_firstName))) && !it->isDeleted()) //checks if the current element is eqaul to the string passed
+		if ((string(it->firstName) == uppercase(_firstName) && (string(it->lastName) == uppercase(_lastname)) && it->id == id && string(it->password) == _password && (it->id) == id || (ENABLE_NO_PASSWORD_CHECK && string(it->firstName) == uppercase(_firstName))) && !it->isDeleted()) //checks if the current element is eqaul to the string passed
 		{
 			*user = &(*it); //sets points to the user that matched the passed strings
 			return;
@@ -383,7 +383,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 		file = fopen(filePath.c_str(), "w"); //if it dosent it try to create it
 		if (file == NULL) //checks if it was sucessful
 		{
-			errorMsg(" Error! Unable to open Logger file; Path: \"" + filePath + "\" The file pointer was NULL.\n This occurred in the Logger constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file?"); //displays error msg
+			errorMsg(" Error! Unable to open User file; Path: \"" + filePath + "\" The file pointer was NULL.\n This occurred in the Logger constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file?"); //displays error msg
 		}
 		else
 		{

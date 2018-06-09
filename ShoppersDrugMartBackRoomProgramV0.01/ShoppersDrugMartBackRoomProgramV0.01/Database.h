@@ -278,7 +278,7 @@ void ItemDatabase::Reload() {
 	}
 	else if (authCode != temp_authCode)
 	{
-		errorMsg(" Error; authCode mismatch in users.dat. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the item database file will be deleted unless returned to its original state.");
+		errorMsg(" Error; authCode mismatch in item.dat. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the item database file will be deleted unless returned to its original state.");
 		return;
 	}
 
