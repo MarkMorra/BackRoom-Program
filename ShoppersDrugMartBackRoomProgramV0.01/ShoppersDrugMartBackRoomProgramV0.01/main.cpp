@@ -498,6 +498,60 @@ void menu(User **user) //Cady's changes start here
 
 }
 
+void addItem(User **user) {
+
+	long long int upc;
+	long long int plu;
+	int amount;
+	string name;
+	string desc;
+	float price;
+	float cost;
+	float sale;
+
+	system("cls");
+
+	cout << "UPC: ";
+	cin >> upc;
+
+	if ((gItemDatabase->Find('u', upc))->size() == 0) {
+
+		cout << "PLU: ";
+		cin >> plu;
+
+		cout << "Amount: ";
+		cin >> amount;
+
+		cout << "Name: ";
+		getline(cin, name);
+		getline(cin, name);
+
+		cout << "Description: ";
+		getline(cin, desc);
+
+		cout << "Price: ";
+		cin >> price;
+
+		cout << "Cost: ";
+		cin >> cost;
+
+		cout << "Sale Price: ";
+		cin >> sale;
+
+		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+
+		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+
+	}
+	else {
+
+		cout << "This item already exists.";
+
+	}
+
+}
+
+
 void selectedItem(User **user, int index) {
 
 	string header = (gItemDatabase->pos(index))->Display();
