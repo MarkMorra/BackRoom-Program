@@ -22,7 +22,8 @@ void resetUserDatabase(User **user);
 void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void addItem(User **user);
-void selectedItem(User **user, Item* item);
+void modifyItem(User **user, Item* item);
+void selectedItem(User **user, Item* item, int gItemIndex);
 void help(string whereToReturn);
 void EditGerneralSetting();
 void editUsers(User** user);
@@ -551,16 +552,87 @@ void addItem(User **user) {
 
 }
 
-void selectedItem(User **user, Item* item) {
+void modifyItem(User **user, Item* item) {
+	
+	int selection;
+	
+	do {
+		
 
-	string header = item->Display();
+		char pricetemp[50];
+		char saletemp[50];
+		char costtemp[50];
+
+		sprintf(pricetemp, "$%0.2f", item->price);
+		sprintf(saletemp, "$%0.2f", item->sale);
+		sprintf(costtemp, "$%0.2f", item->cost);
+
+		string stemp;
+		float temp;
+
+		string availibleOptions[] = { "Back to menu", string("Name: ") + item->name, string("Description: ") + item->desc, string("Price: ") + pricetemp, string("Cost: ") + costtemp, string("Sale: ") + saletemp };
+
+		selection = navigatableMenu(string("UPC: ") + to_string(item->upc), availibleOptions, 5, C_BLUE, C_LGREY);
+
+		switch (selection) {
+		case 1: //name change
+			cout << "Enter the new name: ";
+			getline(cin, stemp);
+			strcpy(item->name, stemp.c_str());
+			gItemDatabase->Save();
+			break;
+		case 2: //desc change
+			cout << "Enter the new description: ";
+			getline(cin, stemp);
+			strcpy(item->desc, stemp.c_str());
+			gItemDatabase->Save();
+			break;
+		case 3: //price change
+			cout << "Enter the new price: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->price = temp;
+			gItemDatabase->Save();
+			break;
+		case 4: //cost change
+			cout << "Enter the new cost: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->cost = temp;
+			gItemDatabase->Save();
+			break;
+		case 5: //sale change
+			float temp;
+			cout << "Enter the new sale price: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->price = temp;
+			gItemDatabase->Save();
+			break;
+			}
+
+	} while (selection != 0);
+
+}
+
+void selectedItem(User **user, Item* item, int gItemIndex) {
+
 	string *availibleOptions;
-	string allOptions[] = { "Back to Item Menu", "Modify item", "Delete item" };
+	string allOptions[] = { "Back to Item Menu", "Modify amount", "Modify item", "Delete item" };
 	int selection;
 	int *corrispondingIndex;
-	int amount = 1; //starts at one because everyone on this page has access to back to menu
+	int amount; 
 
 	do {
+
+		string header = item->Display();
+		amount = 1; //starts at one because everyone on this page has access to back to menu
 
 		//calcs number of perms
 		for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //counts how many permission the current user has access too
@@ -600,12 +672,23 @@ void selectedItem(User **user, Item* item) {
 
 		switch (selection) {
 		case 1:
-			errorMsg("modify item");
-			//modify the item
+			int temp;
+			cout << "Enter the new amount: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->amount = temp;
+			gItemDatabase->Save();
 			break;
 		case 2:
-			errorMsg("remove item");
-			//remove the item
+			modifyItem(user, item);
+			break;
+		case 3:
+			gItemDatabase->Remove(gItemIndex);
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
+			errorMsg("Item removed.");
+			selection = 0;
 			break;
 		}
 
@@ -1079,7 +1162,9 @@ void itemMenu(User **user)
 
 		if (selection < numItemsPage) {
 
-			selectedItem(user, localItemDatabase[currentPage*gItemDatabase->GetItemsPerPage() + selection]);
+			selectedItem(user, localItemDatabase[currentPage*gItemDatabase->GetItemsPerPage() + selection], currentPage*gItemDatabase->GetItemsPerPage() + selection);
+
+			localItemDatabase = gItemDatabase->Find();
 
 		}
 		else {

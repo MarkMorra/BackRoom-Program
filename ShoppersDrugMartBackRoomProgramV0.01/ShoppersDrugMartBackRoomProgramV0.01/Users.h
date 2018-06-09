@@ -29,11 +29,11 @@ using namespace std;
 
 #define NUMBER_OF_IMPERMISSIONS 1 //number of bools in  item menu permissions bool array
 
+#define I_MODIFY_AMOUNT 0 //I means items
+#define I_MODIFY_ITEM 1
+#define I_REMOVE_ITEM 2
 
-#define I_MODIFY_ITEM 0 //I means items
-#define I_REMOVE_ITEM 1
-
-#define NUMBER_OF_IPERMISSIONS 2 //number of bools in item permissions bool array
+#define NUMBER_OF_IPERMISSIONS 3 //number of bools in item permissions bool array
 
 
 #define LENGTH_OF_USER_STRINGS 50
@@ -73,7 +73,7 @@ string Permissions::createString() //converts a users permissions into a string 
 
 	string baseMMOptions[NUMBER_OF_MMPERMISSIONS] = { "View Items", "View Logs" , "Edit User Settings" , "Edit General Settings", "Reset Database" , "Reset Users" }; //the names of all the commands
 	string baseIMOptions[NUMBER_OF_IMPERMISSIONS] = { "Add Item" };
-	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify Item","Delete Item" };
+	string baseIOptions[NUMBER_OF_IPERMISSIONS] = { "Modify amount", "Modify Item", "Delete Item" };
 
 	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //cycles trough all main menu permissions and appends true or false based on weather the user has acces to the command
 	{

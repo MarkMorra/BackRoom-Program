@@ -52,7 +52,7 @@ string Item::Display() {
 	sprintf(saletemp, "$%0.2f", sale);
 	sprintf(costtemp, "$%0.2f", cost);
 
-	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + to_string(upc) + "\n PLU:\t\t" + to_string(plu) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
+	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + to_string(upc) + "\n PLU:\t\t" + to_string(plu) + "\n Amount:\t\t" + to_string(amount) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
 
 }
 
@@ -76,6 +76,7 @@ public:
 	~ItemDatabase();
 	void Clear();
 	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);
+	void Remove(int index);
 	vector<Item>::iterator Search(long long int upc);
 	string buildItem(int index);
 	string buildItem(Item* item);
@@ -87,6 +88,7 @@ public:
 	int length();
 	int GetItemsPerPage();
 	void GetItemsPerPage(int _items);
+	void Save();
 
 private:
 	string filepath;
@@ -94,7 +96,6 @@ private:
 	int itemsPerPage;
 
 	void Reload();
-	void Save();
 
 	long long int authCode;
 
@@ -199,6 +200,13 @@ void ItemDatabase::Add(long long int upc, long long int plu, int amount, string 
 	
 	}
 	
+	Save();
+
+}
+
+void ItemDatabase::Remove(int index) {
+
+	items.erase(items.begin() + index);
 	Save();
 
 }
