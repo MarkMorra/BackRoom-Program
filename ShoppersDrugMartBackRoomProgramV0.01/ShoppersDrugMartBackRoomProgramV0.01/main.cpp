@@ -22,7 +22,7 @@ void resetUserDatabase(User **user);
 void deleteItemDatabase(User **user);
 void itemMenu(User **user);
 void addItem(User **user);
-void selectedItem(User **user, int index);
+void selectedItem(User **user, Item* item);
 void help(string whereToReturn);
 void EditGerneralSetting();
 void editUsers(User** user);
