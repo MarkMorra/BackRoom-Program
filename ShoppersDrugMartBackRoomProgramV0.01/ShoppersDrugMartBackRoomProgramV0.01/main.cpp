@@ -551,9 +551,9 @@ void addItem(User **user) {
 
 }
 
-void selectedItem(User **user, int index) {
+void selectedItem(User **user, Item* item) {
 
-	string header = (gItemDatabase->pos(index))->Display();
+	string header = item->Display();
 	string *availibleOptions;
 	string allOptions[] = { "Back to Item Menu", "Modify item", "Delete item" };
 	int selection;
@@ -1089,7 +1089,7 @@ void itemMenu(User **user)
 
 		if (selection < numItemsPage) {
 
-			//selectedItem(user, localItemDatabase[currentPage*gItemDatabase->GetItemsPerPage() + selection]);
+			selectedItem(user, localItemDatabase[currentPage*gItemDatabase->GetItemsPerPage() + selection]);
 
 		}
 		else {
