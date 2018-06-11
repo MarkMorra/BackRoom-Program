@@ -353,7 +353,7 @@ void logon(User **user) {
 					getline(cin, last);
 				} while (last == "");
 
-				system("cls");
+				system("cls"); //Clears the screen
 				cout << " Please enter your employee id: ";
 				cin >> id;
 				getline(cin, temp); //this is to eat the character left over by cin
@@ -569,7 +569,7 @@ void modifyItem(User **user, Item* item) {
 		string stemp;
 		float temp;
 
-		string availibleOptions[] = { "Back to menu", string("Name: ") + item->name, string("Description: ") + item->desc, string("Price: ") + pricetemp, string("Cost: ") + costtemp, string("Sale: ") + saletemp };
+		string availibleOptions[] = { "Return to Menu", string("Name: ") + item->name, string("Description: ") + item->desc, string("Price: ") + pricetemp, string("Cost: ") + costtemp, string("Sale: ") + saletemp };
 
 		selection = navigatableMenu(string("UPC: ") + to_string(item->upc), availibleOptions, 5, C_BLUE, C_LGREY);
 
@@ -623,6 +623,7 @@ void modifyItem(User **user, Item* item) {
 void selectedItem(User **user, Item* item, int gItemIndex) {
 
 	string *availibleOptions;
+	//Displays the options the user can select in this menu
 	string allOptions[] = { "Back to Item Menu", "Modify amount", "Modify item", "Delete item" };
 	int selection;
 	int *corrispondingIndex;
@@ -672,21 +673,23 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 		switch (selection) {
 		case 1:
 			int temp;
+			//User can enter new item amount
 			cout << "Enter the new amount: ";
 			do {
 				cin >> temp;
 			} while (!(temp >= 0));
 
 			item->amount = temp;
-			gItemDatabase->Save();
+			gItemDatabase->Save(); //Item database is saved
 			break;
 		case 2:
 			modifyItem(user, item);
 			break;
 		case 3:
 			gItemDatabase->Remove(gItemIndex);
+			//Adds log message that a specific item had been removed
 			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
-			errorMsg("Item removed.");
+			errorMsg("Item removed."); //Displays to user that the item has been removed
 			selection = 0;
 			break;
 		}
@@ -702,7 +705,7 @@ void viewLogs()
 {
 	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User" }; //all the options availible to the usre
 	int const numOfOptions = 4;
-	string SearchByType[] = { "View miscellaneous" , "View Amount Changes" , "View New Item Creations" , "View Item Information Changes" , "View User Information Changes" , "View User Account Creations" ,"View Log Ons and Log Offs"}; //options in the search by type sub menu
+	string SearchByType[] = { "View Miscellaneous" , "View Amount Changes" , "View New Item Creations" , "View Item Information Changes" , "View User Information Changes" , "View User Account Creations" ,"View Log Ons and Log Offs"}; //options in the search by type sub menu
 	int const numOfSearchByTypeOptions = 7;
 
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
@@ -789,7 +792,7 @@ void resetUserDatabase(User **user)
 			password = "";
 			do
 			{
-				system("cls");
+				system("cls"); //Clears the screen
 				cout << " Please enter your password to confirm deletion: ";
 
 				for (int i = 0; i < password.length(); i++) //displays * according to how many chars enterd
@@ -1183,10 +1186,10 @@ void itemMenu(User **user)
 			switch (corrispondingIndex[selection - numItemsPage]) //calls the selected function when they press enter
 			{
 			case 0:
-				currentPage++;
+				currentPage++; //Brings the user to next page
 				break;
 			case 1:
-				currentPage--;
+				currentPage--; //Brings the user to previous page
 				break;
 			case 2:
 				break;
@@ -1264,6 +1267,7 @@ void help(string whereToReturn)//Help screen displays instructions on how to use
 	getchar();//Pauses the screen so user can read help screen until user hits enter key
 }
 
+//Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
 int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
@@ -1271,12 +1275,14 @@ int navigatableMenu(string title, string options[], int numberOfOptions, int sta
 
 }
 
+//Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
 	return navigatableMenu(title, options, headerText, blank, numberOfOptions, 0, selectedBackground, selectedForeground);
 }
 
+//Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
@@ -1284,12 +1290,14 @@ int navigatableMenu(string title, string options[], int numberOfOptions, int sel
 
 }
 
+//Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
 	return navigatableMenu(title, options, headerText, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
 }
 
+//Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
 int navigatableMenu(string title, string options[],string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
@@ -1297,6 +1305,7 @@ int navigatableMenu(string title, string options[],string footerText, int number
 
 }
 
+//Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
 int navigatableMenu(string title, string options[], string *headerText, string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 
@@ -1314,7 +1323,7 @@ int navigatableMenu(string title, string options[], string *headerText, string f
 
 	do
 	{
-		system("cls");
+		system("cls"); //Clears the screen
 
 		cout << ((*headerText == "") ? ("") : (*headerText + "\n\n\n")) << ((title == "") ? ("") : (title + "\n\n\n"));
 
@@ -1406,9 +1415,10 @@ void EditGerneralSetting(User **user) {
 
 	int selection = 0;
 	int temp;
+	//Displays the options available in this menu
 	string options[] = { "Return to Main Menu", "How long to store log messages: ", "How many inventory items to display per page: " , "How many users to display per page: " }; //all the options before they have speciific information added to them
 	const int numOfOptions = 4;
-	string modifyedOptions[numOfOptions]; //all the options after they have specific infortion added to them (it takes the string from options and appends text to the option)
+	string modifyedOptions[numOfOptions]; //all the options after they have specific information added to them (it takes the string from options and appends text to the option)
 
 	do
 	{
@@ -1425,7 +1435,7 @@ void EditGerneralSetting(User **user) {
 			cout << " How many hours would you like to store log messages for: "; //gets the input from the user
 			cin >> temp;
 
-			while (temp <= 0) //error trap
+			while (temp <= 0) //error trap so the input is always positive
 			{
 				system("cls");
 				cout << " Error! Time must be a positive value.\n How many hours would you like to store log messages for: ";
@@ -1440,7 +1450,7 @@ void EditGerneralSetting(User **user) {
 			cout << " How many inventory items would you like to display per page: "; //gets the input from the user
 			cin >> temp;
 
-			while (temp <= 0) //error trap
+			while (temp <= 0) //error trap so the input is always positive
 			{
 				system("cls");
 				cout << " Error! Value must be a positive number.\n How many inventory items would you like to display per page: ";
@@ -1454,7 +1464,7 @@ void EditGerneralSetting(User **user) {
 			cout << " How many users would you like to display per page: "; //gets the input from the user
 			cin >> temp;
 
-			while (temp <= 0) //error trap
+			while (temp <= 0) //error trap so the input value is always positive
 			{
 				system("cls");
 				cout << " Error! Value must be a positive number.\n How many users would you like to display per page: ";
@@ -1472,7 +1482,7 @@ void EditGerneralSetting(User **user) {
 void editUsers(User** user)
 {
 	int const sizeOfAllOptions = 4;
-	string alloptions[] = { "Return to main menu" , "Add a new User" , "View exisitng users" , "View deleted users" };
+	string alloptions[] = { "Return to Main Menu" , "Add a New User" , "View Existing Users" , "View Deleted Users" };
 	int selection = 0;
 	User *userToEdit;
 
@@ -1483,13 +1493,13 @@ void editUsers(User** user)
 		switch (selection)
 		{
 		case 1:
-			createNewUser(user);
+			createNewUser(user); //Brings user to function to add a user to the program
 			break;
 		case 2:
-			editExistingUsers(user);
+			editExistingUsers(user); //Brings user to the function to edit current users
 			break;
 		case 3:
-			editDeletedUsers(user);
+			editDeletedUsers(user); //Brings user to the function to delete users
 			break;
 		}
 	} while (selection != 0);
@@ -1500,15 +1510,16 @@ void editExistingUsers(User** user) {
 	User* userToEdit;
 	User copy;
 	int const NUM_OF_OPTIONS = 7;
-	string options[NUM_OF_OPTIONS] = { "Exit", "Save and Exit" ,"Delete this User","Edit thier permissions\n" };
+	//Displays options available for user to pick in this menu
+	string options[NUM_OF_OPTIONS] = { "Exit", "Save and Exit" ,"Delete this User","Edit Their Permissions\n" };
 	string output;
 	int selection = 0;
 	char choice;
 
 	do
 	{
-
-		userToEdit = getUserWithMenu(false, "which user would you like to edit?");
+		//Asks user which current account should be changed
+		userToEdit = getUserWithMenu(false, " Which user would you like to edit?");
 		
 
 		do
@@ -1537,24 +1548,25 @@ void editExistingUsers(User** user) {
 				i++;
 			} while (output[pos] != '\0' && i < NUM_OF_OPTIONS);
 
-
-			selection = navigatableMenu("Which asspect of the user would you like to edit?", options, NUM_OF_OPTIONS, selection, C_BLUE, C_WHITE);
+			//Asks the user what specifically should be changed
+			selection = navigatableMenu(" Which aspect of the user would you like to edit?", options, NUM_OF_OPTIONS, selection, C_BLUE, C_WHITE);
 
 			string temp;
 			switch (selection)
 			{
 			case 0:
-				*userToEdit = copy;
+				*userToEdit = copy; //User that is being edited is copied into a seperate variable
 				break;
 			case 1:
 				break;
 			case 2:
-				system("cls");
+				system("cls"); //Clears the screen
 				if ((*user)->id == userToEdit->id)
 				{
-					errorMsg("You can't delete your own account");
+					errorMsg("You can't delete your own account"); //Function does not allow user to delete their own account
 					break;
 				}
+				//Ensures that the user wants to delete the account, avoids user error
 				cout << "Are you sure you want to delete " << userToEdit->firstName << "'s account? (Y/N): ";
 				while ((choice = _getch()) != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
 
@@ -1563,42 +1575,46 @@ void editExistingUsers(User** user) {
 					break;
 				}
 				userToEdit->remove(true);
-				gUserDatabase->save();
+				gUserDatabase->save(); //User database is updated
 
-				system("cls");
+				system("cls"); //Clears the screen and shows success message to the user
 				cout << "You have successfully deleted thier account\nPress enter to continue...";
 				while (_getch() != 13);
 
+				//Adds message to the log database that a user has been deleted
 				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 3:
+				//User permissions are changed
 				changePermissions(&(userToEdit->permission));
+				//Adds message to the log database that a user's permissons has been changed
 				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s permissions");
 				break;
 			case 4:
-				system("cls");
+				system("cls"); //Clears the screen, user inputs first name
 				cout << "Please enter the new first name: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->firstName, uppercase(temp).c_str());
 
-				system("cls");
+				system("cls"); //Clears the screen, user inputs last name
 				cout << "Please enter the new last name: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->lastName, uppercase(temp).c_str());
 
+				//Adds message to log database that a user's name has been changed
 				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed the name of " + string(copy.firstName) + " " + string(copy.lastName) + " to " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 5:
-				system("cls");
-				cout << "The user ID is not a modifyable value\npress enter to continue...";
+				system("cls"); //Clears the screen, tells user ID cannot be changed
+				cout << " The user ID is not a modifiable value\n Press enter to continue...";
 				while (_getch() != 13);
 				break;
 			case 6:
-				system("cls");
+				system("cls"); //Clears the screen, user inputs new password
 				cout << "Please enter the new password for the user: ";
 				fflush(stdin);
 				cin.clear();
@@ -1607,7 +1623,7 @@ void editExistingUsers(User** user) {
 				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s password");
 				break;
 			}
-			gUserDatabase->save();
+			gUserDatabase->save(); //User database is updated
 		} while (selection > 2);
 
 
@@ -1619,23 +1635,26 @@ void editDeletedUsers(User** user)
 	User* userToEdit;
 	int selection = 0;
 	string userDesc;
-	string option[] = { "No, I do not want to restore them", "Yes, I do want to restore them" };
+	//Displays available options the user can select in this menu
+	string option[] = { " No, I do not want to restore them", " Yes, I do want to restore them" };
 
 	do
 	{
-
-		userToEdit = getUserWithMenu(true, false, "which user would you like to restore?");
+		//Asks user which account should be restored
+		userToEdit = getUserWithMenu(true, false, " Which user would you like to restore?");
 
 		if (userToEdit == NULL) { return; }
-
+		//Deleted user account is displayed on screen
 		userDesc = userToEdit->display(false, true);
-
-		selection = navigatableMenu("Are you sure you want to restore this user?", option, &userDesc, 2, C_BLUE, C_WHITE);
+		
+		//User is asked second time to reduce user error
+		selection = navigatableMenu(" Are you sure you want to restore this user?", option, &userDesc, 2, C_BLUE, C_WHITE);
 
 		switch (selection)
 		{
 		case 1:
-			userToEdit->remove(false);
+			userToEdit->remove(false); //Deleted user account is restored
+			//Message added to log database that a deleted user account is restored
 			gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + ' ' + (*user)->lastName + " restored user account " + userToEdit->firstName + ' ' + userToEdit->lastName + " with ID: " + to_string(userToEdit->id));
 			break;
 		}
@@ -1648,8 +1667,9 @@ User* createNewUser(User** user)
 	string firstName, lastName, password;
 	long int id;
 
-	system("cls");
+	system("cls"); //Clears the screen
 
+	//First name of new user is input
 	cout << " Please enter the new user's first name: ";
 	cin.clear();
 	fflush(stdin);
@@ -1658,7 +1678,7 @@ User* createNewUser(User** user)
 		getline(cin, firstName);
 	} while (firstName == "");
 
-
+	//Last name of new user is input
 	cout << " Please enter " << firstName << "'s last name: ";
 	cin.clear();
 	fflush(stdin);
@@ -1667,6 +1687,7 @@ User* createNewUser(User** user)
 		getline(cin, lastName);
 	} while (lastName == "");
 
+	//New user inputs their password
 	cout << " Please enter " << firstName << "'s password: ";
 	cin.clear();
 	fflush(stdin);
@@ -1676,7 +1697,7 @@ User* createNewUser(User** user)
 	} while (password == "");
 
 	Permissions perms;
-
+	//Admin can change the new user's permissions on this screen
 	changePermissions(&perms);
 
 	id = (*user)->id; //saves the id of the current signed in user
@@ -1687,12 +1708,14 @@ User* createNewUser(User** user)
 
 	system("cls");
 
+	//Success message is displayed to the user
 	cout << " New User added successfully\n\n";
 	cout << newUser->display(false, true);
 	cout << endl << endl << " Press enter to continue...";
 
 	while (_getch() != 13);
 
+	//Message is added to the log database that a new account has been created
 	gLogger->addItem(-1, -1, (*user)->id, 'm', string((*user)->firstName) + " " + string((*user)->lastName) + " created a new user for " + string(newUser->firstName) + " " + string(newUser->lastName) + " with ID: " + to_string(newUser->id));
 
 	return newUser;
@@ -1703,7 +1726,7 @@ void changePermissions(Permissions *perms)
 {
 
 	Permissions permsCopy = *perms;
-
+	//Options available to the user is displayed on this screen
 	string options[NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2] = { "Exit", "Save and Exit\n" };
 	string permissions;
 	int selection = 0;
@@ -1725,6 +1748,7 @@ void changePermissions(Permissions *perms)
 			i++;
 		} while (permissions[pos] != '\0' && i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2);
 
+		//Displays title screen for the permissions page
 		selection = navigatableMenu("\t _____    _ _ _     _____                   _         _\n\t|  ___|  | (_) |   | ___ \\                 (_)       (_)\n\t| |__  __| |_| |_  | |_/ /__ _ __ _ __ ___  _ ___ ___ _  ___  _ __  ___ \n\t|  __|/ _` | | __| |  __/ _ \\ '__| '_ ` _ \\| / __/ __| |/ _ \\| '_ \\/ __|\n\t| |__| (_| | | |_  | | |  __/ |  | | | | | | \\__ \\__ \\ | (_) | | | \\__ \\\n\t\\____/\\__,_|_|\\__| \\_|  \\___|_|  |_| |_| |_|_|___/___/_|\\___/|_| |_|___/", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2, selection, C_BLUE, C_WHITE);
 
 		if (selection == 0)
@@ -1838,28 +1862,29 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 			j++;
 		}
 
-		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? ("There are no users that meet your search") : ("Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
+		//If user is not found in search, then message is shown to the user
+		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? (" There are no users that meet your search") : (" Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
 
 		switch (corispondingIndex[selection])
 		{
 		case 0:
-			delete[] options;
+			delete[] options; //Deletes pointers
 			delete[] corispondingIndex;
 			return NULL;
 		case 1:
-			currentPage++;
+			currentPage++; //Brings user to the next page
 			break;
 		case 2:
-			currentPage--;
+			currentPage--; //Brings user to the previous page
 			break;
 		case 3:
-			selectionSort(&userPointers, 'I');
+			selectionSort(&userPointers, 'I'); //Sorts users
 			break;
 		case 4:
-			selectionSort(&userPointers, 'F');
+			selectionSort(&userPointers, 'F'); //Sorts users
 			break;
 		case 5:
-			selectionSort(&userPointers, 'L');
+			selectionSort(&userPointers, 'L'); //Sorts users
 			break;
 		default:
 			selection = corispondingIndex[selection];

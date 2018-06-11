@@ -311,7 +311,7 @@ User* UserDatabase::Add(User user) //adds the passed user into the database (the
 
 	if (it._Ptr == NULL) { //If a null pointer was returned an error has occured
 
-		errorMsg("A position for user with ID: " + to_string(user.id) + "could not be found in the vector, somthing went wrong with userdatabase::search(). To prevent any issues the user has not been added to the database")
+		errorMsg(" A position for user with ID: " + to_string(user.id) + " could not be found in the vector.\n Something went wrong with UserDatabase::Search().\n To prevent any issues the user has not been added to the database");
 
 	}
 	else if (it == users.end()) { //if the iterator returned by search points to the end of the vecor the new user need to be added to the end
