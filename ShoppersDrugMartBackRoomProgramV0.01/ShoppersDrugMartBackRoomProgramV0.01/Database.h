@@ -15,17 +15,18 @@ using namespace std;
 #define NAME_LEN 15
 #define DESC_LEN 25
 
-class Item {
+class Item { //defines the structure of each item in the database
 
 public:
+	//declares the information we want to save about each item
 	long long int upc, plu;
 	int amount;
 	char name[NAME_LEN], desc[DESC_LEN];
 	float price, cost, sale;
-
-	Item();
-	string Display();
-	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
+	
+	Item(); //default constructor
+	string Display(); //this function returns a string of the information about the item, pre-formatted
+	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale); //constructor that takes all the values of the item and builds an item
 
 };
 
@@ -48,16 +49,18 @@ string Item::Display() {
 	char saletemp[50];
 	char costtemp[50];
 
-	sprintf(pricetemp, "$%0.2f", price);
+	sprintf(pricetemp, "$%0.2f", price); //format the floats to display
 	sprintf(saletemp, "$%0.2f", sale);
 	sprintf(costtemp, "$%0.2f", cost);
 
-	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + to_string(upc) + "\n PLU:\t\t" + to_string(plu) + "\n Amount:\t\t" + to_string(amount) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
+	//return the formatted string
+	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + to_string(upc) + "\n PLU:\t\t" + to_string(plu) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
 
 }
 
 Item::Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale) {
 
+	//sets the values
 	upc = _upc;
 	plu = _plu;
 	amount = _amount;
@@ -91,13 +94,13 @@ public:
 	void Save();
 
 private:
-	string filepath;
-	vector<Item> items;
-	int itemsPerPage;
+	string filepath; //saves the filepath
+	vector<Item> items; //defines the item vector
+	int itemsPerPage; //how many items should be displayed on one page
 
 	void Reload();
 
-	long long int authCode;
+	long long int authCode; //the code that ensures this database belongs with the user and logger databases in the data folder
 
 };
 
@@ -108,16 +111,16 @@ ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
 
-	authCode = *_authCode;
+	authCode = *_authCode; //sets auth code
 
-	itemsPerPage = 10;
+	itemsPerPage = 10; //sets default items per page
 
 	FILE *file;
 	file = fopen(filepath.c_str(), "r");
 	if (file == NULL) //checks if file exists
 	{
 		file = fopen(filepath.c_str(), "w"); //if it dosent it try to create it
-		if (file == NULL) //checks if it was sucessful
+		if (file == NULL) //checks if it was successful
 		{
 			errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the Item Database constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file?"); //displays error msg
 		}
@@ -127,7 +130,7 @@ ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 			{
 				authCode = rand() + 1;
 			}
-			fwrite(&authCode, sizeof(authCode), 1, file);
+			fwrite(&authCode, sizeof(authCode), 1, file); //writes the authcode to the file
 			fclose(file);
 
 		}
@@ -144,41 +147,40 @@ ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 
 ItemDatabase::~ItemDatabase() {
 
-	Save();
-
-	items.clear();
+	Save(); //the deconstructor saves the database
+	
+	items.clear(); //the item vector is cleared
 
 }
 
 void ItemDatabase::Clear() {
 
-	items.clear();
+	items.clear(); //the item vector is cleared
 
-	Save();
+	Save(); //save the empty vector
 
-	Reload();
+	Reload(); //reload it into the program
 
 }
 
 int ItemDatabase::length() {
 
-	return(items.size());
+	return(items.size()); //returns the length of items
 
 }
 
 inline int ItemDatabase::GetItemsPerPage()
 {
-	return itemsPerPage;
+	return itemsPerPage; //returns the items per page
 }
 
 void ItemDatabase::GetItemsPerPage(int _items)
 {
-	itemsPerPage = _items;
-	Save();
+	itemsPerPage = _items; //sets the items per page
+	Save(); //saves
 }
 
 void ItemDatabase::Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale) {
-
 
 	vector<Item>::iterator it;
 
