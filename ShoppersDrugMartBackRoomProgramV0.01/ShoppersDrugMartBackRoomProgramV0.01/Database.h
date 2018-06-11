@@ -23,10 +23,10 @@ public:
 	int amount;
 	char name[NAME_LEN], desc[DESC_LEN];
 	float price, cost, sale;
-	
-	Item(); //default constructor
-	string Display(); //this function returns a string of the information about the item, pre-formatted
-	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale); //constructor that takes all the values of the item and builds an item
+
+	Item();
+	string Display();
+	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
 
 };
 
