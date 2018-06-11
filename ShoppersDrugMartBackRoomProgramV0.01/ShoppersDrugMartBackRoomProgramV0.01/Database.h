@@ -23,10 +23,10 @@ public:
 	int amount;
 	char name[NAME_LEN], desc[DESC_LEN];
 	float price, cost, sale;
-	
-	Item(); //default constructor
-	string Display(); //this function returns a string of the information about the item, pre-formatted
-	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale); //constructor that takes all the values of the item and builds an item
+
+	Item();
+	string Display();
+	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
 
 };
 
@@ -75,29 +75,30 @@ Item::Item(long long int _upc, long long int _plu, int _amount, string _name, st
 class ItemDatabase {
 
 public:
-	//declare the functions and the default constructors
-	ItemDatabase(string filename, long long int *_authCode); //constructs the item database and takes the location to save it and the authcode to ensure it is being accessed by the right user database
-	~ItemDatabase(); //deconstructor for item database
-	void Clear(); //similar to the deconstructor, but it also reloads the file
-	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale); //takes the info about the item, finds the proper place in the database (sorted by upc), and inserts it
-	vector<Item>::iterator Search(long long int upc); //returns an iterator to the location you must push back a new item to
-	string buildItem(int index); //takes an index and returns a string for the item in the item database menu
-	vector<Item*>* Find(); //returns a pointer to a vector of pointers of all items in the database
-	vector<Item*>* Find(char type, long long int num); //returns a vector of all items with the same upc or plu or amount depending on the type passed (u, p, or a)
-	vector<Item*>* Find(char type, float num); //returns a vector of all items with the same price, cost, or sale price depending on the type passed (p, c, or s)
-	vector<Item*>* Find(char type, string text); //returns a vector of all items with the same name or desc depending on the type passed (n or d)
-	Item* pos(int index); //returns a pointer to the item at index
-	int length(); //returns the length of the database
-	int GetItemsPerPage(); //returns the number of items the settings dictates should be displayed on one page
-	void GetItemsPerPage(int _items); //sets items per page
+	ItemDatabase(string filename, long long int *_authCode);
+	~ItemDatabase();
+	void Clear();
+	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);
+	void Remove(int index);
+	vector<Item>::iterator Search(long long int upc);
+	string buildItem(int index);
+	string buildItem(Item* item);
+	vector<Item*> Find();
+	vector<Item*> Find(char type, long long int num);
+	vector<Item*> Find(char type, float num);
+	vector<Item*> Find(char type, string text);
+	Item* pos(int index);
+	int length();
+	int GetItemsPerPage();
+	void GetItemsPerPage(int _items);
+	void Save();
 
 private:
 	string filepath; //saves the filepath
 	vector<Item> items; //defines the item vector
 	int itemsPerPage; //how many items should be displayed on one page
 
-	void Reload(); //reloads the item database from the save file
-	void Save(); //saves the item database to the file
+	void Reload();
 
 	long long int authCode; //the code that ensures this database belongs with the user and logger databases in the data folder
 
