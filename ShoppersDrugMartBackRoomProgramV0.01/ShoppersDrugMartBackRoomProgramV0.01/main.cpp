@@ -1510,14 +1510,15 @@ void editExistingUsers(User** user) {
 
 		userToEdit = getUserWithMenu(false, "which user would you like to edit?");
 		
+		if (userToEdit == NULL)
+		{
+			return;
+		}
+		copy = *userToEdit;
 
 		do
 		{
-			if (userToEdit == NULL)
-			{
-				return;
-			}
-			copy = *userToEdit;
+			
 			output = userToEdit->display(true, false);
 
 			int i = 4;
