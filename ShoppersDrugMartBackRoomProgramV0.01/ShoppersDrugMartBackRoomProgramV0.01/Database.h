@@ -75,7 +75,7 @@ Item::Item(long long int _upc, long long int _plu, int _amount, string _name, st
 class ItemDatabase {
 
 public:
-	ItemDatabase(string filename, long long int *_authCode);
+	ItemDatabase(string filename, long long int *_authCode); //default constructor for the item database
 	~ItemDatabase();
 	void Clear();
 	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);
