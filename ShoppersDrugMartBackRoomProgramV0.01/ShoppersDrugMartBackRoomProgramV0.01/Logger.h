@@ -131,7 +131,8 @@ void Logger::reload() {
 
 	FILE *file;
 
-	file = fopen(Filepath.c_str(), "r");
+	//file = fopen(Filepath.c_str(), "r");
+	file = fopen("data/logger.log", "r");
 
 	if (file == NULL) //makes sure file opend sucessfully
 	{
