@@ -1521,14 +1521,15 @@ void editExistingUsers(User** user) {
 		//Asks user which current account should be changed
 		userToEdit = getUserWithMenu(false, " Which user would you like to edit?");
 		
+		if (userToEdit == NULL)
+		{
+			return;
+		}
+		copy = *userToEdit;
 
 		do
 		{
-			if (userToEdit == NULL)
-			{
-				return;
-			}
-			copy = *userToEdit;
+			
 			output = userToEdit->display(true, false);
 
 			int i = 4;

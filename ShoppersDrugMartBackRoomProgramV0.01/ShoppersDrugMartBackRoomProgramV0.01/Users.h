@@ -49,12 +49,12 @@ public:
 };
 
 Permissions::Permissions()  //sets all permissions to false
-{	
+{
 	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
 	{
 		permissionsMM[i] = false;
 	}
-	
+
 	for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++)
 	{
 		permissionsIM[i] = false;
@@ -88,15 +88,15 @@ string Permissions::createString() //converts a users permissions into a string 
 		str += baseIOptions[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] + (permissionsI[i - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS] ? (": True") : (": False")) + '\n';
 	}
 
-	return string(str, 0 ,str.length()-1); //returns the string with the last '\n' removed
+	return string(str, 0, str.length() - 1); //returns the string with the last '\n' removed
 }
 
 class User //Contains usernames and passwords of each user, accessed through UserDatabase class
 {
 public:
-	User(long int ID,string _firstName,string _lastName, string _password, Permissions _permissions); //constructor allows easy creating of a user if all the data is already known
+	User(long int ID, string _firstName, string _lastName, string _password, Permissions _permissions); //constructor allows easy creating of a user if all the data is already known
 	User(); //initializes everything to blank and zero
-	
+
 	Permissions permission; //saves the users permissions
 	char firstName[LENGTH_OF_USER_STRINGS]; //saves their firstname
 	char lastName[LENGTH_OF_USER_STRINGS]; //saves their lastname
@@ -105,7 +105,7 @@ public:
 	void remove(bool _deleted); //deletes this user (for logging reasons a user is never actaully deleted, the deleted bool is just set to true)
 	string display(bool showPasswordFeild, bool withPerms); //displays all the user information on the screen
 	bool isDeleted(); //returns a bool representing if a user is deleted
-	
+
 private:
 	bool deleted; //saves if this user has been deleted, if it has been deleted it is not actaully removed for logging purposes
 };
@@ -128,7 +128,7 @@ string User::display(bool showPasswordFeild, bool withPerms) //displays a users 
 	return  firstName + string(", ") + lastName + "\n" //shows name
 		+ "ID: " + to_string(id) + "\n" //thier id
 		+ ((showPasswordFeild) ? ("Password: ******") : ("")) + "\n\n"
-		+ ((withPerms)?(permission.createString()):("")); //shows permissions
+		+ ((withPerms) ? (permission.createString()) : ("")); //shows permissions
 }
 
 bool User::isDeleted() //returns a bool representing if a user is deleted
@@ -171,7 +171,7 @@ public:
 private:
 	vector<User> users; //returns a pointer to a user at a givin index in the vector
 	string filePath;
-	
+
 	int itemsPerPage; //saves how many users should be diaplyed on the screen when choosing from a list of them
 
 	void reload(); //saves the data in the database to the file
@@ -179,7 +179,7 @@ private:
 	long long int authCode;
 };
 
-void UserDatabase::checkCredentials(User **user,string _firstName, string _lastname, string _password, long int id) //checks if the passed peramiters match a user in the databse, if so user points to that user, else user is null
+void UserDatabase::checkCredentials(User **user, string _firstName, string _lastname, string _password, long int id) //checks if the passed peramiters match a user in the databse, if so user points to that user, else user is null
 {
 	vector<User>::iterator it;
 
@@ -245,7 +245,7 @@ vector<User*> UserDatabase::getUsers(bool includeDeleted, bool includeNotDeleted
 }
 
 vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator pointing to the position in which the new users should be inserted
-{ 
+{
 
 	int first, middle, last;
 
@@ -254,6 +254,7 @@ vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator 
 
 	if (users.size() == 0) { //checks if the vector is size zero, if it is returns an ittorator pointing to pos 0
 
+		vector<User>::iterator temp = users.begin();
 		return vector<User>::iterator(users.begin());
 
 	}
@@ -264,7 +265,7 @@ vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator 
 
 	}
 
-	if (id >(users[users.size() - 1].id)) { //checks if the users should go in the last position
+	if (id > (users[users.size() - 1].id)) { //checks if the users should go in the last position
 
 		return vector<User>::iterator(users.end());
 
@@ -309,15 +310,13 @@ User* UserDatabase::Add(User user) //adds the passed user into the database (the
 
 	it = Search(user.id); //finds where the user with newly genrated id should be place in the vector
 
-	if (it._Ptr == NULL) { //If a null pointer was returned an error has occured
-
-		errorMsg(" A position for user with ID: " + to_string(user.id) + " could not be found in the vector.\n Something went wrong with UserDatabase::Search().\n To prevent any issues the user has not been added to the database");
-
-	}
-	else if (it == users.end()) { //if the iterator returned by search points to the end of the vecor the new user need to be added to the end
-
+	if (it == users.end()) //if the iterator returned by search points to the end of the vecor the new user need to be added to the end
+	{ 
 		users.push_back(user);
-
+	}
+	else if (it._Ptr == NULL) //If a null pointer was returned an error has occured
+	{
+		errorMsg("A position for user with ID: " + to_string(user.id) + "could not be found in the vector, somthing went wrong with userdatabase::search(). To prevent any issues the user has not been added to the database");
 	}
 	else if ((*it).id == user.id) { //double checks that the user id does not exist
 
@@ -326,7 +325,7 @@ User* UserDatabase::Add(User user) //adds the passed user into the database (the
 	}
 	else { //inserts the new user into the approperat position as decided by serach
 
-		users.insert(it,user);
+		users.insert(it, user);
 
 	}
 	save(); //saves changes made to the database
@@ -369,6 +368,8 @@ User* UserDatabase::findWith(string _firstname, string _lastname) //find a user 
 
 UserDatabase::UserDatabase(string filename, long long int *_authCode) //sets up the database, makes sure the authcode match, make sure the datafile exists (otherwise it creates it) and calls the load function
 {
+
+	users.clear();
 
 	filePath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
 
@@ -480,7 +481,7 @@ void UserDatabase::reload() //reads data from the save file
 	}
 
 	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file); //reads the items per page from file
-	
+
 	while (fread(&temp, sizeof(temp), 1, file)) //loops untill eof is reached, reads users from file and decrypts them and then pushes them to back of vector
 	{
 		decrypt(temp.password, LENGTH_OF_USER_STRINGS);
@@ -514,7 +515,7 @@ void UserDatabase::save() //saves the data in the database to the file
 
 	fwrite(&authCode, sizeof(authCode), 1, file); //writes authcode to the file to the file
 	fwrite(&itemsPerPage, sizeof(itemsPerPage), 1, file); //writes items per page to the file
-	
+
 	it = users.begin();
 	while (it != users.end()) //loops through full length of vector, encrypts the users then writes them to the file
 	{

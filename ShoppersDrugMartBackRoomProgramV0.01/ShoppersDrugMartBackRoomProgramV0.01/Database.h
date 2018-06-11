@@ -22,7 +22,7 @@ public:
 	int amount;
 	char name[NAME_LEN], desc[DESC_LEN];
 	float price, cost, sale;
-	
+
 	Item();
 	string Display();
 	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
@@ -104,6 +104,8 @@ private:
 ItemDatabase::ItemDatabase(string filename, long long int *_authCode)
 {
 
+	items.clear();
+
 	filepath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
 
 	authCode = *_authCode;
@@ -182,24 +184,27 @@ void ItemDatabase::Add(long long int upc, long long int plu, int amount, string 
 
 	it = Search(upc);
 
-	if (it._Ptr == NULL) {
+	if (it == items.end()) {
 
 		items.push_back(Item(upc, plu, amount, name, desc, price, cost, sale));
 
-	} else if (it == items.end()) {
-
-		items.push_back(Item(upc, plu, amount, name, desc, price, cost, sale));
-
-	} else if ((*it).upc == upc) {
-	
-		errorMsg("In ItemDatabase::Add, the UPC already existed after it should have been checked.");
-	
-	} else {
-	
-		items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
-	
 	}
-	
+	else if (it._Ptr == NULL) {
+
+		errorMsg("A position for item with UPC: " + to_string(upc) + "could not be found in the vector, somthing went wrong with database::search(). To prevent any issues the item has not been added to the database");
+
+	}
+	else if ((*it).upc == upc) {
+
+		errorMsg("In ItemDatabase::Add, the UPC already existed after it should have been checked.");
+
+	}
+	else {
+
+		items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
+
+	}
+
 	Save();
 
 }
@@ -245,11 +250,13 @@ vector<Item>::iterator ItemDatabase::Search(long long int upc) { //returns an it
 
 			first = middle + 1;
 
-		} else if (upc == items[middle].upc || (upc > items[middle - 1].upc && upc < items[middle].upc)) { //if middle equals the new item or if the item is larger then the middle but smaller then the one past the middle it reurns the pos of the middle
+		}
+		else if (upc == items[middle].upc || (upc > items[middle - 1].upc && upc < items[middle].upc)) { //if middle equals the new item or if the item is larger then the middle but smaller then the one past the middle it reurns the pos of the middle
 
 			return vector<Item>::iterator(items.begin() + middle);
 
-		} else { //the new item is smaller than the middle then everything larger than middle can be ruled out
+		}
+		else { //the new item is smaller than the middle then everything larger than middle can be ruled out
 
 			last = middle - 1;
 
@@ -464,7 +471,8 @@ vector<Item*> ItemDatabase::Find(char type, float num) {
 
 		return found;
 
-	} else if (type == 'c') {		// seq search for cost when type is c
+	}
+	else if (type == 'c') {		// seq search for cost when type is c
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -478,7 +486,8 @@ vector<Item*> ItemDatabase::Find(char type, float num) {
 
 		return found;
 
-	} else if (type == 's') {		// seq search for sale when type is s
+	}
+	else if (type == 's') {		// seq search for sale when type is s
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -516,7 +525,8 @@ vector<Item*> ItemDatabase::Find(char type, string text) {
 
 		return found;
 
-	} else if (type == 'd') {		// seq search for desc when type is d
+	}
+	else if (type == 'd') {		// seq search for desc when type is d
 
 		for (int i = 0; i < items.size(); i++) {
 
