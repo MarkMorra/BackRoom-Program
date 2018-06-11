@@ -10,13 +10,13 @@ void insertionSort(vector<Item*>* data , char type)
 	int j;
 	Item* temp;
 
-	type = toupper(type);
+	type = toupper(type); //Turns all input characters to uppercase
 	switch (type)
 	{
 	case 'A':
 		for (int i = 1; i < data->size(); i++)
 		{
-			j = i;
+			j = i; //Performs insertion sort to arrange item database by amount
 			while (j > 0 && ((*data)[j - 1])->amount > ((*data)[j])->amount)
 			{
 				temp = (*data)[j - 1];
@@ -26,7 +26,7 @@ void insertionSort(vector<Item*>* data , char type)
 			}
 		}
 		break;
-	case 'P':
+	case 'P': //Performs insertion sort to arrange item database by price
 		for (int i = 1; i < data->size(); i++)
 		{
 			j = i;
@@ -48,7 +48,7 @@ void selectionSort(vector<User*>* data, char type)
 	int smallest;
 	User* temp;
 
-	type = toupper(type);
+	type = toupper(type); //Turns all input characters to uppercase
 
 	switch (type)
 	{
@@ -59,6 +59,7 @@ void selectionSort(vector<User*>* data, char type)
 			smallest = i;
 			for (int j = i + 1; j < data->size(); j++)
 			{
+				//Performs selection sort to arrange user database by first name
 				if (string((*data)[j]->firstName) < string((*data)[smallest]->firstName))
 				{
 					smallest = j;
@@ -77,6 +78,7 @@ void selectionSort(vector<User*>* data, char type)
 			smallest = i;
 			for (int j = i + 1; j < data->size(); j++)
 			{
+				//Performs selection sort to arrange user database by last name
 				if (string((*data)[j]->lastName) < string((*data)[smallest]->lastName))
 				{
 					smallest = j;
@@ -95,6 +97,7 @@ void selectionSort(vector<User*>* data, char type)
 			smallest = i;
 			for (int j = i + 1; j < data->size(); j++)
 			{
+				//Performs selection sort to arrange user database by ID number
 				if ((*data)[j]->id < (*data)[smallest]->id)
 				{
 					smallest = j;

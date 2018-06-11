@@ -61,7 +61,7 @@ void changeColour(int backGroundBefore, int foreGroundBefore, string str) //sets
 string uppercase(string str)
 {
 
-	for (int i = 0; i < str.length(); i++)
+	for (int i = 0; i < str.length(); i++) //Turns all characters in a string to uppercase
 	{
 		str[i] = toupper(str[i]);
 	}
@@ -71,7 +71,7 @@ string uppercase(string str)
 string lowercase(string str)
 {
 
-	for (int i = 0; i < str.length(); i++)
+	for (int i = 0; i < str.length(); i++) //Turns all cahracters in a string to lowercase
 	{
 		str[i] = tolower(str[i]);
 	}

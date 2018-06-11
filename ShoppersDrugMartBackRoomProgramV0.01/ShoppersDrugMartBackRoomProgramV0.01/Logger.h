@@ -100,7 +100,7 @@ Logger::Logger(string filename, long long int *_authCode)
 	if (file == NULL) //checks if file exists
 	{
 		file = fopen(Filepath.c_str(), "w"); //if it dosent it try to create it
-		if (file == NULL) //checks if it was sucessful
+		if (file == NULL) //checks if it was successful
 		{
 			errorMsg(" Error! Unable to open Logger file; Path: \"" + Filepath + "\" The file pointer was NULL.\n This occured in the Logger constructor. An attempt to create a new file has failed.\n Please check if a folder named data exists in same directory as the executable file."); //displays error msg
 		}
@@ -200,7 +200,7 @@ void Logger::save() //saves the data in the database to the file
 	{
 		temp = *it; //creates a clone of the log so it can be encrypted
 		encrypt(temp.message, CHAR_IN_LOG_MSG); //encrypts the msg
-		encrypt(&(temp.type), 1); //encrypts the cahr
+		encrypt(&(temp.type), 1); //encrypts the char
 		temp.timeLogged += 1000000; //if the value isnt increased it dosent read properly (prehaps the binary version of the data contains an eof character unless incerased?)
 		fwrite(&temp, sizeof(Log), 1, file); //writes to the file
 		it++;
