@@ -18,7 +18,7 @@ void logon(User **user); //where the user enters their login details
 void menu(User **user); //the main menu with all the options
 void changePermissions(Permissions *perms); //allows a users permissions to be cahnged
 void viewLogs(); //allows the user to view logs
-void resetUserDatabase(User **user); //delets the user database
+void resetUserDatabase(User **user); //deletes the user database
 void deleteItemDatabase(User **user); //deletes the item database
 void itemMenu(User **user); //where user can add and modify inventory items
 void addItem(User **user); //allows user to add new items
@@ -1826,22 +1826,25 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 
 		if ((((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))) - 1) == currentPage || userPointers.size() == 0)
 		{
+			//Displays the amount of items that should be on one page at a time
 			itemsOnPage = (userPointers.size() - gUserDatabase->getItemsPerPage() * currentPage);
+			//No extra buttons are needed (not enough items)
 			extraButtons[1] = false;
 		}
 		else
 		{
+			//Extra buttons are shown to move throughout pages
 			itemsOnPage = gUserDatabase->getItemsPerPage();
 			extraButtons[1] = true;
 		}
 
 		if (currentPage == 0)
 		{
-			extraButtons[2] = false;
+			extraButtons[2] = false; //No extra buttons (previous page) if on first page
 		}
 		else
 		{
-			extraButtons[2] = true;
+			extraButtons[2] = true; //If not on first page, extra buttons are shown
 		}
 
 		availableExtraButtons = 0;
@@ -1871,6 +1874,7 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 
 		for (int i = availableExtraButtons; i < itemsOnPage + availableExtraButtons; i++)
 		{
+			//Shows users in the user database has options
 			options[i] = (userPointers[currentPage * gUserDatabase->getItemsPerPage() + (i - availableExtraButtons)]->firstName + string(" ") + userPointers[currentPage * gUserDatabase->getItemsPerPage() + (i - availableExtraButtons)]->lastName);
 			corispondingIndex[j] = i + (NUM_OF_EXTRA_BUTTONS - availableExtraButtons);
 			j++;
@@ -1902,8 +1906,9 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 			break;
 		default:
 			selection = corispondingIndex[selection];
-			delete[] options;
+			delete[] options; //Deletes pointers
 			delete[] corispondingIndex;
+			//Finds users in the user database
 			return gUserDatabase->findWith(userPointers[(selection + currentPage * gUserDatabase->getItemsPerPage()) - NUM_OF_EXTRA_BUTTONS]->id);
 		}
 	} while (true);
