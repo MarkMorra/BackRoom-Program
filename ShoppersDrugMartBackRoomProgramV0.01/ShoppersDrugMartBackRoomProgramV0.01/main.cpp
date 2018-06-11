@@ -1294,14 +1294,14 @@ int navigatableMenu(string title, string options[], int numberOfOptions, int sel
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
-	return navigatableMenu(title, options, headerText, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+	return navigatableMenu(title, options, headerText, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground); //creates a menu for the user to select options from, it returns a int corissponding to their selection
 }
 
 //Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
 int navigatableMenu(string title, string options[],string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
-	return navigatableMenu(title, options, &blank, footerText, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+	return navigatableMenu(title, options, &blank, footerText, numberOfOptions, startingPosition, selectedBackground, selectedForeground); //creates a menu for the user to select options from, it returns a int corissponding to their selection
 
 }
 
