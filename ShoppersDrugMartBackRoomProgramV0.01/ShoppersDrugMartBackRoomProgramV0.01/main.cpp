@@ -756,6 +756,8 @@ void viewLogs()
 				gLogger->display(&headerString, 'l'); //log on and offs
 				break;
 			}
+
+			break;
 		case 3: //the user selected sort by user
 			User * user = getUserWithMenu(false, "You are currently in the view logs menu.\nPlease select a user to view thier logs or use the other buttons to sort the users."); //show all users in a list
 			if (user != NULL) { gLogger->display(&headerString, user->id, 'A'); } //gets all log messages for the selected user
@@ -1571,6 +1573,7 @@ void editExistingUsers(User** user) {
 				break;
 			case 3:
 				changePermissions(&(userToEdit->permission));
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s permissions");
 				break;
 			case 4:
 				system("cls");
@@ -1586,6 +1589,8 @@ void editExistingUsers(User** user) {
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->lastName, uppercase(temp).c_str());
+
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed the name of " + string(copy.firstName) + " " + string(copy.lastName) + " to " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 5:
 				system("cls");
@@ -1599,6 +1604,7 @@ void editExistingUsers(User** user) {
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->password, temp.c_str());
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s password");
 				break;
 			}
 			gUserDatabase->save();

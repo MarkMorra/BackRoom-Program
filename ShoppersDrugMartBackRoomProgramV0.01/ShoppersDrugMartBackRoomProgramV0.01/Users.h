@@ -104,7 +104,7 @@ public:
 	long int id; //saves thier user ID
 	void remove(bool _deleted); //deletes this user (for logging reasons a user is never actaully deleted, the deleted bool is just set to true)
 	string display(bool showPasswordFeild, bool withPerms); //displays all the user information on the screen
-	bool isDeleted();
+	bool isDeleted(); //returns a bool representing if a user is deleted
 	
 private:
 	bool deleted; //saves if this user has been deleted, if it has been deleted it is not actaully removed for logging purposes
@@ -118,7 +118,7 @@ User::User() //default constructor just sets all value to zero
 	deleted = false;
 }
 
-void User::remove(bool _deleted)
+void User::remove(bool _deleted) //toggels deleted state of the user
 {
 	deleted = _deleted;
 }
@@ -131,7 +131,7 @@ string User::display(bool showPasswordFeild, bool withPerms) //displays a users 
 		+ ((withPerms)?(permission.createString()):("")); //shows permissions
 }
 
-bool User::isDeleted()
+bool User::isDeleted() //returns a bool representing if a user is deleted
 {
 	return deleted;
 }
@@ -149,24 +149,24 @@ User::User(long int _ID, string _firstName, string _lastName, string _password, 
 class UserDatabase //main job is to store the array os Users
 {
 public:
-	UserDatabase(string filename, long long int *_authCode);
-	~UserDatabase();
+	UserDatabase(string filename, long long int *_authCode); //sets up the database, makes sure the authcode match, make sure the datafile exists (otherwise it creates it) and calls the load function
+	~UserDatabase(); //makes sure the databse gets saved
 
-	User* findWith(long int ID); //find a user with a specific id and return an index representring thier position
-	User* findWith(string _firstname, string _lastname); //find a user with a specific name and return an index representring thier position
-	void checkCredentials(User **user, string _firstName, string _lastName, string _password, long int id);
-	void clear();
-	int size();
-	void remove(vector<User>::iterator pos, bool _delete);
-	void remove(long int index, bool _delete); //removes the user at that index
+	User* findWith(long int ID); //find a user with a specific id and return an pointer pointing to it
+	User* findWith(string _firstname, string _lastname); //find a user with a specific name and return an return an pointer pointing to it
+	void checkCredentials(User **user, string _firstName, string _lastName, string _password, long int id); //checks if the passed peramiters match a user in the databse, if so user points to that user, else user is null
+	void clear(); //clears the database
+	int size(); //returns the number of users in the users vector
+	void remove(vector<User>::iterator pos, bool _delete); //removes or adds (based on the passed bool) a users pointed to by the passed iterator
+	void remove(long int index, bool _delete); //removes or adds (based on the passed bool) a users with the passed index
 	User* pos(long int index); //returns a pointer to the user with that index
-	vector<User*> getUsers(bool includeDeleted); //returns a vector of pointers to the users
-	vector<User*> getUsers(bool includeDeleted, bool includeNotDeleted);
-	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector
-	User* Add(User user);
-	int getItemsPerPage();
-	void getItemsPerPage(int items);
-	void save();
+	vector<User*> getUsers(bool includeDeleted); //returns a vector of pointers to all the users (including the delted one if the pased bool is true)
+	vector<User*> getUsers(bool includeDeleted, bool includeNotDeleted); //returns a vector of pointers to non-deleted and delted users based on the values of passed bools
+	vector<User>::iterator Search(long int id); //returns an iterator pointing to the position at which the item with the passed id should be placed in the vector (uses a modifyed binary search)
+	User* Add(User user); //adds the passed user into the database (the users id is randomly generated)
+	int getItemsPerPage(); //returns the items per page
+	void getItemsPerPage(int items); //sets the items per page and then saves the database
+	void save(); //reads data from the save file
 
 private:
 	vector<User> users; //returns a pointer to a user at a givin index in the vector
@@ -174,12 +174,12 @@ private:
 	
 	int itemsPerPage; //saves how many users should be diaplyed on the screen when choosing from a list of them
 
-	void reload();
+	void reload(); //saves the data in the database to the file
 
 	long long int authCode;
 };
 
-void UserDatabase::checkCredentials(User **user,string _firstName, string _lastname, string _password, long int id) //returns a pointer to a pointer to a user if the firstname, lastname and password match
+void UserDatabase::checkCredentials(User **user,string _firstName, string _lastname, string _password, long int id) //checks if the passed peramiters match a user in the databse, if so user points to that user, else user is null
 {
 	vector<User>::iterator it;
 
@@ -205,17 +205,17 @@ void UserDatabase::clear() //clears the database
 	reload();
 }
 
-int UserDatabase::size() //returns the number od users in the users vector
+int UserDatabase::size() //returns the number of users in the users vector
 {
 	return users.size();
 }
 
-void UserDatabase::remove(vector<User>::iterator pos, bool _delete)  //removes a users pointed to by the passed iterator
+void UserDatabase::remove(vector<User>::iterator pos, bool _delete) //removes or adds (based on the passed bool) a users pointed to by the passed iterator
 {
 	(*pos).remove(_delete);
 }
 
-void UserDatabase::remove(long int index, bool _delete)  //removes a users with the corisponding index
+void UserDatabase::remove(long int index, bool _delete)  //removes or adds (based on the passed bool) a users with the passed index
 {
 	users[index].remove(_delete);
 }
@@ -225,7 +225,7 @@ User* UserDatabase::pos(long int index) //returns a pointer to a user at a givin
 	return &(users[index]);
 }
 
-vector<User*> UserDatabase::getUsers(bool includeDeleted)
+vector<User*> UserDatabase::getUsers(bool includeDeleted) //returns a vector of pointers to all the users
 {
 
 	return getUsers(includeDeleted, true);
@@ -298,48 +298,48 @@ vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator 
 
 }
 
-User* UserDatabase::Add(User user)
+User* UserDatabase::Add(User user) //adds the passed user into the database (the users id is randomly generated)
 {
 	do
 	{
-		user.id = ((((long long int)rand()) * rand()) % (MAX_USER_ID - MIN_USER_ID)) + MIN_USER_ID;
+		user.id = ((((long long int)rand()) * rand()) % (MAX_USER_ID - MIN_USER_ID)) + MIN_USER_ID; //generates a random id (two random numbers are multiplied to form a long int (this ruins the standard distribution of the rand() but for this purpose is dosent matters that the id generation probolbilites approx. a gaussian distribition))
 	} while (findWith(user.id) != NULL); //checks if the id has already been used
 
 	vector<User>::iterator it;
 
-	it = Search(user.id);
+	it = Search(user.id); //finds where the user with newly genrated id should be place in the vector
 
-	if (it._Ptr == NULL) {
+	if (it._Ptr == NULL) { //If a null pointer was returned an error has occured
+
+		errorMsg("A position for user with ID: " + to_string(user.id) + "could not be found in the vector, somthing went wrong with userdatabase::search(). To prevent any issues the user has not been added to the database")
+
+	}
+	else if (it == users.end()) { //if the iterator returned by search points to the end of the vecor the new user need to be added to the end
 
 		users.push_back(user);
 
 	}
-	else if (it == users.end()) {
-
-		users.push_back(user);
-
-	}
-	else if ((*it).id == user.id) {
+	else if ((*it).id == user.id) { //double checks that the user id does not exist
 
 		cout << "\n This item already exists.";
 
 	}
-	else {
+	else { //inserts the new user into the approperat position as decided by serach
 
 		users.insert(it,user);
 
 	}
-	save();
+	save(); //saves changes made to the database
 
-	return (findWith(user.id));
+	return (findWith(user.id)); //returns pointer to newly added user
 }
 
-int UserDatabase::getItemsPerPage()
+int UserDatabase::getItemsPerPage() //returns the items per page
 {
 	return itemsPerPage;
 }
 
-void UserDatabase::getItemsPerPage(int items)
+void UserDatabase::getItemsPerPage(int items) //sets the items per page and then saves the database
 {
 
 	itemsPerPage = items;
@@ -347,7 +347,7 @@ void UserDatabase::getItemsPerPage(int items)
 
 }
 
-User* UserDatabase::findWith(long int ID)
+User* UserDatabase::findWith(long int ID) //find a user with a specific id and return an pointer pointing to it
 {
 	for (int i = 0; i < int(users.size()); i++)
 	{
@@ -357,7 +357,7 @@ User* UserDatabase::findWith(long int ID)
 	return NULL; //if no user with this id exists -1 is returned;
 }
 
-User* UserDatabase::findWith(string _firstname, string _lastname)
+User* UserDatabase::findWith(string _firstname, string _lastname) //find a user with a specific name and return an return an pointer pointing to it
 {
 
 	for (int i = 0; i < int(users.size()); i++) //loops trough all users to find a user matching the passed strings
@@ -367,12 +367,12 @@ User* UserDatabase::findWith(string _firstname, string _lastname)
 	return NULL; //returns -1 if it could not find a match
 }
 
-UserDatabase::UserDatabase(string filename, long long int *_authCode)
+UserDatabase::UserDatabase(string filename, long long int *_authCode) //sets up the database, makes sure the authcode match, make sure the datafile exists (otherwise it creates it) and calls the load function
 {
 
 	filePath = FILE_PREFIX + filename + FILE_SUFFIX; //sets file path
 
-	itemsPerPage = 10;
+	itemsPerPage = 10; //sets itemsperpage to its defult (gets over written if datafile exisits)
 
 	authCode = *_authCode;
 
@@ -387,7 +387,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 		}
 		else
 		{
-			if (authCode == 0)
+			if (authCode == 0) //if no authcode exists it generated one
 			{
 				authCode = rand() + 1;
 			}
@@ -408,7 +408,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 	if (users.size() < 1) //if there are no users in the data base allow a new admin user to be created
 	{
 
-		string firstname, lastname, password;
+		string firstname, lastname, password; //gets the account info for the new user
 
 		system("cls");
 
@@ -423,7 +423,7 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 
 		Permissions permissions;
 
-		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++)
+		for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //the new user gets full access (this sets all there perms to true)
 		{
 			permissions.permissionsMM[i] = true;
 		}
@@ -444,32 +444,32 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode)
 	}
 }
 
-UserDatabase::~UserDatabase()
+UserDatabase::~UserDatabase() //makes sure the databse gets saved
 {
 	save();
 }
 
-void UserDatabase::reload() 
+void UserDatabase::reload() //reads data from the save file
 {
 
 	FILE *file;
 
 	file = fopen(filePath.c_str(), "r");
 
-	if (file == NULL)
+	if (file == NULL) //checks the the file opened correctly
 	{
 		errorMsg(" Error! Unable to open users file; Path: \"" + filePath + "\" The file pointer was NULL. This occurred in the UserDatabase::reload function\n Please check if the data folder was deleted");
 		return;
 	}
 
-	users.clear();
+	users.clear(); //clears the data in memory
 
 	User temp;
 	long long int temp_authCode;
 
-	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
+	(fread(&temp_authCode, sizeof(temp_authCode), 1, file)); //reads the authcode
 
-	if (authCode == 0)
+	if (authCode == 0) //makes sure the authcode is correct (provents people from swapping the files)
 	{
 		authCode = temp_authCode;
 	}
@@ -479,8 +479,9 @@ void UserDatabase::reload()
 		return;
 	}
 
-	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file);
-	while (fread(&temp, sizeof(temp), 1, file))
+	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file); //reads the items per page from file
+	
+	while (fread(&temp, sizeof(temp), 1, file)) //loops untill eof is reached, reads users from file and decrypts them and then pushes them to back of vector
 	{
 		decrypt(temp.password, LENGTH_OF_USER_STRINGS);
 		decrypt(temp.firstName, LENGTH_OF_USER_STRINGS);
@@ -490,13 +491,13 @@ void UserDatabase::reload()
 
 	fclose(file);
 
-	if (users.size() < 0)
+	if (users.size() < 0) //checks that file was read sucessfully
 	{
 		errorMsg(" Error! There was no data in user database. Please check if the file was deleted.\n Please restart the program to reload from the file. If the error persists place a copy of the same users.dat file that has been deleted in the data folder.\n If this is not an option delete the users.dat file in the data folder. This will unfortunately result in all other data being wiped to prevent data theft.\n We apologize for the inconvenience");
 	}
 }
 
-void UserDatabase::save()
+void UserDatabase::save() //saves the data in the database to the file
 {
 
 	FILE *file;
@@ -505,16 +506,17 @@ void UserDatabase::save()
 
 	file = fopen(filePath.c_str(), "w");
 
-	if (file == NULL)
+	if (file == NULL) //makes sure the file has been opened sucessfully
 	{
 		errorMsg(" Error! Unable to open Logger file; Path: \"" + filePath + "\" The file pointer was NULL. This occurred in the Logger::save function.");
 		return;
 	}
 
-	fwrite(&authCode, sizeof(authCode), 1, file); //writes to the file
-	fwrite(&itemsPerPage, sizeof(itemsPerPage), 1, file);
+	fwrite(&authCode, sizeof(authCode), 1, file); //writes authcode to the file to the file
+	fwrite(&itemsPerPage, sizeof(itemsPerPage), 1, file); //writes items per page to the file
+	
 	it = users.begin();
-	while (it != users.end())
+	while (it != users.end()) //loops through full length of vector, encrypts the users then writes them to the file
 	{
 		temp = *it;
 		encrypt(temp.password, LENGTH_OF_USER_STRINGS);
