@@ -7,6 +7,7 @@
 #include <list>
 #include "ErrorMsg.h"
 #include "Encryptor.h"
+#include "StringFunctions.h"
 using namespace std;
 
 #define FILE_PREFIX ""
@@ -52,7 +53,7 @@ string Item::Display() {
 	sprintf(saletemp, "$%0.2f", sale);
 	sprintf(costtemp, "$%0.2f", cost);
 
-	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + to_string(upc) + "\n PLU:\t\t" + to_string(plu) + "\n Amount:\t\t" + to_string(amount) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
+	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + addZeros(12,upc) + "\n PLU:\t\t" + addZeros(5, plu) + "\n Amount:\t" + to_string(amount) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
 
 }
 
@@ -350,13 +351,13 @@ void ItemDatabase::Save()
 
 string ItemDatabase::buildItem(int index) {
 
-	return (to_string(items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
+	return (addZeros(12, items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
 
 }
 
 string ItemDatabase::buildItem(Item* item) {
 
-	return (to_string(item->upc) + "\t\t" + item->name + "\t\t\t" + to_string(item->amount));
+	return (addZeros(12,item->upc) + "\t\t" + item->name + "\t\t\t" + to_string(item->amount));
 
 }
 

@@ -1264,40 +1264,40 @@ void help(string whereToReturn)//Help screen displays instructions on how to use
 	getchar();//Pauses the screen so user can read help screen until user hits enter key
 }
 
-int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground) //creates a menu for the user to select options from, it returns a int corissponding to their selection
 {
 	string blank = "";
 	return navigatableMenu(title, options, &blank, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
 
 }
 
-int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground) //creates a menu for the user to select options from, it returns a int corissponding to their selection
 {
 	string blank = "";
 	return navigatableMenu(title, options, headerText, blank, numberOfOptions, 0, selectedBackground, selectedForeground);
 }
 
-int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground) //creates a menu for the user to select options from, it returns a int corissponding to their selection
 {
 	string blank = "";
 	return navigatableMenu(title, options, &blank, blank, numberOfOptions, 0, selectedBackground, selectedForeground);
 
 }
 
-int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground) //creates a menu for the user to select options from, it returns a int corissponding to their selection
 {
 	string blank = "";
-	return navigatableMenu(title, options, headerText, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+	return navigatableMenu(title, options, headerText, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground); //creates a menu for the user to select options from, it returns a int corissponding to their selection
 }
 
-int navigatableMenu(string title, string options[],string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[],string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground) //creates a menu for the user to select options from, it returns a int corissponding to their selection
 {
 	string blank = "";
-	return navigatableMenu(title, options, &blank, footerText, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+	return navigatableMenu(title, options, &blank, footerText, numberOfOptions, startingPosition, selectedBackground, selectedForeground); //creates a menu for the user to select options from, it returns a int corissponding to their selection
 
 }
 
-int navigatableMenu(string title, string options[], string *headerText, string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[], string *headerText, string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground) //creates a menu for the user to select options from, it returns a int corissponding to their selection
 {
 
 	char choice[2]; //needs to be two values becasue the up and down keys are two values (-32 & 72 for up and -32 & 80 for down)
