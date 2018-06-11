@@ -22,7 +22,7 @@ void resetUserDatabase(User **user); //deletes the user database
 void deleteItemDatabase(User **user); //deletes the item database
 void itemMenu(User **user); //where user can add and modify inventory items
 void addItem(User **user); //allows user to add new items
-void selectedItem(User **user, int index); //menu that comes up when you select an item
+void selectedItem(User **user, Item* item, int gItemIndex); //menu that comes up when you select an item
 void help(string whereToReturn); //displays the help sceen
 void EditGerneralSetting(User **user); //allows you to edit general settings
 void editUsers(User** user); //allows you to modify user accounts
@@ -512,31 +512,44 @@ void addItem(User **user) {
 	system("cls");
 
 	cout << "UPC: "; //gets upc
-	cin >> upc;
+	do {
+		cin >> upc;
+		if (upc < 0 || upc > 999999999999) { cout << "Invalid UPC. 000000000000 - 999999999999.\nUPC: "; }
+	} while (upc < 0 || upc > 999999999999);
 
 	if ((gItemDatabase->Find('u', upc)).size() == 0) { //continues when a unique upc in entered
 
+	do {
 		cout << "PLU: "; //gets all other value
 		cin >> plu;
+	} while (plu < 0 || plu > 99999);
 
 		cout << "Amount: ";
-		cin >> amount;
+		do {
+			cin >> amount;
+		} while (amount < 0);
 
 		cout << "Name: ";
-		getline(cin, name);
+		getline(cin, name); //second getline to eat the leftovers
 		getline(cin, name);
 
 		cout << "Description: ";
 		getline(cin, desc);
 
 		cout << "Price: ";
-		cin >> price;
+		do {
+			cin >> price;
+		} while (price < 0);
 
 		cout << "Cost: ";
-		cin >> cost;
+		do {
+				cin >> cost;
+		} while (cost < 0);
 
 		cout << "Sale Price: ";
-		cin >> sale;
+		do {
+			cin >> sale;
+		} while (sale < 0);
 
 		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale); //adds the new item to the database
 
@@ -1172,7 +1185,7 @@ void itemMenu(User **user)
 		}
 
 		//Displays Item Database title
-		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, string("Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage())))), amount, start, C_BLUE, C_LGREY);
+		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, (localItemDatabase.size() == 0) ? ("") : (string("Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))))), amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
 

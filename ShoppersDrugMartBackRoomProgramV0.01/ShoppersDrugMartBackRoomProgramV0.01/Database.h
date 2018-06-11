@@ -33,7 +33,7 @@ public:
 
 Item::Item() {
 
-	upc = 0; //Initializes the values for the information saved for each item
+	upc = 0;
 	plu = 0;
 	amount = 0;
 	strcpy(name, "");
@@ -54,7 +54,6 @@ string Item::Display() {
 	sprintf(saletemp, "$%0.2f", sale);
 	sprintf(costtemp, "$%0.2f", cost);
 
-	//Displays the item information here
 	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + addZeros(12,upc) + "\n PLU:\t\t" + addZeros(5, plu) + "\n Amount:\t" + to_string(amount) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
 
 }
@@ -76,15 +75,15 @@ Item::Item(long long int _upc, long long int _plu, int _amount, string _name, st
 class ItemDatabase {
 
 public:
-	ItemDatabase(string filename, long long int *_authCode);
-	~ItemDatabase(); //Constructors and destructors for the Item Database
+	ItemDatabase(string filename, long long int *_authCode); //default constructor for the item database
+	~ItemDatabase();
 	void Clear();
 	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);
-	void Remove(int index); //Functions for the item database that allows user to clear, add, remove, save items etc.
+	void Remove(int index);
 	vector<Item>::iterator Search(long long int upc);
 	string buildItem(int index);
 	string buildItem(Item* item);
-	vector<Item*> Find(); //Vectors that hold the contents of the item database so they can be found easily
+	vector<Item*> Find();
 	vector<Item*> Find(char type, long long int num);
 	vector<Item*> Find(char type, float num);
 	vector<Item*> Find(char type, string text);
@@ -188,27 +187,27 @@ void ItemDatabase::Add(long long int upc, long long int plu, int amount, string 
 	it = Search(upc);
 
 	if (it == items.end()) {
-		//Sends new item information in the vector to the back of the vector
+
 		items.push_back(Item(upc, plu, amount, name, desc, price, cost, sale));
 
 	}
 	else if (it._Ptr == NULL) {
-		//Display error message if an item being searched is not found
+
 		errorMsg("A position for item with UPC: " + to_string(upc) + "could not be found in the vector, somthing went wrong with database::search(). To prevent any issues the item has not been added to the database");
 
 	}
 	else if ((*it).upc == upc) {
-		//Displays error message if upc codes match
+
 		errorMsg("In ItemDatabase::Add, the UPC already existed after it should have been checked.");
 
 	}
 	else {
-		//Inserts item information into the item database vector
+
 		items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
 
 	}
 
-	Save(); //Saves item database information
+	Save();
 
 }
 
@@ -266,7 +265,7 @@ vector<Item>::iterator ItemDatabase::Search(long long int upc) { //returns an it
 		}
 
 	}
-	//Error message displays if a binary search cannot find the desired item
+
 	errorMsg(" The binary search in Item Database::Search has failed and was unable to find the correct position for " + to_string(upc) + ".\n This item will not be added to the database."); //if the above while loops exits than an error occured
 	return vector<Item>::iterator();
 
@@ -279,7 +278,7 @@ void ItemDatabase::Reload() {
 	file = fopen(filepath.c_str(), "r");
 
 	if (file == NULL)
-	{ //Error message is displayed if the program cannot open the user database file
+	{
 		errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the Logger::reload function\n Please check if the data folder was deleted.");
 		return;
 	}
@@ -288,7 +287,7 @@ void ItemDatabase::Reload() {
 
 	Item temp;
 	long long int temp_authCode;
-	//Reads the item database file
+
 	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
 
 	if (authCode == 0)
@@ -296,7 +295,7 @@ void ItemDatabase::Reload() {
 		authCode = temp_authCode;
 	}
 	else if (authCode != temp_authCode)
-	{//Displays error message if necessary
+	{
 		errorMsg(" Error; authCode mismatch in item.dat. This is most likely caused by someone tampering with the data files.\n To prevent data theft, the item database file will be deleted unless returned to its original state.");
 		return;
 	}
@@ -305,7 +304,7 @@ void ItemDatabase::Reload() {
 
 	while (fread(&temp, sizeof(temp), 1, file))
 	{
-		//Decrypts the name and description of items in the item database file so the user can read it
+
 		decrypt(temp.name, NAME_LEN);
 		decrypt(temp.desc, DESC_LEN);
 
@@ -325,7 +324,7 @@ void ItemDatabase::Save()
 	file = fopen(filepath.c_str(), "w");
 
 	if (file == NULL)
-	{ //Displays error message is item database file is not found
+	{
 		errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the ItemDatabase::save function");
 		return;
 	}
@@ -338,11 +337,10 @@ void ItemDatabase::Save()
 	while (it != items.end())
 	{
 		temp = *it;
-		//Encrypts the name and description of items in the database
+
 		encrypt(temp.name, NAME_LEN);
 		encrypt(temp.desc, DESC_LEN);
 
-		//Writes encypt messages to the item database file
 		fwrite(&temp, sizeof(temp), 1, file);
 		it++;
 
@@ -352,28 +350,24 @@ void ItemDatabase::Save()
 
 }
 
-//Sends the item to main based on an index input
 string ItemDatabase::buildItem(int index) {
 
 	return (addZeros(12, items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
 
 }
 
-//Sends the item to main based on the item name
 string ItemDatabase::buildItem(Item* item) {
 
 	return (addZeros(12,item->upc) + "\t\t" + item->name + "\t\t\t" + to_string(item->amount));
 
 }
 
-//Sends the position of the item to main
 Item* ItemDatabase::pos(int index) {
 
 	return &(items[index]);
 
 }
 
-//Finds an item in the item database
 vector<Item*> ItemDatabase::Find() {
 
 	vector<Item*> found;
