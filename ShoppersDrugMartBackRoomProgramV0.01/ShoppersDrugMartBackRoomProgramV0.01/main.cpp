@@ -11,57 +11,67 @@ using namespace std;
 #define VERSION "0.83"
 #define FOLDER_NAME "data"
 
-void onStart();
-void welcome();
-void testMenu();
-void logon(User **user);
-void menu(User **user);
-void changePermissions(Permissions *perms);
-void viewLogs();
-void resetUserDatabase(User **user);
-void deleteItemDatabase(User **user);
-void itemMenu(User **user);
-void addItem(User **user);
-void selectedItem(User **user, int index);
-void help(string whereToReturn);
-void EditGerneralSetting();
-void editUsers(User** user);
-User* createNewUser(User** user);
-User* getUserWithMenu(bool includeDeleted, string title);
-void editExistingUsers(User** user);
-User* getUserWithMenu(bool includeDeleted, string *headerText, string title);
-int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
+void onStart(); //called whan the program begins
+void welcome(); //displays welcome screen
+//void testMenu();
+void logon(User **user); //where the user enters their login details
+void menu(User **user); //the main menu with all the options
+void changePermissions(Permissions *perms); //allows a users permissions to be cahnged
+void viewLogs(); //allows the user to view logs
+void resetUserDatabase(User **user); //delets the user database
+void deleteItemDatabase(User **user); //deletes the item database
+void itemMenu(User **user); //where user can add and modify inventory items
+void addItem(User **user); //allows user to add new items
+void selectedItem(User **user, int index); //menu that comes up when you select an item
+void help(string whereToReturn); //displays the help sceen
+void EditGerneralSetting(User **user); //allows you to edit general settings
+void editUsers(User** user); //allows you to modify user accounts
+User* createNewUser(User** user); //allows ou to create new users
+User* getUserWithMenu(bool includeDeleted, string title); //displays a menu with a list of users acccount that the user can select
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string title);
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *headerText, string title);
+void editExistingUsers(User** user); //allows the user to modify profiles of account that have not been deleted
+void editDeletedUsers(User** user); //allows the user to restore deleted accounts
+int navigatableMenu(string title, string options[], int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground); //creates a menu for the user to select options from, it returns a int corissponding to their selection
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], int numberOfOptions, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
+int navigatableMenu(string title, string options[], string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 int navigatableMenu(string title, string options[], string *headerText, string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground);
 
 
-Logger *gLogger;
+Logger *gLogger; //pointers the logger, item database and user database controllers
 ItemDatabase *gItemDatabase;
 UserDatabase *gUserDatabase;
 
 int main() {
 
 	User **user = new User*;
+	bool done = false;
 
 	onStart(); //Initializes important variables such as for databases, menu highlights etc. when program first starts
 	welcome(); //First display of the program shows a welcome screen to the user
 
-	while (true)
+	do// loops untill the user selects exit in logon
 	{
-		logon(user);
-		if (*user == NULL) { return EXIT_SUCCESS; }
-		menu(user);
-	}
+		logon(user); //returns null if user selects exit
+		if (*user == NULL)
+		{ 
+			done = true;
+		}
+		else
+		{
+			menu(user); //return when user selects exit
+		}
+	} while (!done);
 
-	delete *user;
+	delete *user; //deletes pointers
 	delete user;
 	delete gLogger;
 	delete gItemDatabase;
 	delete gUserDatabase;
 
-
+	return EXIT_SUCCESS;
 }
 
 void onStart() {
@@ -77,7 +87,7 @@ void onStart() {
 
 	CreateDirectory(FOLDER_NAME, NULL); //creates the data folder
 
-	gUserDatabase = new UserDatabase(FOLDER_NAME, authCode);
+	gUserDatabase = new UserDatabase(FOLDER_NAME, authCode); //creates the logger, item database and user database controllers, the authcode is code stored in the datafiles to ensure the files have been tampered with
 	gLogger = new Logger(FOLDER_NAME, authCode);
 	gItemDatabase = new ItemDatabase(FOLDER_NAME, authCode);
 
@@ -86,11 +96,11 @@ void onStart() {
 
 void welcome() { //Welcome function to display opening message when program first runs 
 
-	char choice;
+	char choice; //the users choice
 
 	system("cls"); //Clears the screen
 
-	changeColour();
+	changeColour();//sets the screen coulurs to their default
 
 	//Displays Welcome message when user runs the program
 	cout << endl << "\t\t\t\t _    _      _                          _ ";
@@ -113,14 +123,12 @@ void welcome() { //Welcome function to display opening message when program firs
 	cout << endl << endl << " Shoppers Backroom Program Version " << VERSION << endl << endl << endl << " Press enter to continue...";
 
 	//If user presses page up button (this option is not displayed as it is only for testing), they reach a test menu, if they press enter they proceed to regular menu
-	while ((choice = _getch()) != 13 && choice != 73);
-
-	if (choice == 73)
-	{
-		testMenu();
-	}
-
+	while ((choice = _getch()) != 13);
 }
+
+/* 
+
+TEST MENU, NO LONGER NEEDED
 
 void testMenu() //this function is only for testing and can be accssed by pressing page up on the welcome screen
 {
@@ -232,7 +240,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 			break;
 		case '5':
 
-			vector<Item*> *retItems; //returned items
+			vector<Item*> retItems; //returned items
 
 			cout << "1. display all items\n2. search by upc";
 			do {
@@ -246,7 +254,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 				system("cls");
 
-				for (int i = 0; i < retItems->size(); i++) {
+				for (int i = 0; i < retItems.size(); i++) {
 
 					cout << (*retItems)[i]->Display();
 
@@ -265,7 +273,7 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 
 				retItems = gItemDatabase->Find('u', tempupc);
 
-				cout << (*retItems)[0]->Display();
+				cout << (retItems)[0]->Display();
 
 				break;
 			}
@@ -298,33 +306,35 @@ void testMenu() //this function is only for testing and can be accssed by pressi
 	}
 
 }
+*/
 
 void logon(User **user) {
 
 	string first, last, password, temp; //saves the logon information
-	long int id;
+	long int id; //the users id
 	char passChar; //saves the most recent character enetered by the user when typing their password
 	char choice;
 	string choiceName[] = { "Help" , "Log On" , "Exit Program" };
-	int selection = 0;
+	int selection = 0; //saves thevalue returned by nav menu
 
 
 	do
 	{
+		//cerates the menu for the user
 		selection = navigatableMenu("\n\t\t _    _      _                          _ \n\t\t| |  | |    | |                        | |\n\t\t| |  | | ___| | ___ ___  _ __ ___   ___| |\n\t\t| |/\\| |/ _ \\ |/ __/ _ \\| '_ ` _ \\ / _ \\ |\n\t\t\\  /\\  /  __/ | (_| (_) | | | | | |  __/_|\n\t\t \\/  \\/ \\___|_|\\___\\___/|_| |_| |_|\\___(_)", choiceName, 3, selection, C_BLUE, C_WHITE);
 
-		switch (selection)
+		switch (selection) //calls diffrent functions based on the users selection
 		{
-		case 0:
+		case 0: //user selected help
 			help("Log On Screen");
 			break;
 		case 1: //user wants to logon
 			do
 			{
-				*user = NULL;
+				*user = NULL; //intiailzes variables
 				password = "";
 
-				system("cls"); //Clears the screen
+				system("cls"); //gets first name
 				cout << " Please enter your first name: ";
 				cin.clear();
 				fflush(stdin);
@@ -333,7 +343,7 @@ void logon(User **user) {
 					getline(cin, first);
 				} while (first == "");
 
-				system("cls");
+				system("cls"); //gets last name
 				fflush(stdin);
 				cout << " Please enter your last name: ";
 				cin.clear();
@@ -348,12 +358,12 @@ void logon(User **user) {
 				cin >> id;
 				getline(cin, temp); //this is to eat the character left over by cin
 
-				do
+				do //gets the users password
 				{
 					system("cls"); //Clears the screen
 					cout << " Please enter your password: ";
 
-					for (int i = 0; i < password.length(); i++)
+					for (int i = 0; i < password.length(); i++) //displays * accoring to how many characters the user has enterd
 					{
 						cout << '*';
 					}
@@ -362,7 +372,7 @@ void logon(User **user) {
 					do
 					{
 						passChar = _getch();
-					} while (passChar == '\0');
+					} while (passChar == '\0'); //ignores /0 characters in the input stream
 
 
 					if (passChar == '\b') //if the character entered is backspace it deletes the last character in the password 
@@ -372,18 +382,16 @@ void logon(User **user) {
 							password.pop_back(); //deletes the last character
 						}
 					}
-					else if (passChar != 13)
+					else if (passChar != 13) //adds the entered character to the password string
 					{
 						password += passChar;
 					}
 
+				} while (passChar != 13); //keeps going untill they press enter
 
+				gUserDatabase->checkCredentials(user, first, last, password, id); //checks if the inputed values corrispond to an account
 
-				} while (passChar != 13);
-
-				gUserDatabase->checkCredentials(user, first, last, password, id);
-
-				if (*user == NULL)
+				if (*user == NULL) //if it is invlaid it askes the user if they would like to try again
 				{
 					system("cls");
 					cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
@@ -399,24 +407,24 @@ void logon(User **user) {
 
 					} while (choice != 'Y' && choice != 'N');
 				}
-				else
+				else //if it is valid it logs this activity
 				{
 					gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged on");
 				}
 
-			} while (choice == 'Y' && *user == NULL);
+			} while (choice == 'Y' && *user == NULL); //reptets if the user selected retry
 			return;
 		case 2:
-			*user = NULL;
+			*user = NULL; //if the user selected exit it return null
 			return;
 		}
 
-	} while (true);
+	} while (true); //keeps looping (User must select exit to trigger return statement)
 
 
 }
 
-void menu(User **user) //Cady's changes start here
+void menu(User **user)
 {
 	int selection = 0;
 	string allOptions[] = { "View Items" , "View Logs" , "Edit User Accounts" , "Edit General Settings" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database" }; //all of the strings corrispinging to all the possible menu options
@@ -434,7 +442,7 @@ void menu(User **user) //Cady's changes start here
 
 	}
 
-	avalibleOptions = new string[amount];
+	avalibleOptions = new string[amount]; //creates arrays with the length of how many permissions the user has access too
 	corrispondingIndex = new int[amount];
 
 	avalibleOptions[0] = "Log Out"; //all users have access to logout
@@ -456,10 +464,10 @@ void menu(User **user) //Cady's changes start here
 
 	do
 	{
-
+		//displays menu
 		selection = navigatableMenu("\n\t\t  __  __                  \n\t\t |  \\/  |                 \n\t\t | \\  / | ___ _ __  _   _ \n\t\t | |\\/| |/ _ \\  _ \\| | | |\n\t\t | |  | |  __/ | | | |_| |\n\t\t |_|  |_|\\___|_| |_|\\__,_|\n\n The options you see listed are based on your permission level.\n If you believe there is a mistake with your permissions, see your manager", avalibleOptions, amount, selection, C_BLUE, C_LGREY);
 
-		switch (corrispondingIndex[selection]) //calls the selected function when they press enter
+		switch (corrispondingIndex[selection]) //calls the selected function based on what they selectedin nav menu
 		{
 		case 1:
 			itemMenu(user);
@@ -471,7 +479,7 @@ void menu(User **user) //Cady's changes start here
 			editUsers(user);
 			break;
 		case 4:
-			EditGerneralSetting();
+			EditGerneralSetting(user);
 			break;
 		case 5:
 			deleteItemDatabase(user);
@@ -481,9 +489,9 @@ void menu(User **user) //Cady's changes start here
 			break;
 		}
 
-	} while (corrispondingIndex[selection] != 0);
+	} while (corrispondingIndex[selection] != 0); //loops untill the user selectes exit
 
-	gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged off");
+	gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " logged off"); //logs that they logged off
 
 	delete[] corrispondingIndex;
 	delete[] avalibleOptions;
@@ -492,7 +500,7 @@ void menu(User **user) //Cady's changes start here
 
 void addItem(User **user) {
 
-	long long int upc;
+	long long int upc; //the temp varailbe to save the information for the new item
 	long long int plu;
 	int amount;
 	string name;
@@ -503,12 +511,12 @@ void addItem(User **user) {
 
 	system("cls");
 
-	cout << "UPC: ";
+	cout << "UPC: "; //gets upc
 	cin >> upc;
 
-	if ((gItemDatabase->Find('u', upc))->size() == 0) {
+	if ((gItemDatabase->Find('u', upc)).size() == 0) { //continues when a unique upc in entered
 
-		cout << "PLU: ";
+		cout << "PLU: "; //gets all other value
 		cin >> plu;
 
 		cout << "Amount: ";
@@ -530,35 +538,106 @@ void addItem(User **user) {
 		cout << "Sale Price: ";
 		cin >> sale;
 
-		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale);
+		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale); //adds the new item to the database
 
-		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item")));
+		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item"))); //creates a log message
 
 	}
 	else {
 
-		cout << "This item already exists.";
+		cout << "This item already exists."; //dispalys error if upc code is already used
 
 	}
 
 }
 
-void selectedItem(User **user, int index) {
+void modifyItem(User **user, Item* item) {
+	
+	int selection;
+	
+	do {
+		
 
-	string header = (gItemDatabase->pos(index))->Display();
+		char pricetemp[50];
+		char saletemp[50];
+		char costtemp[50];
+
+		sprintf(pricetemp, "$%0.2f", item->price);
+		sprintf(saletemp, "$%0.2f", item->sale);
+		sprintf(costtemp, "$%0.2f", item->cost);
+
+		string stemp;
+		float temp;
+
+		string availibleOptions[] = { "Back to menu", string("Name: ") + item->name, string("Description: ") + item->desc, string("Price: ") + pricetemp, string("Cost: ") + costtemp, string("Sale: ") + saletemp };
+
+		selection = navigatableMenu(string("UPC: ") + to_string(item->upc), availibleOptions, 5, C_BLUE, C_LGREY);
+
+		switch (selection) {
+		case 1: //name change
+			cout << "Enter the new name: ";
+			getline(cin, stemp);
+			strcpy(item->name, stemp.c_str());
+			gItemDatabase->Save();
+			break;
+		case 2: //desc change
+			cout << "Enter the new description: ";
+			getline(cin, stemp);
+			strcpy(item->desc, stemp.c_str());
+			gItemDatabase->Save();
+			break;
+		case 3: //price change
+			cout << "Enter the new price: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->price = temp;
+			gItemDatabase->Save();
+			break;
+		case 4: //cost change
+			cout << "Enter the new cost: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->cost = temp;
+			gItemDatabase->Save();
+			break;
+		case 5: //sale change
+			float temp;
+			cout << "Enter the new sale price: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->price = temp;
+			gItemDatabase->Save();
+			break;
+			}
+
+	} while (selection != 0);
+
+}
+
+void selectedItem(User **user, Item* item, int gItemIndex) {
+
 	string *availibleOptions;
-	string allOptions[] = { "Back to Item Menu", "Modify item", "Delete item" };
+	string allOptions[] = { "Back to Item Menu", "Modify amount", "Modify item", "Delete item" };
 	int selection;
 	int *corrispondingIndex;
-	int amount = 1; //starts at one because everyone on this page has access to back to menu
+	int amount; 
 
 	do {
+
+		string header = item->Display();
+		amount = 1; //starts at one because everyone on this page has access to back to menu
 
 		//calcs number of perms
 		for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //counts how many permission the current user has access too
 		{
 
-			if ((*user)->permission.permissionsIM[i] == true)
+			if ((*user)->permission.permissionsI[i] == true)
 			{
 				amount++;
 			}
@@ -592,12 +671,23 @@ void selectedItem(User **user, int index) {
 
 		switch (selection) {
 		case 1:
-			errorMsg("modify item");
-			//modify the item
+			int temp;
+			cout << "Enter the new amount: ";
+			do {
+				cin >> temp;
+			} while (!(temp >= 0));
+
+			item->amount = temp;
+			gItemDatabase->Save();
 			break;
 		case 2:
-			errorMsg("remove item");
-			//remove the item
+			modifyItem(user, item);
+			break;
+		case 3:
+			gItemDatabase->Remove(gItemIndex);
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
+			errorMsg("Item removed.");
+			selection = 0;
 			break;
 		}
 
@@ -610,10 +700,10 @@ void selectedItem(User **user, int index) {
 
 void viewLogs()
 {
-	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User" };
-	int numOfOptions = 4;
-	string SearchByType[] = { "View Log Ons and Log Offs" , "View Price Changes" , "View Amount Changes" , "View Item Information Changes" };
-	int numOfSearchByTypeOptions = 4;
+	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User" }; //all the options availible to the usre
+	int const numOfOptions = 4;
+	string SearchByType[] = { "View miscellaneous" , "View Amount Changes" , "View New Item Creations" , "View Item Information Changes" , "View User Information Changes" , "View User Account Creations" ,"View Log Ons and Log Offs"}; //options in the search by type sub menu
+	int const numOfSearchByTypeOptions = 7;
 
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
 	int choice = 0; //saves your selection on the main view logs menu
@@ -623,57 +713,69 @@ void viewLogs()
 
 	do
 	{
-		if (headerString == "")
+		if (headerString == "") //displays message if there are no logs that meet search requitments
 		{
 			headerString = " There were no Logs that mactched your search requirements";
 		}
 
+		//sows a menu to the user
 		choice = navigatableMenu("You are currently in the view logs menu.\nBelow are options that allow you to sort the logs.", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
-		switch (choice)
+		switch (choice) //based on choice in nav menu
 		{
 		case 0:
 			return; //returns if they pick return to main menu
 		case 1:
 			gLogger->display(&headerString); //fills the string with all the logs when they select view all
 			break;
-		case 2:
+		case 2: //the user selected sort by type
+
 			choice = navigatableMenu("You are currently in the view logs menu.\nPlease select which type of log you would like to view.", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
 
 			switch (choice)
 			{
 			case 0:
-				gLogger->display(&headerString, 'l');
+				gLogger->display(&headerString, 'g'); //view misc
 				break;
 			case 1:
-				gLogger->display(&headerString, 'p');
+				gLogger->display(&headerString, 'a'); //view amount cahnges
 				break;
 			case 2:
-				gLogger->display(&headerString, 'a');
+				gLogger->display(&headerString, 'n'); //view item creations
 				break;
 			case 3:
-				gLogger->display(&headerString, 'i');
+				gLogger->display(&headerString, 'i'); //view item information changes
+				break;
+			case 4:
+				gLogger->display(&headerString, 'u'); //user information changes
+				break;
+			case 5:
+				gLogger->display(&headerString, 'm'); //new users added
+				break;
+			case 6:
+				gLogger->display(&headerString, 'l'); //log on and offs
+				break;
 			}
+
 			break;
-		case 3:
-			User * user = getUserWithMenu(false, "You are currently in the view logs menu.\nPlease select a user to view thier logs or use the other buttons to sort the users.");
-			if (user != NULL) { gLogger->display(&headerString, user->id, 'A'); }
+		case 3: //the user selected sort by user
+			User * user = getUserWithMenu(false, "You are currently in the view logs menu.\nPlease select a user to view thier logs or use the other buttons to sort the users."); //show all users in a list
+			if (user != NULL) { gLogger->display(&headerString, user->id, 'A'); } //gets all log messages for the selected user
 
 		}
 	} while (true);
-
 
 }
 
 void resetUserDatabase(User **user)
 {
-	string options[] = { " NO, I DO NOT WANT TO DELETE THE DATABASE", " YES, I WANT TO PERMANENTLY DELETE THE USER DATABASE" };
+	string options[] = { " NO, I DO NOT WANT TO DELETE THE DATABASE", " YES, I WANT TO PERMANENTLY DELETE THE USER DATABASE" }; //options in nav menu
 	int numOfOptions = 2;
 
-	int selection;
-	string password;
+	int selection;//saves choice from nav menu
+	string password; //used when user is asked to re enter password
 	char passChar, choice;
-	User **returnedUser = new User*;
+	User **returnedUser = new User*; //when a pass check is completed a user pointer is returned
 
 	selection = navigatableMenu(" ARE YOU ABSOLUTELY SURE THAT YOU WANT TO RESET THE USER DATABASE?\n THIS OPERATION CANNOT BE UNDONE!", options, numOfOptions, C_BLUE, C_WHITE); //created menu to ask user
 	if (selection == 0) //true if they pick no
@@ -715,14 +817,14 @@ void resetUserDatabase(User **user)
 				}
 			} while (passChar != 13); //continues if they press enter
 
-			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the 
+			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the password is valid
 
-			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
+			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id)) //checks id entered password is valid
 			{
 				system("cls");
 				cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
 
-				do
+				do //loops untill the user selects a vlid option
 				{
 					fflush(stdin);
 					do
@@ -733,16 +835,20 @@ void resetUserDatabase(User **user)
 
 				} while (choice != 'Y' && choice != 'N');
 			}
-			else
+			else //the password was valid
 			{
-				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the UserDatabase");
-				gUserDatabase->clear();
-				long int userID = (*user)->id;
-				gUserDatabase->Add(**user); //adds the current user back to the database (deleteing the database does not delete your own account)
-				*user = gUserDatabase->findWith(userID);
+				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the UserDatabase"); //creates log msg
+				User currentUser = **user; //saves a copy of the currently logged in user
+				gUserDatabase->clear(); //deletes databae
+				*user = gUserDatabase->Add(currentUser); //adds the current user back to the database (deleteing the database does not delete your own account)
 				choice = 'N'; //this is to stop the while loop
+
+				system("cls"); //shows mesage to verify deletion
+				cout << "User database cleared sucessfully\nYour new user id is: " << (*user)->id << "\n\nPress enter to continue...";
+
+				while (_getch() != 13);
 			}
-		} while (choice == 'Y');
+		} while (choice == 'Y'); //loops if they wanted to rrtry enting their password
 	}
 
 	delete returnedUser;
@@ -750,13 +856,13 @@ void resetUserDatabase(User **user)
 
 void deleteItemDatabase(User **user)
 {
-	string options[] = { " NO, I DO NOT WANT TO DELETE THE ITEM DATABASE", " YES, I WANT TO PERMANENTLY DELETE THE ITEM DATABASE" };
+	string options[] = { " NO, I DO NOT WANT TO DELETE THE ITEM DATABASE", " YES, I WANT TO PERMANENTLY DELETE THE ITEM DATABASE" }; //options for nav menu
 	int numOfOptions = 2;
 
-	int selection;
-	string password;
+	int selection; //the users selction from nav menu
+	string password; //used when user is asked to re enter password
 	char passChar, choice;
-	User **returnedUser = new User*;
+	User **returnedUser = new User*; //when a pass check is completed a user pointer is returned
 
 	selection = navigatableMenu(" ARE YOU ABSOLUTELY SURE THAT YOU WANT TO RESET THE ITEM DATABASE?\n THIS OPERATION CANNOT BE UNDONE!", options, numOfOptions, C_BLUE, C_WHITE); //created menu to ask user
 	if (selection == 0) //true if they pick no
@@ -798,14 +904,14 @@ void deleteItemDatabase(User **user)
 				}
 			} while (passChar != 13); //continues if they press enter
 
-			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the 
+			gUserDatabase->checkCredentials(returnedUser, (*user)->firstName, (*user)->lastName, password, (*user)->id);  //checks if the password entered is valid
 
-			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id))
+			if ((*returnedUser == NULL) ? (true) : ((*user)->id != (*returnedUser)->id)) // checks if password is valid
 			{
 				system("cls");
-				cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)";
+				cout << " Error, invalid credentials\n\n Would you like to try again? (Y/N)"; //displys error msg
 
-				do
+				do //aks if user want to try again
 				{
 					fflush(stdin);
 					do
@@ -821,6 +927,11 @@ void deleteItemDatabase(User **user)
 				gLogger->addItem(-1, -1, (*user)->id, 'l', string((*user)->firstName) + ' ' + (*user)->lastName + " Deleted the ItemDatabase");
 				gItemDatabase->Clear();
 				choice = 'N'; //this is to stop the while loop
+
+				system("cls");
+				cout << "Item database cleared sucessfully\n\nPress enter to continue...";
+
+				while (_getch() != 13);
 			}
 		} while (choice == 'Y');
 	}
@@ -831,9 +942,11 @@ void deleteItemDatabase(User **user)
 void itemMenu(User **user)
 {
 
+	vector<Item*> localItemDatabase = gItemDatabase->Find();
+
 	const int NON_OTHER_OPTIONS = 2; //how many options in all options are not categorized as "other"
 	const int otherOptions = 3; //how many other options there are
-	int selection = (int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage())), start = 0, currentPage = 0;
+	int selection = (int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage())), start = 0, currentPage = 0;
 	string pageOptions[] = { "Next Page", "Previous Page" };
 	string allOptions[] = { "Return to Main Menu", "Add Item", "Sort by UPC", "Sort by Price", "Sort by Amount" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
@@ -852,10 +965,11 @@ void itemMenu(User **user)
 		absolutePos[0] = 0;
 		selection = absolutePos[selection];
 
-		//calcs number of items
-		if ((currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) || gItemDatabase->length() == 0) { //if last page or if empty database
 
-			numItemsPage = (gItemDatabase->length() - (currentPage * gItemDatabase->GetItemsPerPage())); //calculates how many items there are on the last page and adjusts the amount accordingly
+		//calcs number of items
+		if ((currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) || localItemDatabase.size() == 0) { //if last page or if empty database
+
+			numItemsPage = (localItemDatabase.size() - (currentPage * gItemDatabase->GetItemsPerPage())); //calculates how many items there are on the last page and adjusts the amount accordingly
 
 		}
 		else {
@@ -869,7 +983,7 @@ void itemMenu(User **user)
 		//calcs number of nav buttons
 		if (currentPage == 0) { //if first page, we only want to show next page
 
-			if ((currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) || gItemDatabase->length() == 0) {
+			if ((currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) || localItemDatabase.size() == 0) {
 
 				navButtons = 0;
 				amtNavBut = 0;
@@ -884,7 +998,7 @@ void itemMenu(User **user)
 			}
 
 		}
-		else if (currentPage == ((int)(ceil((float)gItemDatabase->length() / gItemDatabase->GetItemsPerPage()))) - 1) { //if its the last page, only show previous page option
+		else if (currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) { //if its the last page, only show previous page option
 
 			navButtons = 2;
 			amtNavBut = 1;
@@ -922,7 +1036,7 @@ void itemMenu(User **user)
 
 		for (j; j < numItemsPage; j++) { //add items to navigatable menu
 
-			avalibleOptions[j] = gItemDatabase->buildItem((currentPage * gItemDatabase->GetItemsPerPage()) + j);
+			avalibleOptions[j] = gItemDatabase->buildItem(localItemDatabase[(currentPage * gItemDatabase->GetItemsPerPage()) + j]);
 
 			if (j == numItemsPage - 1) { avalibleOptions[j] += '\n'; }
 
@@ -1055,11 +1169,13 @@ void itemMenu(User **user)
 		}
 
 		//Displays Item Database title
-		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((gItemDatabase->length() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, amount, start, C_BLUE, C_LGREY);
+		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, string("Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage())))), amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
 
-			selectedItem(user, (currentPage*gItemDatabase->GetItemsPerPage() + selection));
+			selectedItem(user, localItemDatabase[currentPage*gItemDatabase->GetItemsPerPage() + selection], currentPage*gItemDatabase->GetItemsPerPage() + selection);
+
+			localItemDatabase = gItemDatabase->Find();
 
 		}
 		else {
@@ -1075,16 +1191,17 @@ void itemMenu(User **user)
 			case 2:
 				break;
 			case 3:
-				addItem(user);
+				addItem(user); //run the function to create a new item
+				localItemDatabase = gItemDatabase->Find(); //update the local vector of items to include this new item
 				break;
 			case 4:
-
+				localItemDatabase = gItemDatabase->Find(); //sets the local vector of items to the global item database, which is sorted by upc
 				break;
 			case 5:
-
+				insertionSort(&localItemDatabase, 'P'); //sort the local vector of items by their price
 				break;
 			case 6:
-
+				insertionSort(&localItemDatabase, 'A'); //sort the local vector of items by the amount
 				break;
 			}
 
@@ -1171,6 +1288,13 @@ int navigatableMenu(string title, string options[], string *headerText, int numb
 {
 	string blank = "";
 	return navigatableMenu(title, options, headerText, blank, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+}
+
+int navigatableMenu(string title, string options[],string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
+{
+	string blank = "";
+	return navigatableMenu(title, options, &blank, footerText, numberOfOptions, startingPosition, selectedBackground, selectedForeground);
+
 }
 
 int navigatableMenu(string title, string options[], string *headerText, string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
@@ -1278,7 +1402,7 @@ int navigatableMenu(string title, string options[], string *headerText, string f
 	return selection;
 }
 
-void EditGerneralSetting() {
+void EditGerneralSetting(User **user) {
 
 	int selection = 0;
 	int temp;
@@ -1308,6 +1432,7 @@ void EditGerneralSetting() {
 				cin >> temp;
 			}
 			gLogger->GetSecondsBeforeMsgDelete(temp * 3600); //convert the hours to seconds and then sets it;
+			gLogger->addItem(-1, -1, (*user)->id, 'g', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed changed the log message store length to: " + to_string((gLogger->GetSecondsBeforeMsgDelete())/3600) + " hours");
 			break;
 
 		case 2:
@@ -1322,6 +1447,7 @@ void EditGerneralSetting() {
 				cin >> temp;
 			}
 			gItemDatabase->GetItemsPerPage(temp); //sets it;
+			gLogger->addItem(-1, -1, (*user)->id, 'g', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed changed the users per page to: " + to_string(gItemDatabase->GetItemsPerPage()));
 			break;
 		case 3:
 			system("cls");
@@ -1331,10 +1457,11 @@ void EditGerneralSetting() {
 			while (temp <= 0) //error trap
 			{
 				system("cls");
-				cout << " Error! Value must be a positive number.\n How many inventory items would you like to display per page: ";
+				cout << " Error! Value must be a positive number.\n How many users would you like to display per page: ";
 				cin >> temp;
 			}
 			gUserDatabase->getItemsPerPage(temp); //sets it;
+			gLogger->addItem(-1, -1, (*user)->id, 'g', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed changed the users per page to: " + to_string(gUserDatabase->getItemsPerPage()));
 			break;
 		}
 
@@ -1362,16 +1489,10 @@ void editUsers(User** user)
 			editExistingUsers(user);
 			break;
 		case 3:
+			editDeletedUsers(user);
 			break;
 		}
-
-		//keep going
 	} while (selection != 0);
-
-
-
-
-
 }
 
 void editExistingUsers(User** user) {
@@ -1388,6 +1509,7 @@ void editExistingUsers(User** user) {
 	{
 
 		userToEdit = getUserWithMenu(false, "which user would you like to edit?");
+		
 
 		do
 		{
@@ -1395,6 +1517,7 @@ void editExistingUsers(User** user) {
 			{
 				return;
 			}
+			copy = *userToEdit;
 			output = userToEdit->display(true, false);
 
 			int i = 4;
@@ -1422,9 +1545,9 @@ void editExistingUsers(User** user) {
 			{
 			case 0:
 				*userToEdit = copy;
-				return;
+				break;
 			case 1:
-				return;
+				break;
 			case 2:
 				system("cls");
 				if ((*user)->id == userToEdit->id)
@@ -1450,6 +1573,7 @@ void editExistingUsers(User** user) {
 				break;
 			case 3:
 				changePermissions(&(userToEdit->permission));
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s permissions");
 				break;
 			case 4:
 				system("cls");
@@ -1465,6 +1589,8 @@ void editExistingUsers(User** user) {
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->lastName, uppercase(temp).c_str());
+
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed the name of " + string(copy.firstName) + " " + string(copy.lastName) + " to " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 5:
 				system("cls");
@@ -1478,6 +1604,7 @@ void editExistingUsers(User** user) {
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->password, temp.c_str());
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s password");
 				break;
 			}
 			gUserDatabase->save();
@@ -1487,6 +1614,34 @@ void editExistingUsers(User** user) {
 	} while (true);
 }
 
+void editDeletedUsers(User** user)
+{
+	User* userToEdit;
+	int selection = 0;
+	string userDesc;
+	string option[] = { "No, I do not want to restore them", "Yes, I do want to restore them" };
+
+	do
+	{
+
+		userToEdit = getUserWithMenu(true, false, "which user would you like to restore?");
+
+		if (userToEdit == NULL) { return; }
+
+		userDesc = userToEdit->display(false, true);
+
+		selection = navigatableMenu("Are you sure you want to restore this user?", option, &userDesc, 2, C_BLUE, C_WHITE);
+
+		switch (selection)
+		{
+		case 1:
+			userToEdit->remove(false);
+			gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + ' ' + (*user)->lastName + " restored user account " + userToEdit->firstName + ' ' + userToEdit->lastName + " with ID: " + to_string(userToEdit->id));
+			break;
+		}
+
+	} while (true);
+}
 
 User* createNewUser(User** user)
 {
@@ -1533,7 +1688,7 @@ User* createNewUser(User** user)
 	system("cls");
 
 	cout << " New User added successfully\n\n";
-	newUser->display(false, true);
+	cout << newUser->display(false, true);
 	cout << endl << endl << " Press enter to continue...";
 
 	while (_getch() != 13);
@@ -1570,7 +1725,7 @@ void changePermissions(Permissions *perms)
 			i++;
 		} while (permissions[pos] != '\0' && i < NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2);
 
-		selection = navigatableMenu("\t _____    _ _ _     _____                   _         _\n\t|  ___|  | (_) |   | ___ \\                 (_)       (_)\n\t| |__  __| |_| |_  | |_/ /__ _ __ _ __ ___  _ ___ ___ _  ___  _ __  ___ \n\t|  __|/ _` | | __| |  __/ _ \\ '__| '_ ` _ \\| / __/ __| |/ _ \\| '_ \\/ __|\n\t| |__| (_| | | |_  | | |  __/ |  | | | | | | \\__ \\__ \\ | (_) | | | \\__ \\\n\t\\____/\\__,_|_|\\__| \\_|  \\___|_|  |_| |_| |_|_|___/___/_|\\___/|_| |_|___/", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 1, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu("\t _____    _ _ _     _____                   _         _\n\t|  ___|  | (_) |   | ___ \\                 (_)       (_)\n\t| |__  __| |_| |_  | |_/ /__ _ __ _ __ ___  _ ___ ___ _  ___  _ __  ___ \n\t|  __|/ _` | | __| |  __/ _ \\ '__| '_ ` _ \\| / __/ __| |/ _ \\| '_ \\/ __|\n\t| |__| (_| | | |_  | | |  __/ |  | | | | | | \\__ \\__ \\ | (_) | | | \\__ \\\n\t\\____/\\__,_|_|\\__| \\_|  \\___|_|  |_| |_| |_|_|___/___/_|\\___/|_| |_|___/", options, NUMBER_OF_MMPERMISSIONS + NUMBER_OF_IMPERMISSIONS + NUMBER_OF_IPERMISSIONS + 2, selection, C_BLUE, C_WHITE);
 
 		if (selection == 0)
 		{
@@ -1602,19 +1757,25 @@ User* getUserWithMenu(bool includeDeleted, string title)
 {
 	string header = "";
 
-	return getUserWithMenu(includeDeleted, &header, title);
+	return getUserWithMenu(includeDeleted, true, &header, title);
 
 }
 
-User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string title)
+{
+	string header = "";
+	return getUserWithMenu(includeDeleted, includeNotDeleted, &header, title);
+}
+
+User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *headerText, string title)
 {
 
-	vector<User*> userPointers = gUserDatabase->getUsers(false);
+	vector<User*> userPointers = gUserDatabase->getUsers(includeDeleted, includeNotDeleted);
 	int selection = 0;
 	int availableExtraButtons = 0; //saves how many of the values in extra buttons are true
 	int const NUM_OF_EXTRA_BUTTONS = 6;
 	bool extraButtons[NUM_OF_EXTRA_BUTTONS]; //0 = Exit, 1 = nextpage 2 = previous page
-	string extraButtonNames[NUM_OF_EXTRA_BUTTONS] = { "Return to Main Menu" , "Next Page" , "Previous Page" , "Sort by ID" , "Sort by firstname" , "Sort by lastname\n" };
+	string extraButtonNames[NUM_OF_EXTRA_BUTTONS] = { "Exit" , "Next Page" , "Previous Page" , "Sort by ID" , "Sort by firstname" , "Sort by lastname\n" };
 
 	int currentPage = 0, itemsOnPage;
 
@@ -1625,7 +1786,7 @@ User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
 		extraButtons[4] = true; //everyone has access to sort by firstname;
 		extraButtons[5] = true; //everyone has access to sort by lastname;
 
-		if ((((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))) - 1) == currentPage)
+		if ((((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))) - 1) == currentPage || userPointers.size() == 0)
 		{
 			itemsOnPage = (userPointers.size() - gUserDatabase->getItemsPerPage() * currentPage);
 			extraButtons[1] = false;
@@ -1677,7 +1838,7 @@ User* getUserWithMenu(bool includeDeleted, string *headerText, string title)
 			j++;
 		}
 
-		selection = navigatableMenu(title, options, headerText, "Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? ("There are no users that meet your search") : ("Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
 
 		switch (corispondingIndex[selection])
 		{
