@@ -93,7 +93,7 @@ string addSpaces(int numOfChars, string str) //creates a string with the number 
 	char *buffer;
 	buffer = new char[numOfChars + 1];
 
-	sprintf(buffer, ((string("%") + to_string(numOfChars) + "s").c_str()), str); //adds the spaces
+	sprintf(buffer, ((string("%-") + to_string(numOfChars) + "s").c_str()), str.c_str()); //adds the spaces
 
 	return string(buffer);
 }
