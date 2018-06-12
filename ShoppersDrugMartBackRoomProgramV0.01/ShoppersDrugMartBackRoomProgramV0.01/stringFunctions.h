@@ -78,12 +78,12 @@ string lowercase(string str)
 	return str;
 }
 
-string addZeros(int numOfDidgits, int number) //creates a string with the number of desired didgits (preceding 0 are added to reach the requitment)
+string addZeros(int numOfDidgits, long long int number) //creates a string with the number of desired didgits (preceding 0 are added to reach the requitment)
 {
 	char *buffer;
 	buffer = new char[numOfDidgits + 1];
 
-	sprintf(buffer, (string("%0" + to_string(numOfDidgits) + "d").c_str()), number); //adds the zeros
+	sprintf(buffer, ((string("%0") + to_string(numOfDidgits) + "lld").c_str()), number); //adds the zeros
 
 	return string(buffer);
 }

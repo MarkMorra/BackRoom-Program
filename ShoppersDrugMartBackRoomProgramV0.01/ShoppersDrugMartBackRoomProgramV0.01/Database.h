@@ -25,13 +25,13 @@ public:
 	char name[NAME_LEN], desc[DESC_LEN];
 	float price, cost, sale;
 
-	Item();
-	string Display();
-	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale);
+	Item(); //default constructor
+	string Display(); //returns a string that is the formatted information about the item
+	Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale); //item constructor that takes values
 
 };
 
-Item::Item() {
+Item::Item() { //default item constructor, sets to empty/0 values
 
 	upc = 0;
 	plu = 0;
@@ -54,13 +54,14 @@ string Item::Display() {
 	sprintf(saletemp, "$%0.2f", sale);
 	sprintf(costtemp, "$%0.2f", cost);
 
+	//returns the string to be used in a cout call; it is preformatted and looks nice before being returned
 	return (" Name:\t\t" + string(name) + "\n Desc:\t\t" + string(desc) + "\n UPC:\t\t" + addZeros(12,upc) + "\n PLU:\t\t" + addZeros(5, plu) + "\n Amount:\t" + to_string(amount) + "\n Price:\t\t" + pricetemp + "\n Sale Price:\t" + saletemp + "\n Purchase Cost:\t" + costtemp);
 
 }
 
 Item::Item(long long int _upc, long long int _plu, int _amount, string _name, string _desc, float _price, float _cost, float _sale) {
 
-	//sets the values
+	//sets all the values to the variables in the item
 	upc = _upc;
 	plu = _plu;
 	amount = _amount;
@@ -75,30 +76,30 @@ Item::Item(long long int _upc, long long int _plu, int _amount, string _name, st
 class ItemDatabase {
 
 public:
-	ItemDatabase(string filename, long long int *_authCode); //default constructor for the item database
-	~ItemDatabase();
-	void Clear();
-	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);
-	void Remove(int index);
-	vector<Item>::iterator Search(long long int upc);
-	string buildItem(int index);
-	string buildItem(Item* item);
-	vector<Item*> Find();
-	vector<Item*> Find(char type, long long int num);
-	vector<Item*> Find(char type, float num);
-	vector<Item*> Find(char type, string text);
-	Item* pos(int index);
-	int length();
-	int GetItemsPerPage();
-	void GetItemsPerPage(int _items);
-	void Save();
+	ItemDatabase(string filename, long long int *_authCode); //default constructor for the item database, takes the file path and the authcode that ensures only the correct user database is paired with this item database
+	~ItemDatabase(); //default deconstructor for the item database
+	void Clear(); //nukes the item database vector and reloads the file, resetting the database to 0 items
+	void Add(long long int upc, long long int plu, int amount, string name, string desc, float price, float cost, float sale);  //function to properly add a new item to the database
+	void Remove(int index); //removes the item at given index
+	vector<Item>::iterator Search(long long int upc); //searches for the iterator position a given upc must be inserted at
+	string buildItem(int index); //returns the string that will be displayed in the item list for item at index
+	string buildItem(Item* item); //returns the string that will be displayed in the item list for the item given by the item pointer
+	vector<Item*> Find(); //returns a vector of pointers to every item in the array
+	vector<Item*> Find(char type, long long int num); //returns a vector of pointers to every item matching the chosen type (u = upc, p = plu, a = amount)
+	vector<Item*> Find(char type, float num); //returns a vector of pointers to every item matching the chosen type (p = price, c = cost, s = sale)
+	vector<Item*> Find(char type, string text); //returns a vector of pointers to every item matching the chosen type (n = name, d = description)
+	Item* pos(int index); //returns a pointer to the item at the given index
+	int length(); //returns the number of items in the database
+	int GetItemsPerPage(); //returns the max number of items that should be on a page
+	void GetItemsPerPage(int _items); //sets the max number of items that should be on a page
+	void Save(); //saves the item database to the file
 
 private:
 	string filepath; //saves the filepath
 	vector<Item> items; //defines the item vector
 	int itemsPerPage; //how many items should be displayed on one page
 
-	void Reload();
+	void Reload(); //reloads the database from the file
 
 	long long int authCode; //the code that ensures this database belongs with the user and logger databases in the data folder
 
@@ -184,37 +185,37 @@ void ItemDatabase::Add(long long int upc, long long int plu, int amount, string 
 
 	vector<Item>::iterator it;
 
-	it = Search(upc);
+	it = Search(upc); //finds the location for the given upc to be inserted
 
-	if (it == items.end()) {
+	if (it == items.end()) { //if the iterator is at the end of the items vector, it should be pushed to the end
 
-		items.push_back(Item(upc, plu, amount, name, desc, price, cost, sale));
+		items.push_back(Item(upc, plu, amount, name, desc, price, cost, sale)); //add the item to the end of the vector
 
 	}
-	else if (it._Ptr == NULL) {
+	else if (it._Ptr == NULL) { //if a NULL pointer is returned, something went wrong
 
 		errorMsg("A position for item with UPC: " + to_string(upc) + "could not be found in the vector, somthing went wrong with database::search(). To prevent any issues the item has not been added to the database");
 
 	}
-	else if ((*it).upc == upc) {
+	else if ((*it).upc == upc) { //if the upc already exists in the database, something else went wrong (it should have checked the upc when the user entered it. the only way this could happen is if an item with the same upc was added between those two steps, which is not possible with our code, or if a memory value was modified)
 
 		errorMsg("In ItemDatabase::Add, the UPC already existed after it should have been checked.");
 
 	}
-	else {
+	else { //with all the edge cases handled, most cases will result in this code being run. inserts the item at the iterator position
 
 		items.insert(it, Item(upc, plu, amount, name, desc, price, cost, sale));
 
 	}
 
-	Save();
+	Save(); //saves the database to file
 
 }
 
-void ItemDatabase::Remove(int index) {
+void ItemDatabase::Remove(int index) { //remove the item at this index
 
-	items.erase(items.begin() + index);
-	Save();
+	items.erase(items.begin() + index); //erase
+	Save(); //save to file
 
 }
 
@@ -271,26 +272,26 @@ vector<Item>::iterator ItemDatabase::Search(long long int upc) { //returns an it
 
 }
 
-void ItemDatabase::Reload() {
+void ItemDatabase::Reload() { //reloads the file
 
 	FILE *file;
 
-	file = fopen(filepath.c_str(), "r");
+	file = fopen(filepath.c_str(), "r"); //opens the file to read the data
 
 	if (file == NULL)
 	{
-		errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the Logger::reload function\n Please check if the data folder was deleted.");
+		errorMsg(" Error! Unable to open Item Database file; Path: \"" + filepath + "\" The file pointer was NULL.\n This occurred in the Logger::reload function\n Please check if the data folder was deleted."); //error traps
 		return;
 	}
 
-	items.clear();
+	items.clear(); //clears the vector to ensure no data conflicts
 
 	Item temp;
 	long long int temp_authCode;
 
-	(fread(&temp_authCode, sizeof(temp_authCode), 1, file));
+	(fread(&temp_authCode, sizeof(temp_authCode), 1, file)); //reads into temp vars
 
-	if (authCode == 0)
+	if (authCode == 0) //checks for the correct auth code to ensure the file has not been switched out
 	{
 		authCode = temp_authCode;
 	}
@@ -302,7 +303,7 @@ void ItemDatabase::Reload() {
 
 	fread(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 
-	while (fread(&temp, sizeof(temp), 1, file))
+	while (fread(&temp, sizeof(temp), 1, file)) //reads the items out and pushes them into the vector
 	{
 
 		decrypt(temp.name, NAME_LEN);
@@ -311,17 +312,17 @@ void ItemDatabase::Reload() {
 		items.push_back(temp);
 	}
 
-	fclose(file);
+	fclose(file); //closes the file
 }
 
-void ItemDatabase::Save()
+void ItemDatabase::Save() //saves the database to the file
 {
 
 	FILE *file;
 	vector<Item>::iterator it;
 	Item temp;
 
-	file = fopen(filepath.c_str(), "w");
+	file = fopen(filepath.c_str(), "w"); //opens for writing
 
 	if (file == NULL)
 	{
@@ -333,8 +334,8 @@ void ItemDatabase::Save()
 
 	fwrite(&itemsPerPage, sizeof(itemsPerPage), 1, file);
 
-	it = items.begin();
-	while (it != items.end())
+	it = items.begin(); //starts the iterator at the beginning
+	while (it != items.end()) //goes through every item in the vector and writes it
 	{
 		temp = *it;
 
@@ -350,19 +351,19 @@ void ItemDatabase::Save()
 
 }
 
-string ItemDatabase::buildItem(int index) {
+string ItemDatabase::buildItem(int index) { //builds the crucial information into a one line string to display in item menu from the index of the required item
 
 	return (addZeros(12, items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
 
 }
 
-string ItemDatabase::buildItem(Item* item) {
+string ItemDatabase::buildItem(Item* item) { //builds the crucial information into a one line string to display in item menu from an item pointer
 
 	return (addZeros(12,item->upc) + "\t\t" + item->name + "\t\t\t" + to_string(item->amount));
 
 }
 
-Item* ItemDatabase::pos(int index) {
+Item* ItemDatabase::pos(int index) { //returns the mem address of the item at index
 
 	return &(items[index]);
 
@@ -372,13 +373,13 @@ vector<Item*> ItemDatabase::Find() {
 
 	vector<Item*> found;
 
-	for (int i = 0; i < items.size(); i++) {
+	for (int i = 0; i < items.size(); i++) { //iterates through all the items
 
-		found.push_back(&items[i]);
+		found.push_back(&items[i]); //adds the pointer to the vector
 
 	}
 
-	return found;
+	return found; //returns vector full of a pointer to each item in the database
 
 }
 
@@ -386,7 +387,7 @@ vector<Item*> ItemDatabase::Find(char type, long long int num) {
 
 	vector<Item*> found;
 
-	if (type == 'u') {		// binary search for upc when type is u
+	if (type == 'u') { // binary search for upc when type is u
 
 		int first, middle, last;
 
@@ -417,10 +418,10 @@ vector<Item*> ItemDatabase::Find(char type, long long int num) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same upc (should ONLY ever be one item)
 
 	}
-	else if (type == 'p') {		// seq search for plu when type is p
+	else if (type == 'p') {	// seq search for plu when type is p
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -432,10 +433,10 @@ vector<Item*> ItemDatabase::Find(char type, long long int num) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same plu (can be multiple)
 
 	}
-	else if (type == 'a') {		// seq search for amount when type is a
+	else if (type == 'a') {	// seq search for amount when type is a
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -447,11 +448,11 @@ vector<Item*> ItemDatabase::Find(char type, long long int num) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same amount (can be multiple)
 
 	}
 
-	return found;
+	return found; //if invalid type, return empty vector
 
 }
 
@@ -459,7 +460,7 @@ vector<Item*> ItemDatabase::Find(char type, float num) {
 
 	vector<Item*> found;
 
-	if (type == 'p') {		// seq search for price when type is p
+	if (type == 'p') { // seq search for price when type is p
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -471,10 +472,10 @@ vector<Item*> ItemDatabase::Find(char type, float num) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same price (can be multiple)
 
 	}
-	else if (type == 'c') {		// seq search for cost when type is c
+	else if (type == 'c') { // seq search for cost when type is c
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -486,10 +487,10 @@ vector<Item*> ItemDatabase::Find(char type, float num) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same cost (can be multiple)
 
 	}
-	else if (type == 's') {		// seq search for sale when type is s
+	else if (type == 's') { // seq search for sale when type is s
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -501,11 +502,11 @@ vector<Item*> ItemDatabase::Find(char type, float num) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same sale price (can be multiple)
 
 	}
 
-	return found;
+	return found; //if invalid type, return empty vector
 
 }
 
@@ -513,7 +514,7 @@ vector<Item*> ItemDatabase::Find(char type, string text) {
 
 	vector<Item*> found;
 
-	if (type == 'n') {				// seq search for name when type is n
+	if (type == 'n') { // seq search for name when type is n
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -525,10 +526,10 @@ vector<Item*> ItemDatabase::Find(char type, string text) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same name (can be multiple)
 
 	}
-	else if (type == 'd') {		// seq search for desc when type is d
+	else if (type == 'd') {	// seq search for desc when type is d
 
 		for (int i = 0; i < items.size(); i++) {
 
@@ -540,10 +541,10 @@ vector<Item*> ItemDatabase::Find(char type, string text) {
 
 		}
 
-		return found;
+		return found; //returns vector of all items with same description (can be multiple)
 
 	}
 
-	return found;
+	return found; //if invalid type, return empty vector
 
 }

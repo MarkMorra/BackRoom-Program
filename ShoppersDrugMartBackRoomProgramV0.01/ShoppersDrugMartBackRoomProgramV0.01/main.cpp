@@ -514,7 +514,7 @@ void addItem(User **user) {
 	cout << "UPC: "; //gets upc
 	do {
 		cin >> upc;
-		if (upc < 0 || upc > 999999999999) { cout << "Invalid UPC. 000000000000 - 999999999999.\nUPC: "; }
+		if (upc < 0 || upc > 999999999999) { cout << "Invalid UPC. 000000000000 - 999999999999.\nUPC: "; } //checks for valid upc
 	} while (upc < 0 || upc > 999999999999);
 
 	if ((gItemDatabase->Find('u', upc)).size() == 0) { //continues when a unique upc in entered
@@ -527,7 +527,7 @@ void addItem(User **user) {
 		cout << "Amount: ";
 		do {
 			cin >> amount;
-			if (amount < 0) { cout << "Invalid amount. Positive or zero only.\nUPC: "; }
+			if (amount < 0) { cout << "Invalid amount. Positive or zero only.\nUPC: "; } //error traps
 		} while (amount < 0);
 
 		cout << "Name: ";
@@ -540,29 +540,31 @@ void addItem(User **user) {
 		cout << "Price: ";
 		do {
 			cin >> price;
-			if (price < 0)  { cout << "Invalid price. Positive or zero only.\nUPC: "; }
+			if (price < 0)  { cout << "Invalid price. Positive or zero only.\nUPC: "; } //error traps
 		} while (price < 0);
 
 		cout << "Cost: ";
 		do {
 			cin >> cost;
-			if (cost < 0) { cout << "Invalid cost. Positive or zero only.\nUPC: "; }
+			if (cost < 0) { cout << "Invalid cost. Positive or zero only.\nUPC: "; } //error traps
 		} while (cost < 0);
 
 		cout << "Sale Price: ";
 		do {
 			cin >> sale;
-			if (sale < 0) { cout << "Invalid sale price. Positive or zero only.\nUPC: "; }
+			if (sale < 0) { cout << "Invalid sale price. Positive or zero only.\nUPC: "; } //error traps
 		} while (sale < 0);
 
 		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale); //adds the new item to the database
+
+		gItemDatabase->Save();
 
 		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item"))); //creates a log message
 
 	}
 	else {
 
-		cout << "This item already exists."; //dispalys error if upc code is already used
+		cout << "This item already exists."; //displays error if upc code is already used
 
 	}
 
@@ -574,62 +576,69 @@ void modifyItem(User **user, Item* item) {
 	
 	do {
 		
-
 		char pricetemp[50];
 		char saletemp[50];
 		char costtemp[50];
 
-		sprintf(pricetemp, "$%0.2f", item->price);
+		sprintf(pricetemp, "$%0.2f", item->price); //formats float prices to nice looking strings
 		sprintf(saletemp, "$%0.2f", item->sale);
 		sprintf(costtemp, "$%0.2f", item->cost);
 
 		string stemp;
 		float temp;
 
+		//creates the availible options based on the item
 		string availibleOptions[] = { "Return to Menu", string("Name: ") + item->name, string("Description: ") + item->desc, string("Price: ") + pricetemp, string("Cost: ") + costtemp, string("Sale: ") + saletemp };
 
-		selection = navigatableMenu(string("UPC: ") + to_string(item->upc), availibleOptions, 5, C_BLUE, C_LGREY);
+		//creates the navigatable menu with the item variables
+		selection = navigatableMenu(string("UPC: ") + to_string(item->upc), availibleOptions, 6, C_BLUE, C_LGREY);
 
+		//depending on what the user selects, it enters the case to modify that value
 		switch (selection) {
 		case 1: //name change
 			cout << "Enter the new name: ";
 			getline(cin, stemp);
-			strcpy(item->name, stemp.c_str());
-			gItemDatabase->Save();
+			strncpy(item->name, stemp.c_str(), sizeof(item->name));
+			item->name[NAME_LEN - 1] = '\0';
+			gItemDatabase->Save(); //save
 			break;
 		case 2: //desc change
 			cout << "Enter the new description: ";
 			getline(cin, stemp);
-			strcpy(item->desc, stemp.c_str());
-			gItemDatabase->Save();
+			strncpy(item->desc, stemp.c_str(), sizeof(item->desc));
+			item->desc[DESC_LEN - 1] = '\0';
+			gItemDatabase->Save(); //save
 			break;
 		case 3: //price change
 			cout << "Enter the new price: ";
 			do {
 				cin >> temp;
-			} while (!(temp >= 0));
+				if (temp < 0) { cout << "Invalid price. Positive or zero only.\nEnter the new price: "; }
+			} while (temp < 0); //error trap
 
 			item->price = temp;
-			gItemDatabase->Save();
+			gItemDatabase->Save(); //save
 			break;
 		case 4: //cost change
 			cout << "Enter the new cost: ";
 			do {
 				cin >> temp;
-			} while (!(temp >= 0));
+				if (temp < 0) { cout << "Invalid cost. Positive or zero only.\nEnter the new cost: "; }
+			} while (temp < 0); //error trap
 
 			item->cost = temp;
-			gItemDatabase->Save();
+			gItemDatabase->Save(); //save
 			break;
 		case 5: //sale change
 			float temp;
 			cout << "Enter the new sale price: ";
 			do {
 				cin >> temp;
-			} while (!(temp >= 0));
+				if (temp < 0) { cout << "Invalid sale price. Positive or zero only.\nEnter the new sale price: "; }
+			} while (temp < 0); //error trap
 
 			item->price = temp;
-			gItemDatabase->Save();
+			gItemDatabase->Save(); //save
 			break;
 			}
 
@@ -1005,13 +1014,13 @@ void itemMenu(User **user)
 
 			if ((currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) || localItemDatabase.size() == 0) {
 
-				navButtons = 0;
+				navButtons = 0; //sets nav button state to 0 (0 is none, 1 is next, 2 is prev, 3 is both)
 				amtNavBut = 0;
 
 			}
 			else {
 
-				navButtons = 1;
+				navButtons = 1; //sets nav button state to 1 (0 is none, 1 is next, 2 is prev, 3 is both)
 				amtNavBut = 1;
 				amount++;
 
@@ -1020,14 +1029,14 @@ void itemMenu(User **user)
 		}
 		else if (currentPage == ((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))) - 1) { //if its the last page, only show previous page option
 
-			navButtons = 2;
+			navButtons = 2; //sets nav button state to 2 (0 is none, 1 is next, 2 is prev, 3 is both)
 			amtNavBut = 1;
 			amount++;
 
 		}
 		else { //if its not the first or last, show both next and previous
 
-			navButtons = 3;
+			navButtons = 3; //sets nav button state to 3 (0 is none, 1 is next, 2 is prev, 3 is both)
 			amtNavBut = 2;
 			amount += 2;
 
@@ -1056,19 +1065,19 @@ void itemMenu(User **user)
 
 		for (j; j < numItemsPage; j++) { //add items to navigatable menu
 
-			avalibleOptions[j] = gItemDatabase->buildItem(localItemDatabase[(currentPage * gItemDatabase->GetItemsPerPage()) + j]);
+			avalibleOptions[j] = gItemDatabase->buildItem(localItemDatabase[(currentPage * gItemDatabase->GetItemsPerPage()) + j]); //adds each item to the availible options
 
-			if (j == numItemsPage - 1) { avalibleOptions[j] += '\n'; }
+			if (j == numItemsPage - 1) { avalibleOptions[j] += '\n'; } //if this is the last item on this page, add a new line to put space between the items and menu options
 
-			absolutePos[j] = currentAbsPos;
+			absolutePos[j] = currentAbsPos; //set absolute position so we can calculate where the user last selected
 			currentAbsPos++;
 
-			if (selection == 0) { start = j; }
+			if (selection == 0) { start = j; } //this is where the user last selected option is checked 
 			selection--;
 
 		}
 
-		if (selection < (gItemDatabase->GetItemsPerPage() - currentAbsPos)) { start = j; }
+		if (selection < (gItemDatabase->GetItemsPerPage() - currentAbsPos)) { start = j; } //if 
 		selection -= (gItemDatabase->GetItemsPerPage() - currentAbsPos);
 		currentAbsPos = gItemDatabase->GetItemsPerPage();
 
@@ -1082,7 +1091,7 @@ void itemMenu(User **user)
 			pos++;
 
 			absolutePos[j] = currentAbsPos;
-			if (selection < 2) { start = j; }
+			if (selection < 2) { start = j; } //if selection is in the next two buttons, set it to this one this time
 			selection -= 2;
 			currentAbsPos += 2;
 
@@ -1095,7 +1104,7 @@ void itemMenu(User **user)
 			corrispondingIndex[pos] = 1;
 			pos++;
 
-			if (selection < 2) { start = j; }
+			if (selection < 2) { start = j; } //if selection is in the next two buttons, set it to this one this time
 			selection -= 2;
 
 			currentAbsPos++;
@@ -1114,7 +1123,7 @@ void itemMenu(User **user)
 			absolutePos[j] = currentAbsPos;
 			currentAbsPos++;
 
-			if (selection == 0) { start = j; }
+			if (selection == 0) { start = j; } //if selection was this one last time, set it to this one this time
 			selection--;
 
 			j++;
@@ -1126,7 +1135,7 @@ void itemMenu(User **user)
 			absolutePos[j] = currentAbsPos;
 			currentAbsPos++;
 
-			if (selection == 0) { start = j; }
+			if (selection == 0) { start = j; } //if selection was this one last time, set it to this one this time
 			selection--;
 
 			j++;
@@ -1134,7 +1143,7 @@ void itemMenu(User **user)
 		}
 		else {
 
-			if (selection < 2) { start = j; }
+			if (selection < 2) { start = j; }  //if selection is in the next two buttons, set it to this one this time
 			selection -= 2;
 
 			currentAbsPos += 2;
@@ -1149,7 +1158,7 @@ void itemMenu(User **user)
 		absolutePos[j] = currentAbsPos;
 		currentAbsPos++;
 
-		if (selection == 0) { start = j; }
+		if (selection == 0) { start = j; } //if selection was this one last time, set it to this one this time
 		selection--;
 
 		j++;
