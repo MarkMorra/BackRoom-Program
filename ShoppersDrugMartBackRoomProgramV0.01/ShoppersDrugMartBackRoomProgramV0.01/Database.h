@@ -194,12 +194,12 @@ void ItemDatabase::Add(long long int upc, long long int plu, int amount, string 
 	}
 	else if (it._Ptr == NULL) { //if a NULL pointer is returned, something went wrong
 
-		errorMsg("A position for item with UPC: " + to_string(upc) + "could not be found in the vector, somthing went wrong with database::search(). To prevent any issues the item has not been added to the database");
+		errorMsg(" A position for item with UPC: " + to_string(upc) + "could not be found in the vector, somthing went wrong with database::search(). To prevent any issues the item has not been added to the database");
 
 	}
 	else if ((*it).upc == upc) { //if the upc already exists in the database, something else went wrong (it should have checked the upc when the user entered it. the only way this could happen is if an item with the same upc was added between those two steps, which is not possible with our code, or if a memory value was modified)
 
-		errorMsg("In ItemDatabase::Add, the UPC already existed after it should have been checked.");
+		errorMsg(" In ItemDatabase::Add, the UPC already existed after it should have been checked.");
 
 	}
 	else { //with all the edge cases handled, most cases will result in this code being run. inserts the item at the iterator position
