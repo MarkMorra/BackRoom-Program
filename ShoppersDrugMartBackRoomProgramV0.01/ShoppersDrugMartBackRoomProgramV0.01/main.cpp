@@ -1206,7 +1206,7 @@ void itemMenu(User **user)
 		}
 
 		//Displays Item Database title
-		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\n\tThere are no items in the database.") : ("")), avalibleOptions, (localItemDatabase.size() == 0) ? ("") : (string("Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))))), amount, start, C_BLUE, C_LGREY);
+		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\n\t\tThere are no items in the database.") : ("")), avalibleOptions, (localItemDatabase.size() == 0) ? ("") : (string("    Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))))), amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
 
@@ -1912,7 +1912,7 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 		}
 
 		//If user is not found in search, then message is shown to the user
-		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? (" There are no users that meet your search") : (" Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? (" There are no users that meet your search") : ("    Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
 
 		switch (corispondingIndex[selection])
 		{
