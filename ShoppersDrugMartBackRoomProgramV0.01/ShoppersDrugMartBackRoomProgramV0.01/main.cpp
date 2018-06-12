@@ -8,10 +8,10 @@
 
 using namespace std;
 
-#define VERSION "0.83"
+#define VERSION "0.99 PRE_PRELEASE"
 #define FOLDER_NAME "data"
 
-void onStart(); //called whan the program begins
+void onStart(long long int *authCode); //called whan the program begins
 void welcome(); //displays welcome screen
 //void testMenu();
 void logon(User **user); //where the user enters their login details
@@ -48,8 +48,9 @@ int main() {
 
 	User **user = new User*;
 	bool done = false;
+	long long int *authCode = new long long int; //all datafiles containe a random generated authCode. All databases generated at the same time contain the same authCode, this is to verifiy that a password database corisponding to a item database is not used to access antoher database
 
-	onStart(); //Initializes important variables such as for databases, menu highlights etc. when program first starts
+	onStart(authCode); //Initializes important variables such as for databases, menu highlights etc. when program first starts
 	welcome(); //First display of the program shows a welcome screen to the user
 
 	do// loops untill the user selects exit in logon
@@ -70,13 +71,14 @@ int main() {
 	delete gLogger;
 	delete gItemDatabase;
 	delete gUserDatabase;
+	delete authCode;
 
 	return EXIT_SUCCESS;
 }
 
-void onStart() {
+void onStart(long long int *authCode) {
 
-	long long int *authCode = new long long int; //all datafiles containe a random generated authCode. All databases generated at the same time contain the same authCode, this is to verifiy that a password database corisponding to a item database is not used to access antoher database
+	
 	*authCode = 0;
 
 	srand(time(NULL));
