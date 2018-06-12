@@ -527,6 +527,7 @@ void addItem(User **user) {
 		cout << "Amount: ";
 		do {
 			cin >> amount;
+			if (amount < 0) { cout << "Invalid amount. Positive or zero only.\nUPC: "; }
 		} while (amount < 0);
 
 		cout << "Name: ";
@@ -539,16 +540,19 @@ void addItem(User **user) {
 		cout << "Price: ";
 		do {
 			cin >> price;
+			if (price < 0)  { cout << "Invalid price. Positive or zero only.\nUPC: "; }
 		} while (price < 0);
 
 		cout << "Cost: ";
 		do {
-				cin >> cost;
+			cin >> cost;
+			if (cost < 0) { cout << "Invalid cost. Positive or zero only.\nUPC: "; }
 		} while (cost < 0);
 
 		cout << "Sale Price: ";
 		do {
 			cin >> sale;
+			if (sale < 0) { cout << "Invalid sale price. Positive or zero only.\nUPC: "; }
 		} while (sale < 0);
 
 		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale); //adds the new item to the database
