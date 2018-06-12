@@ -1463,10 +1463,10 @@ void EditGerneralSetting(User **user) {
 			cout << " How many hours would you like to store log messages for: "; //gets the input from the user
 			cin >> temp;
 
-			while (temp <= 0) //error trap so the input is always positive
+			while (temp < 96) //error trap so the input is  >= to 96
 			{
 				system("cls");
-				cout << " Error! Time must be a positive value.\n How many hours would you like to store log messages for: ";
+				cout << " Error! Time must be greater then 96 hours.\n How many hours would you like to store log messages for: ";
 				cin >> temp;
 			}
 			gLogger->GetSecondsBeforeMsgDelete(temp * 3600); //convert the hours to seconds and then sets it;
