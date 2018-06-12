@@ -534,6 +534,8 @@ void addItem(User **user) {
 		getline(cin, name); //second getline to eat the leftovers
 		getline(cin, name);
 
+		name = uppercase(name);
+
 		cout << "Description: ";
 		getline(cin, desc);
 
@@ -597,13 +599,17 @@ void modifyItem(User **user, Item* item) {
 		switch (selection) {
 		case 1: //name change
 			cout << "Enter the new name: ";
+			fflush(stdin);
+			cin.clear();
 			getline(cin, stemp);
-			strncpy(item->name, stemp.c_str(), sizeof(item->name));
+			strncpy(item->name, uppercase(stemp).c_str(), sizeof(item->name));
 			item->name[NAME_LEN - 1] = '\0';
 			gItemDatabase->Save(); //save
 			break;
 		case 2: //desc change
 			cout << "Enter the new description: ";
+			fflush(stdin);
+			cin.clear();
 			getline(cin, stemp);
 			strncpy(item->desc, stemp.c_str(), sizeof(item->desc));
 			item->desc[DESC_LEN - 1] = '\0';
