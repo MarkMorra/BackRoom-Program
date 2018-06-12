@@ -13,8 +13,8 @@ using namespace std;
 #define FILE_PREFIX ""
 #define FILE_SUFFIX "/items.dat"
 
-#define NAME_LEN 15
-#define DESC_LEN 25
+#define NAME_LEN 50
+#define DESC_LEN 200
 
 class Item { //defines the structure of each item in the database
 
