@@ -85,7 +85,7 @@ void onStart(long long int *authCode) {
 
 	changeColour(); //sets the colour to the defult set in Colours.h
 	system("cls"); //forces the screen to update to the new colours
-	SetConsoleTitle("Shoppers Inventory Managment, By: Mark, Ben and Cady");
+	SetConsoleTitle("Shoppers Inventory Management, By: Mark, Ben and Cady");
 
 	CreateDirectory(FOLDER_NAME, NULL); //creates the data folder
 
@@ -513,50 +513,50 @@ void addItem(User **user) {
 
 	system("cls");
 
-	cout << "UPC: "; //gets upc
+	cout << " UPC: "; //gets upc
 	do {
 		cin >> upc;
-		if (upc < 0 || upc > 999999999999) { cout << "Invalid UPC. 000000000000 - 999999999999.\nUPC: "; } //checks for valid upc
+		if (upc < 0 || upc > 999999999999) { cout << " Invalid UPC. 000000000000 - 999999999999.\n UPC: "; } //checks for valid upc
 	} while (upc < 0 || upc > 999999999999);
 
 	if ((gItemDatabase->Find('u', upc)).size() == 0) { //continues when a unique upc in entered
 
 	do {
-		cout << "PLU: "; //gets all other value
+		cout << " PLU: "; //gets all other value
 		cin >> plu;
 	} while (plu < 0 || plu > 99999);
 
-		cout << "Amount: ";
+		cout << " Amount: ";
 		do {
 			cin >> amount;
-			if (amount < 0) { cout << "Invalid amount. Positive or zero only.\nUPC: "; } //error traps
+			if (amount < 0) { cout << " Invalid amount. Positive or zero only.\n Amount: "; } //error traps
 		} while (amount < 0);
 
-		cout << "Name: ";
+		cout << " Name: ";
 		getline(cin, name); //second getline to eat the leftovers
 		getline(cin, name);
 
 		name = uppercase(name);
 
-		cout << "Description: ";
+		cout << " Description: ";
 		getline(cin, desc);
 
-		cout << "Price: ";
+		cout << " Price: ";
 		do {
 			cin >> price;
-			if (price < 0)  { cout << "Invalid price. Positive or zero only.\nUPC: "; } //error traps
+			if (price < 0)  { cout << " Invalid price. Positive or zero only.\n Price: "; } //error traps
 		} while (price < 0);
 
-		cout << "Cost: ";
+		cout << " Cost: ";
 		do {
 			cin >> cost;
-			if (cost < 0) { cout << "Invalid cost. Positive or zero only.\nUPC: "; } //error traps
+			if (cost < 0) { cout << " Invalid cost. Positive or zero only.\n Cost: "; } //error traps
 		} while (cost < 0);
 
-		cout << "Sale Price: ";
+		cout << " Sale Price: ";
 		do {
 			cin >> sale;
-			if (sale < 0) { cout << "Invalid sale price. Positive or zero only.\nUPC: "; } //error traps
+			if (sale < 0) { cout << " Invalid sale price. Positive or zero only.\n Sale Price: "; } //error traps
 		} while (sale < 0);
 
 		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale); //adds the new item to the database
@@ -568,7 +568,7 @@ void addItem(User **user) {
 	}
 	else {
 
-		cout << "This item already exists."; //displays error if upc code is already used
+		cout << " This item already exists."; //displays error if upc code is already used
 
 	}
 
@@ -600,55 +600,53 @@ void modifyItem(User **user, Item* item) {
 		//depending on what the user selects, it enters the case to modify that value
 		switch (selection) {
 		case 1: //name change
-			cout << "Enter the new name: ";
+			cout << " Enter the new name: ";
 			fflush(stdin);
 			cin.clear();
 			getline(cin, stemp);
 			strncpy(item->name, uppercase(stemp).c_str(), sizeof(item->name));
 			item->name[NAME_LEN - 1] = '\0';
 			gItemDatabase->Save(); //save
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the name of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 2: //desc change
-			cout << "Enter the new description: ";
+			cout << " Enter the new description: ";
 			fflush(stdin);
 			cin.clear();
 			getline(cin, stemp);
 			strncpy(item->desc, stemp.c_str(), sizeof(item->desc));
 			item->desc[DESC_LEN - 1] = '\0';
 			gItemDatabase->Save(); //save
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the name of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 3: //price change
-			cout << "Enter the new price: ";
+			cout << " Enter the new price: ";
 			do {
 				cin >> temp;
-				if (temp < 0) { cout << "Invalid price. Positive or zero only.\nEnter the new price: "; }
+				if (temp < 0) { cout << " Invalid price. Positive or zero only.\n Enter the new price: "; }
 			} while (temp < 0); //error trap
+
 			item->price = temp;
 			gItemDatabase->Save(); //save
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'p', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the price of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 4: //cost change
-			cout << "Enter the new cost: ";
+			cout << " Enter the new cost: ";
 			do {
 				cin >> temp;
-				if (temp < 0) { cout << "Invalid cost. Positive or zero only.\nEnter the new cost: "; }
+				if (temp < 0) { cout << " Invalid cost. Positive or zero only.\n Enter the new cost: "; }
 			} while (temp < 0); //error trap
+
 			item->cost = temp;
 			gItemDatabase->Save(); //save
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'c', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the cost of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 5: //sale change
 			float temp;
-			cout << "Enter the new sale price: ";
+			cout << " Enter the new sale price: ";
 			do {
 				cin >> temp;
-				if (temp < 0) { cout << "Invalid sale price. Positive or zero only.\nEnter the new sale price: "; }
+				if (temp < 0) { cout << " Invalid sale price. Positive or zero only.\n Enter the new sale price: "; }
 			} while (temp < 0); //error trap
+
 			item->price = temp;
 			gItemDatabase->Save(); //save
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 's', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the sale price of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 			}
 
@@ -660,7 +658,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 
 	string *availibleOptions;
 	//Displays the options the user can select in this menu
-	string allOptions[] = { "Back to Item Menu", "Modify amount", "Modify item", "Delete item" };
+	string allOptions[] = { "Back to Item Menu", "Modify Amount", "Modify Item", "Delete Item" };
 	int selection;
 	int *corrispondingIndex;
 	int amount; 
@@ -710,13 +708,13 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 		case 1:
 			int temp;
 			//User can enter new item amount
-			cout << "Enter the new amount: ";
+			cout << " Enter the new amount: ";
 			do {
 				cin >> temp;
 			} while (!(temp >= 0));
+
 			item->amount = temp;
 			gItemDatabase->Save(); //Item database is saved
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'a', ((*user)->firstName + string(" ") + (*user)->lastName + string(" updated the stock amount of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 2:
 			modifyItem(user, item);
@@ -724,8 +722,8 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 		case 3:
 			gItemDatabase->Remove(gItemIndex);
 			//Adds log message that a specific item had been removed
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', ((*user)->firstName + string(" ") + (*user)->lastName + string("removed ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
-			errorMsg("Item removed."); //Displays to user that the item has been removed
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
+			errorMsg(" Item removed."); //Displays to user that the item has been removed
 			selection = 0;
 			break;
 		}
@@ -758,7 +756,7 @@ void viewLogs()
 		}
 
 		//sows a menu to the user
-		choice = navigatableMenu("You are currently in the view logs menu.\nBelow are options that allow you to sort the logs.", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
+		choice = navigatableMenu(" You are currently in the View Logs menu.\n Below are options that allow you to sort the logs.", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
 		switch (choice) //based on choice in nav menu
 		{
@@ -769,7 +767,7 @@ void viewLogs()
 			break;
 		case 2: //the user selected sort by type
 
-			choice = navigatableMenu("You are currently in the view logs menu.\nPlease select which type of log you would like to view.", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
+			choice = navigatableMenu(" You are currently in the View Logs menu.\n Please select which type of log you would like to view.", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
 
 			switch (choice)
 			{
@@ -798,7 +796,7 @@ void viewLogs()
 
 			break;
 		case 3: //the user selected sort by user
-			User * user = getUserWithMenu(false, "You are currently in the view logs menu.\nPlease select a user to view thier logs or use the other buttons to sort the users."); //show all users in a list
+			User * user = getUserWithMenu(false, " You are currently in the View Logs menu.\n Please select a user to view thier logs or use the other buttons to sort the users."); //show all users in a list
 			if (user != NULL) { gLogger->display(&headerString, user->id, 'A'); } //gets all log messages for the selected user
 
 		}
@@ -883,7 +881,7 @@ void resetUserDatabase(User **user)
 				choice = 'N'; //this is to stop the while loop
 
 				system("cls"); //shows mesage to verify deletion
-				cout << "User database cleared sucessfully\nYour new user id is: " << (*user)->id << "\n\nPress enter to continue...";
+				cout << " User database cleared sucessfully\n Your new user id is: " << (*user)->id << "\n\n Press enter to continue...";
 
 				while (_getch() != 13);
 			}
@@ -968,7 +966,7 @@ void deleteItemDatabase(User **user)
 				choice = 'N'; //this is to stop the while loop
 
 				system("cls");
-				cout << "Item database cleared sucessfully\n\nPress enter to continue...";
+				cout << " Item database cleared sucessfully\n\n Press enter to continue...";
 
 				while (_getch() != 13);
 			}
@@ -1208,7 +1206,7 @@ void itemMenu(User **user)
 		}
 
 		//Displays Item Database title
-		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\nThere are no items in the database.") : ("")), avalibleOptions, (localItemDatabase.size() == 0) ? ("") : (string("Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))))), amount, start, C_BLUE, C_LGREY);
+		selection = navigatableMenu(string("\t _____ _                   _____      _        _\n\t|_   _| |                 |  _  \\    | |      | |\n\t  | | | |_ ___ _ __ ___   | | | |__ _| |_ __ _| |__   __ _ ___  ___\n\t  | | | __/ _ \\ '_ ` _ \\  | | | / _` | __/ _` | '_ \\ / _` / __|/ _ \\\n\t _| |_| ||  __/ | | | | | | |/ / (_| | || (_| | |_) | (_| \\__ \\  __/\n\t \\___/ \\__\\___|_| |_| |_| |___/ \\__,_|\\__\\__,_|_.__/ \\__,_|___/\\___|") + ((localItemDatabase.size() == 0) ? ("\n\n\n\t\tThere are no items in the database.") : ("")), avalibleOptions, (localItemDatabase.size() == 0) ? ("") : (string("    Page ") + to_string(currentPage + 1) + "/" + to_string(((int)(ceil((float)localItemDatabase.size() / gItemDatabase->GetItemsPerPage()))))), amount, start, C_BLUE, C_LGREY);
 
 		if (selection < numItemsPage) {
 
@@ -1471,10 +1469,10 @@ void EditGerneralSetting(User **user) {
 			cout << " How many hours would you like to store log messages for: "; //gets the input from the user
 			cin >> temp;
 
-			while (temp < 96) //error trap so the input is  >= to 96
+			while (temp <= 0) //error trap so the input is always positive
 			{
 				system("cls");
-				cout << " Error! Time must be greater then 96 hours.\n How many hours would you like to store log messages for: ";
+				cout << " Error! Time must be a positive value.\n How many hours would you like to store log messages for: ";
 				cin >> temp;
 			}
 			gLogger->GetSecondsBeforeMsgDelete(temp * 3600); //convert the hours to seconds and then sets it;
@@ -1601,11 +1599,11 @@ void editExistingUsers(User** user) {
 				system("cls"); //Clears the screen
 				if ((*user)->id == userToEdit->id)
 				{
-					errorMsg("You can't delete your own account"); //Function does not allow user to delete their own account
+					errorMsg(" You can't delete your own account"); //Function does not allow user to delete their own account
 					break;
 				}
 				//Ensures that the user wants to delete the account, avoids user error
-				cout << "Are you sure you want to delete " << userToEdit->firstName << "'s account? (Y/N): ";
+				cout << " Are you sure you want to delete " << userToEdit->firstName << "'s account? (Y/N): ";
 				while ((choice = _getch()) != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
 
 				if (choice == 'N' || choice == 'n')
@@ -1616,35 +1614,35 @@ void editExistingUsers(User** user) {
 				gUserDatabase->save(); //User database is updated
 
 				system("cls"); //Clears the screen and shows success message to the user
-				cout << "You have successfully deleted thier account\nPress enter to continue...";
+				cout << " You have successfully deleted their account\n Press enter to continue...";
 				while (_getch() != 13);
 
 				//Adds message to the log database that a user has been deleted
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 3:
 				//User permissions are changed
 				changePermissions(&(userToEdit->permission));
 				//Adds message to the log database that a user's permissons has been changed
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s permissions");
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s permissions");
 				break;
 			case 4:
 				system("cls"); //Clears the screen, user inputs first name
-				cout << "Please enter the new first name: ";
+				cout << " Please enter the new first name: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->firstName, uppercase(temp).c_str());
 
 				system("cls"); //Clears the screen, user inputs last name
-				cout << "Please enter the new last name: ";
+				cout << " Please enter the new last name: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->lastName, uppercase(temp).c_str());
 
 				//Adds message to log database that a user's name has been changed
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed the name of " + string(copy.firstName) + " " + string(copy.lastName) + " to " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has changed the name of " + string(copy.firstName) + " " + string(copy.lastName) + " to " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 5:
 				system("cls"); //Clears the screen, tells user ID cannot be changed
@@ -1653,12 +1651,12 @@ void editExistingUsers(User** user) {
 				break;
 			case 6:
 				system("cls"); //Clears the screen, user inputs new password
-				cout << "Please enter the new password for the user: ";
+				cout << " Please enter the new password for the user: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->password, temp.c_str());
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s password");
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s password");
 				break;
 			}
 			gUserDatabase->save(); //User database is updated
@@ -1914,7 +1912,7 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 		}
 
 		//If user is not found in search, then message is shown to the user
-		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? (" There are no users that meet your search") : (" Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
+		selection = navigatableMenu(title, options, headerText, ((userPointers.size() == 0) ? (" There are no users that meet your search") : ("    Page " + to_string(currentPage + 1) + '/' + to_string((int)(ceil((float)userPointers.size() / (gUserDatabase->getItemsPerPage())))))), itemsOnPage + availableExtraButtons, selection, C_BLUE, C_WHITE);
 
 		switch (corispondingIndex[selection])
 		{
