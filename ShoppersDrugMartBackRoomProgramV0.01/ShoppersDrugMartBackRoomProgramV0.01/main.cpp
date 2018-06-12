@@ -432,7 +432,7 @@ void menu(User **user)
 	string allOptions[] = { "View Items" , "View Logs" , "Edit User Accounts" , "Edit General Settings" ,"Delete the Item Database", "Delete the User Database", "Delete the Log Database" }; //all of the strings corrispinging to all the possible menu options
 	string *avalibleOptions; //a list of options that the current user has access to based on their permissions;
 	int *corrispondingIndex; //since only some options are avilible to users this array of intergers converts thier choice to what their choice would have been had they accesss to all options
-	int amount = 1; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
+	int amount = 2; //the amount of options the current user has access too, it starts a one beacuse all users have access to logout;
 
 	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //counts how many permission the current user has access too
 	{
@@ -448,16 +448,18 @@ void menu(User **user)
 	corrispondingIndex = new int[amount];
 
 	avalibleOptions[0] = "Log Out"; //all users have access to logout
+	avalibleOptions[1] = "Help"; //all users have access to logout
 
-	int pos = 1; //this number is iterated everytime the user has access to a command;
+	int pos = 2; //this number is iterated everytime the user has access to a command;
 	corrispondingIndex[0] = 0; //option zero is always option zero as it isa vilible to every user;
+	corrispondingIndex[1] = 1; //option one is always option one as it isa vilible to every user;
 
 	for (int i = 0; i < NUMBER_OF_MMPERMISSIONS; i++) //makes the array of string to be passed to the menu function
 	{
 
 		if ((*user)->permission.permissionsMM[i] == true)
 		{
-			corrispondingIndex[pos] = i + 1;
+			corrispondingIndex[pos] = i + 2;
 			avalibleOptions[pos] = allOptions[i];
 			pos++;
 		}
@@ -472,21 +474,24 @@ void menu(User **user)
 		switch (corrispondingIndex[selection]) //calls the selected function based on what they selectedin nav menu
 		{
 		case 1:
-			itemMenu(user);
+			help("Main Menu");
 			break;
 		case 2:
-			viewLogs();
+			itemMenu(user);
 			break;
 		case 3:
-			editUsers(user);
+			viewLogs();
 			break;
 		case 4:
-			EditGerneralSetting(user);
+			editUsers(user);
 			break;
 		case 5:
-			deleteItemDatabase(user);
+			EditGerneralSetting(user);
 			break;
 		case 6:
+			deleteItemDatabase(user);
+			break;
+		case 7:
 			resetUserDatabase(user);
 			break;
 		}
@@ -1298,7 +1303,7 @@ void help(string whereToReturn)//Help screen displays instructions on how to use
 	//Instructs the user how to continue the program after the screen pauses
 	cout << endl << endl << " Please press the enter key to return to the " << whereToReturn << "...";
 
-	getchar();//Pauses the screen so user can read help screen until user hits enter key
+	while(_getch() != 13);//Pauses the screen so user can read help screen until user hits enter key
 }
 
 //Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
