@@ -7,7 +7,7 @@
 #include "stringFunctions.h"
 using namespace std;
 
-#define ENABLE_NO_PASSWORD_CHECK true //when true password checks are bipassed
+#define ENABLE_NO_PASSWORD_CHECK false //when true password checks are bipassed
 
 #define MAX_USER_ID 9999999
 #define MIN_USER_ID 1000000
