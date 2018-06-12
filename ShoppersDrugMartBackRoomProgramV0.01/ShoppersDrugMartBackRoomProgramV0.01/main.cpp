@@ -607,6 +607,7 @@ void modifyItem(User **user, Item* item) {
 			strncpy(item->name, uppercase(stemp).c_str(), sizeof(item->name));
 			item->name[NAME_LEN - 1] = '\0';
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the name of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 2: //desc change
 			cout << "Enter the new description: ";
@@ -616,6 +617,7 @@ void modifyItem(User **user, Item* item) {
 			strncpy(item->desc, stemp.c_str(), sizeof(item->desc));
 			item->desc[DESC_LEN - 1] = '\0';
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the name of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 3: //price change
 			cout << "Enter the new price: ";
@@ -623,9 +625,9 @@ void modifyItem(User **user, Item* item) {
 				cin >> temp;
 				if (temp < 0) { cout << "Invalid price. Positive or zero only.\nEnter the new price: "; }
 			} while (temp < 0); //error trap
-
 			item->price = temp;
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'p', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the price of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 4: //cost change
 			cout << "Enter the new cost: ";
@@ -633,9 +635,9 @@ void modifyItem(User **user, Item* item) {
 				cin >> temp;
 				if (temp < 0) { cout << "Invalid cost. Positive or zero only.\nEnter the new cost: "; }
 			} while (temp < 0); //error trap
-
 			item->cost = temp;
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'c', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the cost of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 5: //sale change
 			float temp;
@@ -644,9 +646,9 @@ void modifyItem(User **user, Item* item) {
 				cin >> temp;
 				if (temp < 0) { cout << "Invalid sale price. Positive or zero only.\nEnter the new sale price: "; }
 			} while (temp < 0); //error trap
-
 			item->price = temp;
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 's', ((*user)->firstName + string(" ") + (*user)->lastName + string(" modified the sale price of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 			}
 
@@ -712,9 +714,9 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 			do {
 				cin >> temp;
 			} while (!(temp >= 0));
-
 			item->amount = temp;
 			gItemDatabase->Save(); //Item database is saved
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'a', ((*user)->firstName + string(" ") + (*user)->lastName + string(" updated the stock amount of ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			break;
 		case 2:
 			modifyItem(user, item);
@@ -722,7 +724,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 		case 3:
 			gItemDatabase->Remove(gItemIndex);
 			//Adds log message that a specific item had been removed
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', ((*user)->firstName + string(" ") + (*user)->lastName + string("removed ") + item->name + ". UPC: " + to_string(item->upc))); //creates a log message
 			errorMsg("Item removed."); //Displays to user that the item has been removed
 			selection = 0;
 			break;
