@@ -353,13 +353,13 @@ void ItemDatabase::Save() //saves the database to the file
 
 string ItemDatabase::buildItem(int index) { //builds the crucial information into a one line string to display in item menu from the index of the required item
 
-	return (addZeros(12, items[index].upc) + "\t\t" + items[index].name + "\t\t\t" + to_string(items[index].amount));
+	return (addZeros(12, items[index].upc) + addSpaces(60, string(items[index].name)) + addSpaces(10, to_string(items[index].amount)));
 
 }
 
 string ItemDatabase::buildItem(Item* item) { //builds the crucial information into a one line string to display in item menu from an item pointer
 
-	return (addZeros(12,item->upc) + "\t\t" + item->name + "\t\t\t" + to_string(item->amount));
+	return (addZeros(12,item->upc) + addSpaces(60, string(item->name)) + addSpaces(10, to_string(item->amount)));
 
 }
 

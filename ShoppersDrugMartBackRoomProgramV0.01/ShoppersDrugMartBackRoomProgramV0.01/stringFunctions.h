@@ -88,12 +88,12 @@ string addZeros(int numOfDidgits, long long int number) //creates a string with 
 	return string(buffer);
 }
 
-string addSpaces(int numOfString, long long int number) //creates a string with the number of desired didgits (preceding 0 are added to reach the requitment)
+string addSpaces(int numOfChars, string str) //creates a string with the number of desired didgits (preceding 0 are added to reach the requitment)
 {
 	char *buffer;
-	buffer = new char[numOfDidgits + 1];
+	buffer = new char[numOfChars + 1];
 
-	sprintf(buffer, ((string("%0") + to_string(numOfDidgits) + "lld").c_str()), number); //adds the zeros
+	sprintf(buffer, ((string("%") + to_string(numOfChars) + "s").c_str()), str); //adds the spaces
 
 	return string(buffer);
 }
