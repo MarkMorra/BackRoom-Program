@@ -57,7 +57,7 @@ int main() {
 	{
 		logon(user); //returns null if user selects exit
 		if (*user == NULL)
-		{ 
+		{
 			done = true;
 		}
 		else
@@ -78,7 +78,7 @@ int main() {
 
 void onStart(long long int *authCode) {
 
-	
+
 	*authCode = 0;
 
 	srand(time(NULL));
@@ -128,7 +128,7 @@ void welcome() { //Welcome function to display opening message when program firs
 	while ((choice = _getch()) != 13);
 }
 
-/* 
+/*
 
 TEST MENU, NO LONGER NEEDED
 
@@ -526,16 +526,10 @@ void addItem(User **user) {
 
 	if ((gItemDatabase->Find('u', upc)).size() == 0) { //continues when a unique upc in entered
 
-	do {
-		cout << " PLU: "; //gets all other value
-		cin >> plu;
-	} while (plu < 0 || plu > 99999);
-
-		cout << " Amount: ";
 		do {
-			cin >> amount;
-			if (amount < 0) { cout << " Invalid amount. Positive or zero only.\n Amount: "; } //error traps
-		} while (amount < 0);
+			cout << " PLU: "; //gets all other value
+			cin >> plu;
+		} while (plu < 0 || plu > 99999);
 
 		cout << " Name: ";
 		getline(cin, name); //second getline to eat the leftovers
@@ -543,13 +537,23 @@ void addItem(User **user) {
 
 		name = uppercase(name);
 
+		name = string(name, 0, NAME_LEN - 1);
+
 		cout << " Description: ";
 		getline(cin, desc);
+
+		desc = string(desc, 0, DESC_LEN - 1);
+
+		cout << " Amount: ";
+		do {
+			cin >> amount;
+			if (amount < 0) { cout << " Invalid amount. Positive or zero only.\n Amount: "; } //error traps
+		} while (amount < 0);
 
 		cout << " Price: ";
 		do {
 			cin >> price;
-			if (price < 0)  { cout << " Invalid price. Positive or zero only.\n Price: "; } //error traps
+			if (price < 0) { cout << " Invalid price. Positive or zero only.\n Price: "; } //error traps
 		} while (price < 0);
 
 		cout << " Cost: ";
@@ -566,8 +570,6 @@ void addItem(User **user) {
 
 		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale); //adds the new item to the database
 
-		gItemDatabase->Save();
-
 		gLogger->addItem(upc, plu, (*user)->id, 'n', ((*user)->firstName + string(" ") + (*user)->lastName + string(" added an item"))); //creates a log message
 
 	}
@@ -580,11 +582,11 @@ void addItem(User **user) {
 }
 
 void modifyItem(User **user, Item* item) {
-	
+
 	int selection;
-	
+
 	do {
-		
+
 		char pricetemp[50];
 		char saletemp[50];
 		char costtemp[50];
@@ -609,6 +611,7 @@ void modifyItem(User **user, Item* item) {
 			fflush(stdin);
 			cin.clear();
 			getline(cin, stemp);
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', string((*user)->firstName) + ' ' + (*user)->lastName + " has renamed " + item->name + " to " + uppercase(stemp));
 			strncpy(item->name, uppercase(stemp).c_str(), sizeof(item->name));
 			item->name[NAME_LEN - 1] = '\0';
 			gItemDatabase->Save(); //save
@@ -621,6 +624,7 @@ void modifyItem(User **user, Item* item) {
 			strncpy(item->desc, stemp.c_str(), sizeof(item->desc));
 			item->desc[DESC_LEN - 1] = '\0';
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed the description of " + item->name);
 			break;
 		case 3: //price change
 			cout << " Enter the new price: ";
@@ -631,6 +635,7 @@ void modifyItem(User **user, Item* item) {
 
 			item->price = temp;
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed the price of " + item->name + " to " + to_string(item->price));
 			break;
 		case 4: //cost change
 			cout << " Enter the new cost: ";
@@ -641,6 +646,7 @@ void modifyItem(User **user, Item* item) {
 
 			item->cost = temp;
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed the cost of " + item->name + " to " + to_string(item->cost));
 			break;
 		case 5: //sale change
 			float temp;
@@ -652,8 +658,9 @@ void modifyItem(User **user, Item* item) {
 
 			item->price = temp;
 			gItemDatabase->Save(); //save
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed the sale price of " + item->name + " to " + to_string(item->sale));
 			break;
-			}
+		}
 
 	} while (selection != 0);
 
@@ -666,7 +673,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 	string allOptions[] = { "Back to Item Menu", "Modify Amount", "Modify Item", "Delete Item" };
 	int selection;
 	int *corrispondingIndex;
-	int amount; 
+	int amount;
 
 	do {
 
@@ -720,6 +727,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 
 			item->amount = temp;
 			gItemDatabase->Save(); //Item database is saved
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'i', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed the amount of "  + item->name + " to " + to_string(item->amount));
 			break;
 		case 2:
 			modifyItem(user, item);
@@ -727,7 +735,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 		case 3:
 			gItemDatabase->Remove(gItemIndex);
 			//Adds log message that a specific item had been removed
-			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
+			gLogger->addItem(item->upc, item->plu, (*user)->id, 'n', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
 			errorMsg(" Item removed."); //Displays to user that the item has been removed
 			selection = 0;
 			break;
@@ -744,7 +752,7 @@ void viewLogs()
 {
 	string options[] = { "Return to Main Menu" , "View All Logs", "Search By Type", "Search by User" }; //all the options availible to the usre
 	int const numOfOptions = 4;
-	string SearchByType[] = { "View Miscellaneous" , "View Amount Changes" , "View New Item Creations" , "View Item Information Changes" , "View User Information Changes" , "View User Account Creations" ,"View Log Ons and Log Offs"}; //options in the search by type sub menu
+	string SearchByType[] = { "View Miscellaneous" , "View Amount Changes" , "View New Item Creations" , "View Item Information Changes" , "View User Information Changes" , "View User Account Creations" ,"View Log Ons and Log Offs" }; //options in the search by type sub menu
 	int const numOfSearchByTypeOptions = 7;
 
 	string headerString; //this is the text displayed under the options, in this case it will store the logs the user wishes to see
@@ -1303,7 +1311,7 @@ void help(string whereToReturn)//Help screen displays instructions on how to use
 	//Instructs the user how to continue the program after the screen pauses
 	cout << endl << endl << " Please press the enter key to return to the " << whereToReturn << "...";
 
-	while(_getch() != 13);//Pauses the screen so user can read help screen until user hits enter key
+	while (_getch() != 13);//Pauses the screen so user can read help screen until user hits enter key
 }
 
 //Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
@@ -1337,7 +1345,7 @@ int navigatableMenu(string title, string options[], string *headerText, int numb
 }
 
 //Displays the title and options in each menu in the code. This way, the user can navigate with little to no background change
-int navigatableMenu(string title, string options[],string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
+int navigatableMenu(string title, string options[], string footerText, int numberOfOptions, int startingPosition, int selectedBackground, int selectedForeground)
 {
 	string blank = "";
 	return navigatableMenu(title, options, &blank, footerText, numberOfOptions, startingPosition, selectedBackground, selectedForeground); //creates a menu for the user to select options from, it returns a int corissponding to their selection
@@ -1481,7 +1489,7 @@ void EditGerneralSetting(User **user) {
 				cin >> temp;
 			}
 			gLogger->GetSecondsBeforeMsgDelete(temp * 3600); //convert the hours to seconds and then sets it;
-			gLogger->addItem(-1, -1, (*user)->id, 'g', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed changed the log message store length to: " + to_string((gLogger->GetSecondsBeforeMsgDelete())/3600) + " hours");
+			gLogger->addItem(-1, -1, (*user)->id, 'g', string((*user)->firstName) + ' ' + (*user)->lastName + " has changed changed the log message store length to: " + to_string((gLogger->GetSecondsBeforeMsgDelete()) / 3600) + " hours");
 			break;
 
 		case 2:
@@ -1560,7 +1568,7 @@ void editExistingUsers(User** user) {
 	{
 		//Asks user which current account should be changed
 		userToEdit = getUserWithMenu(false, " Which user would you like to edit?");
-		
+
 		if (userToEdit == NULL)
 		{
 			return;
@@ -1569,7 +1577,7 @@ void editExistingUsers(User** user) {
 
 		do
 		{
-			
+
 			output = userToEdit->display(true, false);
 
 			int i = 4;
@@ -1687,7 +1695,7 @@ void editDeletedUsers(User** user)
 		if (userToEdit == NULL) { return; }
 		//Deleted user account is displayed on screen
 		userDesc = userToEdit->display(false, true);
-		
+
 		//User is asked second time to reduce user error
 		selection = navigatableMenu(" Are you sure you want to restore this user?", option, &userDesc, 2, C_BLUE, C_WHITE);
 
