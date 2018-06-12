@@ -1499,6 +1499,7 @@ void EditGerneralSetting(User **user) {
 void editUsers(User** user)
 {
 	int const sizeOfAllOptions = 4;
+	//Displays the available options for the user in this menu
 	string alloptions[] = { "Return to Main Menu" , "Add a New User" , "View Existing Users" , "View Deleted Users" };
 	int selection = 0;
 	User *userToEdit;
@@ -1553,7 +1554,7 @@ void editExistingUsers(User** user) {
 			int pos = 0;
 			do
 			{
-				options[i] = "";
+				options[i] = ""; //Displays the options in a single column
 				while (output[pos] != '\n' && output[pos] != '\0')
 				{
 					options[i] += output[pos];
@@ -1756,7 +1757,7 @@ void changePermissions(Permissions *perms)
 		int pos = 0;
 		do
 		{
-			options[i] = "";
+			options[i] = ""; //Displays the options for the user in a single column
 			do
 			{
 				options[i] += permissions[pos];
@@ -1771,7 +1772,7 @@ void changePermissions(Permissions *perms)
 
 		if (selection == 0)
 		{
-			*perms = permsCopy;
+			*perms = permsCopy; //Creates a copy of the permissions for the user
 			return;
 		}
 		else if (selection == 1)
@@ -1780,14 +1781,17 @@ void changePermissions(Permissions *perms)
 		}
 		else if (selection < NUMBER_OF_MMPERMISSIONS + 2)
 		{
+			//Sends the permissions to the user database to be saved
 			perms->permissionsMM[selection - 2] = !perms->permissionsMM[selection - 2];
 		}
 		else if (selection < NUMBER_OF_IMPERMISSIONS + 2)
 		{
+			//Sends the permissions to the user database to be saved
 			perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 2] = !perms->permissionsIM[selection - NUMBER_OF_MMPERMISSIONS - 2];
 		}
 		else
 		{
+			//Sends the permissions to the user database to be saved
 			perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 2] = !perms->permissionsI[selection - NUMBER_OF_MMPERMISSIONS - NUMBER_OF_IMPERMISSIONS - 2];
 		}
 
@@ -1795,6 +1799,7 @@ void changePermissions(Permissions *perms)
 
 }
 
+//Information from the user database is sent to a menu for the user to see
 User* getUserWithMenu(bool includeDeleted, string title)
 {
 	string header = "";
@@ -1803,12 +1808,14 @@ User* getUserWithMenu(bool includeDeleted, string title)
 
 }
 
+//Information from the user database is sent to a menu for the user to see
 User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string title)
 {
 	string header = "";
 	return getUserWithMenu(includeDeleted, includeNotDeleted, &header, title);
 }
 
+//Information from the user database is sent to a menu for the user to see
 User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *headerText, string title)
 {
 
@@ -1855,6 +1862,7 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 
 		for (int i = 0; i < NUM_OF_EXTRA_BUTTONS; i++)
 		{
+			//Adds extra buttons if need be to avoid overcrowding of the debug screen
 			if (extraButtons[i] == true) { availableExtraButtons++; }
 		}
 
@@ -1863,6 +1871,7 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 		int j = 0;
 		string *options;
 		int *corispondingIndex;
+		//The amount of options for the user to choose from includes the items on page and the number of extra buttons
 		options = new string[itemsOnPage + availableExtraButtons];
 		corispondingIndex = new int[itemsOnPage + availableExtraButtons];
 
@@ -1870,6 +1879,7 @@ User* getUserWithMenu(bool includeDeleted, bool includeNotDeleted, string *heade
 		{
 			if (extraButtons[i] == true)
 			{
+				//If there are extra buttons, the names for these options are provided here
 				options[j] = extraButtonNames[i];
 				corispondingIndex[j] = i;
 				j++;

@@ -293,7 +293,7 @@ vector<User>::iterator UserDatabase::Search(long int id) //returns an itterator 
 		}
 
 	}
-
+	//The search for a certain user in the user database has failed, therefore an error message is displayed
 	errorMsg(" The binary search in User Database::Search has failed and was unable to find the correct position for " + to_string(id) + ".\n This user will not be added to the database."); //if the above while loops exits then an error occured
 	return vector<User>::iterator();
 
@@ -411,8 +411,9 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode) //sets up 
 
 		string firstname, lastname, password; //gets the account info for the new user
 
-		system("cls");
+		system("cls"); //Clears the screen
 
+		//User inputs their information to create a new account
 		cout << " There are currently no user accounts.\n The following steps will allow you to create a new user account with full privileges\n\n Please enter a first name: ";
 		getline(cin, firstname);
 
@@ -429,16 +430,16 @@ UserDatabase::UserDatabase(string filename, long long int *_authCode) //sets up 
 			permissions.permissionsMM[i] = true;
 		}
 
-		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++)
+		for (int i = 0; i < NUMBER_OF_IMPERMISSIONS; i++) //the new user gets full access (this sets all there perms to true)
 		{
 			permissions.permissionsIM[i] = true;
 		}
 
-		for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++)
+		for (int i = 0; i < NUMBER_OF_IPERMISSIONS; i++) //the new user gets full access (this sets all there perms to true)
 		{
 			permissions.permissionsI[i] = true;
 		}
-
+		//Displays the user id when a new account is created
 		cout << "\n The account ID of the new account is: " << Add(User(0, firstname, lastname, password, permissions))->id << "\n Press enter to continue..."; //displays the new account id
 		while (_getch() != 13);
 		save();
@@ -528,7 +529,7 @@ void UserDatabase::save() //saves the data in the database to the file
 
 	}
 
-	fclose(file);
+	fclose(file); //User database file is closed
 
 }
 
