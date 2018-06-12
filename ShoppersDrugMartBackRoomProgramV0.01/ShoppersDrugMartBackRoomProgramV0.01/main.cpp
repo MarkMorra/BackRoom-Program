@@ -85,7 +85,7 @@ void onStart(long long int *authCode) {
 
 	changeColour(); //sets the colour to the defult set in Colours.h
 	system("cls"); //forces the screen to update to the new colours
-	SetConsoleTitle("Shoppers Inventory Managment, By: Mark, Ben and Cady");
+	SetConsoleTitle("Shoppers Inventory Management, By: Mark, Ben and Cady");
 
 	CreateDirectory(FOLDER_NAME, NULL); //creates the data folder
 
@@ -513,50 +513,50 @@ void addItem(User **user) {
 
 	system("cls");
 
-	cout << "UPC: "; //gets upc
+	cout << " UPC: "; //gets upc
 	do {
 		cin >> upc;
-		if (upc < 0 || upc > 999999999999) { cout << "Invalid UPC. 000000000000 - 999999999999.\nUPC: "; } //checks for valid upc
+		if (upc < 0 || upc > 999999999999) { cout << " Invalid UPC. 000000000000 - 999999999999.\n UPC: "; } //checks for valid upc
 	} while (upc < 0 || upc > 999999999999);
 
 	if ((gItemDatabase->Find('u', upc)).size() == 0) { //continues when a unique upc in entered
 
 	do {
-		cout << "PLU: "; //gets all other value
+		cout << " PLU: "; //gets all other value
 		cin >> plu;
 	} while (plu < 0 || plu > 99999);
 
-		cout << "Amount: ";
+		cout << " Amount: ";
 		do {
 			cin >> amount;
-			if (amount < 0) { cout << "Invalid amount. Positive or zero only.\nUPC: "; } //error traps
+			if (amount < 0) { cout << " Invalid amount. Positive or zero only.\n Amount: "; } //error traps
 		} while (amount < 0);
 
-		cout << "Name: ";
+		cout << " Name: ";
 		getline(cin, name); //second getline to eat the leftovers
 		getline(cin, name);
 
 		name = uppercase(name);
 
-		cout << "Description: ";
+		cout << " Description: ";
 		getline(cin, desc);
 
-		cout << "Price: ";
+		cout << " Price: ";
 		do {
 			cin >> price;
-			if (price < 0)  { cout << "Invalid price. Positive or zero only.\nUPC: "; } //error traps
+			if (price < 0)  { cout << " Invalid price. Positive or zero only.\n Price: "; } //error traps
 		} while (price < 0);
 
-		cout << "Cost: ";
+		cout << " Cost: ";
 		do {
 			cin >> cost;
-			if (cost < 0) { cout << "Invalid cost. Positive or zero only.\nUPC: "; } //error traps
+			if (cost < 0) { cout << " Invalid cost. Positive or zero only.\n Cost: "; } //error traps
 		} while (cost < 0);
 
-		cout << "Sale Price: ";
+		cout << " Sale Price: ";
 		do {
 			cin >> sale;
-			if (sale < 0) { cout << "Invalid sale price. Positive or zero only.\nUPC: "; } //error traps
+			if (sale < 0) { cout << " Invalid sale price. Positive or zero only.\n Sale Price: "; } //error traps
 		} while (sale < 0);
 
 		gItemDatabase->Add(upc, plu, amount, name, desc, price, cost, sale); //adds the new item to the database
@@ -568,7 +568,7 @@ void addItem(User **user) {
 	}
 	else {
 
-		cout << "This item already exists."; //displays error if upc code is already used
+		cout << " This item already exists."; //displays error if upc code is already used
 
 	}
 
@@ -600,7 +600,7 @@ void modifyItem(User **user, Item* item) {
 		//depending on what the user selects, it enters the case to modify that value
 		switch (selection) {
 		case 1: //name change
-			cout << "Enter the new name: ";
+			cout << " Enter the new name: ";
 			fflush(stdin);
 			cin.clear();
 			getline(cin, stemp);
@@ -609,7 +609,7 @@ void modifyItem(User **user, Item* item) {
 			gItemDatabase->Save(); //save
 			break;
 		case 2: //desc change
-			cout << "Enter the new description: ";
+			cout << " Enter the new description: ";
 			fflush(stdin);
 			cin.clear();
 			getline(cin, stemp);
@@ -618,20 +618,20 @@ void modifyItem(User **user, Item* item) {
 			gItemDatabase->Save(); //save
 			break;
 		case 3: //price change
-			cout << "Enter the new price: ";
+			cout << " Enter the new price: ";
 			do {
 				cin >> temp;
-				if (temp < 0) { cout << "Invalid price. Positive or zero only.\nEnter the new price: "; }
+				if (temp < 0) { cout << " Invalid price. Positive or zero only.\n Enter the new price: "; }
 			} while (temp < 0); //error trap
 
 			item->price = temp;
 			gItemDatabase->Save(); //save
 			break;
 		case 4: //cost change
-			cout << "Enter the new cost: ";
+			cout << " Enter the new cost: ";
 			do {
 				cin >> temp;
-				if (temp < 0) { cout << "Invalid cost. Positive or zero only.\nEnter the new cost: "; }
+				if (temp < 0) { cout << " Invalid cost. Positive or zero only.\n Enter the new cost: "; }
 			} while (temp < 0); //error trap
 
 			item->cost = temp;
@@ -639,10 +639,10 @@ void modifyItem(User **user, Item* item) {
 			break;
 		case 5: //sale change
 			float temp;
-			cout << "Enter the new sale price: ";
+			cout << " Enter the new sale price: ";
 			do {
 				cin >> temp;
-				if (temp < 0) { cout << "Invalid sale price. Positive or zero only.\nEnter the new sale price: "; }
+				if (temp < 0) { cout << " Invalid sale price. Positive or zero only.\n Enter the new sale price: "; }
 			} while (temp < 0); //error trap
 
 			item->price = temp;
@@ -658,7 +658,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 
 	string *availibleOptions;
 	//Displays the options the user can select in this menu
-	string allOptions[] = { "Back to Item Menu", "Modify amount", "Modify item", "Delete item" };
+	string allOptions[] = { "Back to Item Menu", "Modify Amount", "Modify Item", "Delete Item" };
 	int selection;
 	int *corrispondingIndex;
 	int amount; 
@@ -708,7 +708,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 		case 1:
 			int temp;
 			//User can enter new item amount
-			cout << "Enter the new amount: ";
+			cout << " Enter the new amount: ";
 			do {
 				cin >> temp;
 			} while (!(temp >= 0));
@@ -723,7 +723,7 @@ void selectedItem(User **user, Item* item, int gItemIndex) {
 			gItemDatabase->Remove(gItemIndex);
 			//Adds log message that a specific item had been removed
 			gLogger->addItem(item->upc, item->plu, (*user)->id, 'r', string((*user)->firstName) + ' ' + (*user)->lastName + " removed item with UPC " + to_string(item->upc));
-			errorMsg("Item removed."); //Displays to user that the item has been removed
+			errorMsg(" Item removed."); //Displays to user that the item has been removed
 			selection = 0;
 			break;
 		}
