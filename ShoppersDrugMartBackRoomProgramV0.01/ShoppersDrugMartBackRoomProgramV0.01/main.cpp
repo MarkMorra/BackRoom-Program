@@ -8,7 +8,7 @@
 
 using namespace std;
 
-#define VERSION "0.99 PRE_PRELEASE"
+#define VERSION "1.00 RELEASE"
 #define FOLDER_NAME "data"
 
 void onStart(long long int *authCode); //called whan the program begins
