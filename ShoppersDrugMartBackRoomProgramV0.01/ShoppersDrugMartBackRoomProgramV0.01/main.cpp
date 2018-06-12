@@ -756,7 +756,7 @@ void viewLogs()
 		}
 
 		//sows a menu to the user
-		choice = navigatableMenu("You are currently in the view logs menu.\nBelow are options that allow you to sort the logs.", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
+		choice = navigatableMenu(" You are currently in the View Logs menu.\n Below are options that allow you to sort the logs.", options, &headerString, numOfOptions, C_BLUE, C_WHITE);
 
 		switch (choice) //based on choice in nav menu
 		{
@@ -767,7 +767,7 @@ void viewLogs()
 			break;
 		case 2: //the user selected sort by type
 
-			choice = navigatableMenu("You are currently in the view logs menu.\nPlease select which type of log you would like to view.", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
+			choice = navigatableMenu(" You are currently in the View Logs menu.\n Please select which type of log you would like to view.", SearchByType, &headerString, numOfSearchByTypeOptions, C_BLUE, C_WHITE); //keep going
 
 			switch (choice)
 			{
@@ -796,7 +796,7 @@ void viewLogs()
 
 			break;
 		case 3: //the user selected sort by user
-			User * user = getUserWithMenu(false, "You are currently in the view logs menu.\nPlease select a user to view thier logs or use the other buttons to sort the users."); //show all users in a list
+			User * user = getUserWithMenu(false, " You are currently in the View Logs menu.\n Please select a user to view thier logs or use the other buttons to sort the users."); //show all users in a list
 			if (user != NULL) { gLogger->display(&headerString, user->id, 'A'); } //gets all log messages for the selected user
 
 		}
@@ -881,7 +881,7 @@ void resetUserDatabase(User **user)
 				choice = 'N'; //this is to stop the while loop
 
 				system("cls"); //shows mesage to verify deletion
-				cout << "User database cleared sucessfully\nYour new user id is: " << (*user)->id << "\n\nPress enter to continue...";
+				cout << " User database cleared sucessfully\n Your new user id is: " << (*user)->id << "\n\n Press enter to continue...";
 
 				while (_getch() != 13);
 			}
@@ -966,7 +966,7 @@ void deleteItemDatabase(User **user)
 				choice = 'N'; //this is to stop the while loop
 
 				system("cls");
-				cout << "Item database cleared sucessfully\n\nPress enter to continue...";
+				cout << " Item database cleared sucessfully\n\n Press enter to continue...";
 
 				while (_getch() != 13);
 			}
@@ -1599,11 +1599,11 @@ void editExistingUsers(User** user) {
 				system("cls"); //Clears the screen
 				if ((*user)->id == userToEdit->id)
 				{
-					errorMsg("You can't delete your own account"); //Function does not allow user to delete their own account
+					errorMsg(" You can't delete your own account"); //Function does not allow user to delete their own account
 					break;
 				}
 				//Ensures that the user wants to delete the account, avoids user error
-				cout << "Are you sure you want to delete " << userToEdit->firstName << "'s account? (Y/N): ";
+				cout << " Are you sure you want to delete " << userToEdit->firstName << "'s account? (Y/N): ";
 				while ((choice = _getch()) != 'Y' && choice != 'y' && choice != 'N' && choice != 'n');
 
 				if (choice == 'N' || choice == 'n')
@@ -1614,35 +1614,35 @@ void editExistingUsers(User** user) {
 				gUserDatabase->save(); //User database is updated
 
 				system("cls"); //Clears the screen and shows success message to the user
-				cout << "You have successfully deleted thier account\nPress enter to continue...";
+				cout << " You have successfully deleted their account\n Press enter to continue...";
 				while (_getch() != 13);
 
 				//Adds message to the log database that a user has been deleted
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has deleted " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 3:
 				//User permissions are changed
 				changePermissions(&(userToEdit->permission));
 				//Adds message to the log database that a user's permissons has been changed
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s permissions");
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s permissions");
 				break;
 			case 4:
 				system("cls"); //Clears the screen, user inputs first name
-				cout << "Please enter the new first name: ";
+				cout << " Please enter the new first name: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->firstName, uppercase(temp).c_str());
 
 				system("cls"); //Clears the screen, user inputs last name
-				cout << "Please enter the new last name: ";
+				cout << " Please enter the new last name: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->lastName, uppercase(temp).c_str());
 
 				//Adds message to log database that a user's name has been changed
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed the name of " + string(copy.firstName) + " " + string(copy.lastName) + " to " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has changed the name of " + string(copy.firstName) + " " + string(copy.lastName) + " to " + string(userToEdit->firstName) + " " + string(userToEdit->lastName));
 				break;
 			case 5:
 				system("cls"); //Clears the screen, tells user ID cannot be changed
@@ -1651,12 +1651,12 @@ void editExistingUsers(User** user) {
 				break;
 			case 6:
 				system("cls"); //Clears the screen, user inputs new password
-				cout << "Please enter the new password for the user: ";
+				cout << " Please enter the new password for the user: ";
 				fflush(stdin);
 				cin.clear();
 				getline(cin, temp);
 				strcpy(userToEdit->password, temp.c_str());
-				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " Has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s password");
+				gLogger->addItem(-1, -1, (*user)->id, 'u', string((*user)->firstName) + " " + string((*user)->lastName) + " has changed " + string(userToEdit->firstName) + " " + string(userToEdit->lastName) + "'s password");
 				break;
 			}
 			gUserDatabase->save(); //User database is updated
