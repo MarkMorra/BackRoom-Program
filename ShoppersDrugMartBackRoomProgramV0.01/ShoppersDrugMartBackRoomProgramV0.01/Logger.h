@@ -25,7 +25,7 @@ public:
 	long long int PLUCode; //-1 if not applicable
 	long int Userid; //id of the user who made the change -1 if not applicable
 	char type; //the type of log
-	//g = generic, p = price change, a = amount change, n = new item, l = login/logout, i = item information changes (eg the description was changed), u = user information change, m = new user added, r = removed item
+	//g = generic, p = price change, a = amount change, n = new item/remove item, l = login/logout, i = item information changes (eg the description was changed), u = user information change, m = new user added
 	char message[CHAR_IN_LOG_MSG];
 };
 

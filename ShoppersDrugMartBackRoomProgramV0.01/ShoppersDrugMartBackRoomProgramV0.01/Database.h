@@ -349,6 +349,8 @@ void ItemDatabase::Save() //saves the database to the file
 
 	fclose(file);
 
+	Reload();
+
 }
 
 string ItemDatabase::buildItem(int index) { //builds the crucial information into a one line string to display in item menu from the index of the required item
