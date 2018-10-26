@@ -19,7 +19,7 @@ using namespace std;
 #define MM_ITEMS 0 //MM means main menu
 #define MM_VIEWLOGS 1
 #define MM_VIEWUSERS 2
-#define MM_GENERALSETTINGS 3
+#define MM_GENERALSETTINGS 4
 #define MM_RESETITEM 4
 #define MM_RESETUSERS 5
 
