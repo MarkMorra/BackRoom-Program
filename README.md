@@ -1,5 +1,5 @@
 # Inventory-Managment
-# End of year project for grade 12 CS class. program was made by Mark, Ben and Kady
+# End of year project for grade 12 CS class. program was made by Mark, Ben and Cady
 
 
 Introduction:
